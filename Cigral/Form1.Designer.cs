@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormMain));
             panelHeader = new Panel();
             label1 = new Label();
             pictureBox1 = new PictureBox();
@@ -40,9 +41,11 @@
             btnAuditoria = new FontAwesome.Sharp.IconButton();
             btnStock = new FontAwesome.Sharp.IconButton();
             iconButtonIngreso = new FontAwesome.Sharp.IconButton();
+            pictureBox2 = new PictureBox();
             panelHeader.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             panel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)pictureBox2).BeginInit();
             SuspendLayout();
             // 
             // panelHeader
@@ -54,16 +57,15 @@
             panelHeader.Location = new Point(0, 0);
             panelHeader.Margin = new Padding(3, 2, 3, 2);
             panelHeader.Name = "panelHeader";
-            panelHeader.Size = new Size(1664, 97);
+            panelHeader.Size = new Size(1904, 97);
             panelHeader.TabIndex = 0;
-            
             // 
             // label1
             // 
             label1.Anchor = AnchorStyles.None;
             label1.Font = new Font("Segoe UI", 24F, FontStyle.Bold | FontStyle.Underline, GraphicsUnit.Point, 0);
             label1.ForeColor = Color.White;
-            label1.Location = new Point(485, 25);
+            label1.Location = new Point(605, 25);
             label1.Name = "label1";
             label1.Size = new Size(858, 50);
             label1.TabIndex = 2;
@@ -88,13 +90,13 @@
             panelContainer.Location = new Point(208, 97);
             panelContainer.Margin = new Padding(0);
             panelContainer.Name = "panelContainer";
-            panelContainer.Size = new Size(1456, 678);
+            panelContainer.Size = new Size(1696, 944);
             panelContainer.TabIndex = 3;
-           
             // 
             // panel1
             // 
             panel1.BackColor = Color.LightSlateGray;
+            panel1.Controls.Add(pictureBox2);
             panel1.Controls.Add(btnHistorialRemitos);
             panel1.Controls.Add(label2);
             panel1.Controls.Add(btnInicio);
@@ -106,7 +108,7 @@
             panel1.Location = new Point(0, 97);
             panel1.Margin = new Padding(3, 2, 0, 2);
             panel1.Name = "panel1";
-            panel1.Size = new Size(208, 678);
+            panel1.Size = new Size(208, 944);
             panel1.TabIndex = 2;
             // 
             // btnHistorialRemitos
@@ -132,12 +134,11 @@
             label2.Anchor = AnchorStyles.Bottom;
             label2.AutoSize = true;
             label2.ForeColor = Color.White;
-            label2.Location = new Point(0, 663);
+            label2.Location = new Point(0, 929);
             label2.Name = "label2";
             label2.Size = new Size(72, 15);
             label2.TabIndex = 7;
             label2.Text = "Versión 1.0.0";
-            
             // 
             // btnInicio
             // 
@@ -229,11 +230,21 @@
             iconButtonIngreso.UseVisualStyleBackColor = true;
             iconButtonIngreso.Click += iconButton2_Click;
             // 
+            // pictureBox2
+            // 
+            pictureBox2.Image = (Image)resources.GetObject("pictureBox2.Image");
+            pictureBox2.Location = new Point(3, 768);
+            pictureBox2.Name = "pictureBox2";
+            pictureBox2.Size = new Size(202, 140);
+            pictureBox2.SizeMode = PictureBoxSizeMode.StretchImage;
+            pictureBox2.TabIndex = 9;
+            pictureBox2.TabStop = false;
+            // 
             // FormMain
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1664, 775);
+            ClientSize = new Size(1904, 1041);
             Controls.Add(panelContainer);
             Controls.Add(panel1);
             Controls.Add(panelHeader);
@@ -248,6 +259,7 @@
             ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
             panel1.ResumeLayout(false);
             panel1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)pictureBox2).EndInit();
             ResumeLayout(false);
         }
 
@@ -265,5 +277,6 @@
         private Label label2;
         private FontAwesome.Sharp.IconButton btnInicio;
         private FontAwesome.Sharp.IconButton btnHistorialRemitos;
+        private PictureBox pictureBox2;
     }
 }

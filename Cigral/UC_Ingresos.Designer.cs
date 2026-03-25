@@ -28,17 +28,19 @@
         /// </summary>
         private void InitializeComponent()
         {
-            DataGridViewCellStyle dataGridViewCellStyle9 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle10 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle11 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle12 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle13 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle14 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle15 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle16 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle4 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle5 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle6 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle7 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle8 = new DataGridViewCellStyle();
             panel1 = new Panel();
             labelTitulo = new Label();
             groupBox1 = new GroupBox();
+            txtComprobante = new TextBox();
+            label6 = new Label();
             btnAgregarProveedor = new FontAwesome.Sharp.IconButton();
             chkConRemito = new CheckBox();
             labelDeposito = new Label();
@@ -67,8 +69,6 @@
             iconBtnBack = new FontAwesome.Sharp.IconButton();
             buttonCancel = new Button();
             buttonConfirm = new Button();
-            label6 = new Label();
-            textBox1 = new TextBox();
             panel1.SuspendLayout();
             groupBox1.SuspendLayout();
             panel2.SuspendLayout();
@@ -84,7 +84,7 @@
             panel1.Location = new Point(0, 0);
             panel1.Margin = new Padding(3, 2, 3, 2);
             panel1.Name = "panel1";
-            panel1.Size = new Size(1456, 56);
+            panel1.Size = new Size(1696, 56);
             panel1.TabIndex = 0;
             // 
             // labelTitulo
@@ -93,7 +93,7 @@
             labelTitulo.AutoSize = true;
             labelTitulo.Font = new Font("Segoe UI", 18F, FontStyle.Bold | FontStyle.Underline);
             labelTitulo.ForeColor = Color.White;
-            labelTitulo.Location = new Point(527, 10);
+            labelTitulo.Location = new Point(647, 10);
             labelTitulo.Name = "labelTitulo";
             labelTitulo.Size = new Size(306, 32);
             labelTitulo.TabIndex = 0;
@@ -101,7 +101,7 @@
             // 
             // groupBox1
             // 
-            groupBox1.Controls.Add(textBox1);
+            groupBox1.Controls.Add(txtComprobante);
             groupBox1.Controls.Add(label6);
             groupBox1.Controls.Add(btnAgregarProveedor);
             groupBox1.Controls.Add(chkConRemito);
@@ -119,10 +119,29 @@
             groupBox1.Margin = new Padding(3, 2, 3, 2);
             groupBox1.Name = "groupBox1";
             groupBox1.Padding = new Padding(3, 2, 3, 2);
-            groupBox1.Size = new Size(1456, 98);
+            groupBox1.Size = new Size(1696, 98);
             groupBox1.TabIndex = 1;
             groupBox1.TabStop = false;
             groupBox1.Text = "Datos del Proveedor";
+            // 
+            // txtComprobante
+            // 
+            txtComprobante.Enabled = false;
+            txtComprobante.Font = new Font("Segoe UI", 12F);
+            txtComprobante.Location = new Point(964, 36);
+            txtComprobante.Name = "txtComprobante";
+            txtComprobante.Size = new Size(159, 29);
+            txtComprobante.TabIndex = 15;
+            // 
+            // label6
+            // 
+            label6.AutoSize = true;
+            label6.Font = new Font("Segoe UI", 12F);
+            label6.Location = new Point(782, 39);
+            label6.Name = "label6";
+            label6.Size = new Size(176, 21);
+            label6.TabIndex = 14;
+            label6.Text = "Comprobante Asociado:";
             // 
             // btnAgregarProveedor
             // 
@@ -144,7 +163,7 @@
             // 
             chkConRemito.AutoSize = true;
             chkConRemito.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            chkConRemito.Location = new Point(1050, 39);
+            chkConRemito.Location = new Point(1143, 38);
             chkConRemito.Name = "chkConRemito";
             chkConRemito.Size = new Size(143, 25);
             chkConRemito.TabIndex = 8;
@@ -156,7 +175,7 @@
             // 
             labelDeposito.AutoSize = true;
             labelDeposito.Font = new Font("Segoe UI", 12F);
-            labelDeposito.Location = new Point(1199, 39);
+            labelDeposito.Location = new Point(1414, 41);
             labelDeposito.Name = "labelDeposito";
             labelDeposito.Size = new Size(75, 21);
             labelDeposito.TabIndex = 7;
@@ -167,7 +186,7 @@
             cmbDeposito.DropDownStyle = ComboBoxStyle.DropDownList;
             cmbDeposito.Font = new Font("Segoe UI", 12F);
             cmbDeposito.FormattingEnabled = true;
-            cmbDeposito.Location = new Point(1280, 35);
+            cmbDeposito.Location = new Point(1495, 38);
             cmbDeposito.Margin = new Padding(3, 2, 3, 2);
             cmbDeposito.Name = "cmbDeposito";
             cmbDeposito.Size = new Size(153, 29);
@@ -200,7 +219,7 @@
             textRemito.Location = new Point(426, 35);
             textRemito.Margin = new Padding(3, 2, 3, 2);
             textRemito.Name = "textRemito";
-            textRemito.Size = new Size(155, 29);
+            textRemito.Size = new Size(159, 29);
             textRemito.TabIndex = 3;
             // 
             // label1
@@ -246,14 +265,14 @@
             panel2.Location = new Point(0, 154);
             panel2.Margin = new Padding(0);
             panel2.Name = "panel2";
-            panel2.Size = new Size(1456, 139);
+            panel2.Size = new Size(1696, 139);
             panel2.TabIndex = 2;
             // 
             // lblIngresoManual
             // 
             lblIngresoManual.Anchor = AnchorStyles.None;
             lblIngresoManual.AutoSize = true;
-            lblIngresoManual.Location = new Point(798, 101);
+            lblIngresoManual.Location = new Point(918, 101);
             lblIngresoManual.Name = "lblIngresoManual";
             lblIngresoManual.Size = new Size(62, 15);
             lblIngresoManual.TabIndex = 3;
@@ -265,7 +284,7 @@
             // 
             label5.Anchor = AnchorStyles.None;
             label5.AutoSize = true;
-            label5.Location = new Point(479, 101);
+            label5.Location = new Point(599, 101);
             label5.Name = "label5";
             label5.Size = new Size(324, 15);
             label5.TabIndex = 2;
@@ -278,7 +297,7 @@
             textScanner.Location = new Point(252, 39);
             textScanner.Margin = new Padding(3, 2, 3, 2);
             textScanner.Name = "textScanner";
-            textScanner.Size = new Size(895, 36);
+            textScanner.Size = new Size(1135, 36);
             textScanner.TabIndex = 1;
             textScanner.TextAlign = HorizontalAlignment.Center;
             textScanner.KeyDown += textScanner_KeyDown;
@@ -289,7 +308,7 @@
             label4.AutoSize = true;
             label4.Font = new Font("Segoe UI", 12F);
             label4.ForeColor = Color.Black;
-            label4.Location = new Point(575, 16);
+            label4.Location = new Point(695, 16);
             label4.Name = "label4";
             label4.Size = new Size(201, 21);
             label4.TabIndex = 0;
@@ -299,14 +318,14 @@
             // 
             dgvIngreso.BackgroundColor = Color.White;
             dgvIngreso.BorderStyle = BorderStyle.None;
-            dataGridViewCellStyle9.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle9.BackColor = Color.MediumSeaGreen;
-            dataGridViewCellStyle9.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-            dataGridViewCellStyle9.ForeColor = Color.White;
-            dataGridViewCellStyle9.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle9.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle9.WrapMode = DataGridViewTriState.True;
-            dgvIngreso.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle9;
+            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = Color.MediumSeaGreen;
+            dataGridViewCellStyle1.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            dataGridViewCellStyle1.ForeColor = Color.White;
+            dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
+            dgvIngreso.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             dgvIngreso.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dgvIngreso.Columns.AddRange(new DataGridViewColumn[] { id, Producto, Lote, Vencimiento, Serie, Cantidad, InfoAdicional, colEliminar });
             dgvIngreso.Dock = DockStyle.Fill;
@@ -315,15 +334,15 @@
             dgvIngreso.Margin = new Padding(3, 2, 3, 2);
             dgvIngreso.Name = "dgvIngreso";
             dgvIngreso.RowHeadersWidth = 51;
-            dgvIngreso.Size = new Size(1456, 385);
+            dgvIngreso.Size = new Size(1696, 651);
             dgvIngreso.TabIndex = 3;
             dgvIngreso.CellContentClick += dgvIngreso_CellContentClick;
             // 
             // id
             // 
-            dataGridViewCellStyle10.SelectionBackColor = Color.White;
-            dataGridViewCellStyle10.SelectionForeColor = Color.Black;
-            id.DefaultCellStyle = dataGridViewCellStyle10;
+            dataGridViewCellStyle2.SelectionBackColor = Color.White;
+            dataGridViewCellStyle2.SelectionForeColor = Color.Black;
+            id.DefaultCellStyle = dataGridViewCellStyle2;
             id.HeaderText = "id";
             id.Name = "id";
             id.ReadOnly = true;
@@ -332,9 +351,9 @@
             // Producto
             // 
             Producto.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            dataGridViewCellStyle11.SelectionBackColor = Color.White;
-            dataGridViewCellStyle11.SelectionForeColor = Color.Black;
-            Producto.DefaultCellStyle = dataGridViewCellStyle11;
+            dataGridViewCellStyle3.SelectionBackColor = Color.White;
+            dataGridViewCellStyle3.SelectionForeColor = Color.Black;
+            Producto.DefaultCellStyle = dataGridViewCellStyle3;
             Producto.FillWeight = 30.9278278F;
             Producto.HeaderText = "Producto";
             Producto.MinimumWidth = 6;
@@ -343,9 +362,9 @@
             // Lote
             // 
             Lote.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
-            dataGridViewCellStyle12.SelectionBackColor = Color.White;
-            dataGridViewCellStyle12.SelectionForeColor = Color.Black;
-            Lote.DefaultCellStyle = dataGridViewCellStyle12;
+            dataGridViewCellStyle4.SelectionBackColor = Color.White;
+            dataGridViewCellStyle4.SelectionForeColor = Color.Black;
+            Lote.DefaultCellStyle = dataGridViewCellStyle4;
             Lote.FillWeight = 376.2887F;
             Lote.HeaderText = "Lote";
             Lote.MinimumWidth = 6;
@@ -355,9 +374,9 @@
             // Vencimiento
             // 
             Vencimiento.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
-            dataGridViewCellStyle13.SelectionBackColor = Color.White;
-            dataGridViewCellStyle13.SelectionForeColor = Color.Black;
-            Vencimiento.DefaultCellStyle = dataGridViewCellStyle13;
+            dataGridViewCellStyle5.SelectionBackColor = Color.White;
+            dataGridViewCellStyle5.SelectionForeColor = Color.Black;
+            Vencimiento.DefaultCellStyle = dataGridViewCellStyle5;
             Vencimiento.FillWeight = 30.9278278F;
             Vencimiento.HeaderText = "Vencimiento";
             Vencimiento.MinimumWidth = 6;
@@ -367,9 +386,9 @@
             // Serie
             // 
             Serie.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
-            dataGridViewCellStyle14.SelectionBackColor = Color.White;
-            dataGridViewCellStyle14.SelectionForeColor = Color.Black;
-            Serie.DefaultCellStyle = dataGridViewCellStyle14;
+            dataGridViewCellStyle6.SelectionBackColor = Color.White;
+            dataGridViewCellStyle6.SelectionForeColor = Color.Black;
+            Serie.DefaultCellStyle = dataGridViewCellStyle6;
             Serie.FillWeight = 30.9278278F;
             Serie.HeaderText = "Serie";
             Serie.MinimumWidth = 6;
@@ -379,9 +398,9 @@
             // Cantidad
             // 
             Cantidad.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
-            dataGridViewCellStyle15.SelectionBackColor = Color.White;
-            dataGridViewCellStyle15.SelectionForeColor = Color.Black;
-            Cantidad.DefaultCellStyle = dataGridViewCellStyle15;
+            dataGridViewCellStyle7.SelectionBackColor = Color.White;
+            dataGridViewCellStyle7.SelectionForeColor = Color.Black;
+            Cantidad.DefaultCellStyle = dataGridViewCellStyle7;
             Cantidad.FillWeight = 30.9278278F;
             Cantidad.HeaderText = "Cantidad";
             Cantidad.MinimumWidth = 6;
@@ -399,13 +418,13 @@
             // 
             // colEliminar
             // 
-            dataGridViewCellStyle16.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle16.BackColor = Color.White;
-            dataGridViewCellStyle16.Font = new Font("Microsoft Sans Serif", 8.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            dataGridViewCellStyle16.ForeColor = Color.Red;
-            dataGridViewCellStyle16.SelectionBackColor = Color.Transparent;
-            dataGridViewCellStyle16.SelectionForeColor = Color.Red;
-            colEliminar.DefaultCellStyle = dataGridViewCellStyle16;
+            dataGridViewCellStyle8.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle8.BackColor = Color.White;
+            dataGridViewCellStyle8.Font = new Font("Microsoft Sans Serif", 8.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            dataGridViewCellStyle8.ForeColor = Color.Red;
+            dataGridViewCellStyle8.SelectionBackColor = Color.Transparent;
+            dataGridViewCellStyle8.SelectionForeColor = Color.Red;
+            colEliminar.DefaultCellStyle = dataGridViewCellStyle8;
             colEliminar.FlatStyle = FlatStyle.Popup;
             colEliminar.HeaderText = "Acciones";
             colEliminar.Name = "colEliminar";
@@ -418,10 +437,10 @@
             panel3.Controls.Add(buttonCancel);
             panel3.Controls.Add(buttonConfirm);
             panel3.Dock = DockStyle.Bottom;
-            panel3.Location = new Point(0, 610);
+            panel3.Location = new Point(0, 876);
             panel3.Margin = new Padding(3, 2, 3, 2);
             panel3.Name = "panel3";
-            panel3.Size = new Size(1456, 68);
+            panel3.Size = new Size(1696, 68);
             panel3.TabIndex = 4;
             // 
             // iconBtnBack
@@ -452,7 +471,7 @@
             buttonCancel.FlatStyle = FlatStyle.Flat;
             buttonCancel.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
             buttonCancel.ForeColor = Color.White;
-            buttonCancel.Location = new Point(1045, 10);
+            buttonCancel.Location = new Point(1285, 10);
             buttonCancel.Margin = new Padding(3, 2, 3, 2);
             buttonCancel.Name = "buttonCancel";
             buttonCancel.Size = new Size(178, 50);
@@ -472,7 +491,7 @@
             buttonConfirm.FlatStyle = FlatStyle.Flat;
             buttonConfirm.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
             buttonConfirm.ForeColor = Color.White;
-            buttonConfirm.Location = new Point(1255, 10);
+            buttonConfirm.Location = new Point(1495, 10);
             buttonConfirm.Margin = new Padding(3, 2, 3, 2);
             buttonConfirm.Name = "buttonConfirm";
             buttonConfirm.Size = new Size(178, 50);
@@ -480,23 +499,6 @@
             buttonConfirm.Text = "CONFIRMAR INGRESO (F5)";
             buttonConfirm.UseVisualStyleBackColor = false;
             buttonConfirm.Click += buttonConfirm_Click;
-            // 
-            // label6
-            // 
-            label6.AutoSize = true;
-            label6.Font = new Font("Segoe UI", 12F);
-            label6.Location = new Point(782, 39);
-            label6.Name = "label6";
-            label6.Size = new Size(131, 21);
-            label6.TabIndex = 14;
-            label6.Text = "Compr. Asociado:";
-            // 
-            // textBox1
-            // 
-            textBox1.Location = new Point(919, 36);
-            textBox1.Name = "textBox1";
-            textBox1.Size = new Size(112, 29);
-            textBox1.TabIndex = 15;
             // 
             // UC_Ingresos
             // 
@@ -509,7 +511,7 @@
             Controls.Add(panel1);
             Margin = new Padding(3, 2, 3, 2);
             Name = "UC_Ingresos";
-            Size = new Size(1456, 678);
+            Size = new Size(1696, 944);
             Load += UC_Ingresos_Load;
             panel1.ResumeLayout(false);
             panel1.PerformLayout();
@@ -544,6 +546,11 @@
         private Label labelDeposito;
         private ComboBox cmbDeposito;
         private CheckBox chkConRemito;
+        private FontAwesome.Sharp.IconButton btnAgregarProveedor;
+        private LinkLabel lblIngresoManual;
+        private Label label5;
+        private Label label6;
+        private TextBox txtComprobante;
         private DataGridViewTextBoxColumn id;
         private DataGridViewTextBoxColumn Producto;
         private DataGridViewTextBoxColumn Lote;
@@ -552,10 +559,5 @@
         private DataGridViewTextBoxColumn Cantidad;
         private DataGridViewTextBoxColumn InfoAdicional;
         private DataGridViewButtonColumn colEliminar;
-        private FontAwesome.Sharp.IconButton btnAgregarProveedor;
-        private LinkLabel lblIngresoManual;
-        private Label label5;
-        private Label label6;
-        private TextBox textBox1;
     }
 }

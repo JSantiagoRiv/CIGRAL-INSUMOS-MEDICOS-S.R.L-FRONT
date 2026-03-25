@@ -29,15 +29,19 @@
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
             panel1 = new Panel();
             labelTitulo = new Label();
             groupBox1 = new GroupBox();
             dtpHasta = new DateTimePicker();
+            btnExportar = new FontAwesome.Sharp.IconButton();
             cmbMov = new ComboBox();
             label3 = new Label();
             label1 = new Label();
             dtpDesde = new DateTimePicker();
+            lblPagina = new Label();
+            btnSiguiente = new Button();
+            btnAnterior = new Button();
             dgvAuditoria = new DataGridView();
             tipo = new DataGridViewTextBoxColumn();
             fechaMov = new DataGridViewTextBoxColumn();
@@ -53,7 +57,6 @@
             usuario = new DataGridViewTextBoxColumn();
             detalle = new DataGridViewTextBoxColumn();
             panel3 = new Panel();
-            btnExportar = new FontAwesome.Sharp.IconButton();
             iconBtnBack = new FontAwesome.Sharp.IconButton();
             toolTip1 = new ToolTip(components);
             panel1.SuspendLayout();
@@ -70,7 +73,7 @@
             panel1.Location = new Point(0, 0);
             panel1.Margin = new Padding(3, 2, 3, 2);
             panel1.Name = "panel1";
-            panel1.Size = new Size(1456, 56);
+            panel1.Size = new Size(1696, 56);
             panel1.TabIndex = 6;
             // 
             // labelTitulo
@@ -79,7 +82,7 @@
             labelTitulo.BackColor = Color.Transparent;
             labelTitulo.Font = new Font("Segoe UI", 18F, FontStyle.Bold | FontStyle.Underline);
             labelTitulo.ForeColor = Color.White;
-            labelTitulo.Location = new Point(527, 10);
+            labelTitulo.Location = new Point(647, 10);
             labelTitulo.Name = "labelTitulo";
             labelTitulo.Size = new Size(341, 31);
             labelTitulo.TabIndex = 0;
@@ -89,6 +92,7 @@
             // groupBox1
             // 
             groupBox1.Controls.Add(dtpHasta);
+            groupBox1.Controls.Add(btnExportar);
             groupBox1.Controls.Add(cmbMov);
             groupBox1.Controls.Add(label3);
             groupBox1.Controls.Add(label1);
@@ -99,7 +103,7 @@
             groupBox1.Margin = new Padding(3, 2, 3, 2);
             groupBox1.Name = "groupBox1";
             groupBox1.Padding = new Padding(3, 2, 3, 2);
-            groupBox1.Size = new Size(1456, 98);
+            groupBox1.Size = new Size(1696, 98);
             groupBox1.TabIndex = 7;
             groupBox1.TabStop = false;
             groupBox1.Text = "Consultar Auditoria";
@@ -112,6 +116,25 @@
             dtpHasta.Name = "dtpHasta";
             dtpHasta.Size = new Size(125, 29);
             dtpHasta.TabIndex = 12;
+            // 
+            // btnExportar
+            // 
+            btnExportar.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            btnExportar.BackColor = Color.Transparent;
+            btnExportar.Cursor = Cursors.Hand;
+            btnExportar.FlatAppearance.BorderSize = 0;
+            btnExportar.FlatStyle = FlatStyle.Flat;
+            btnExportar.IconChar = FontAwesome.Sharp.IconChar.Print;
+            btnExportar.IconColor = Color.Black;
+            btnExportar.IconFont = FontAwesome.Sharp.IconFont.Auto;
+            btnExportar.IconSize = 50;
+            btnExportar.Location = new Point(1606, 37);
+            btnExportar.Name = "btnExportar";
+            btnExportar.Size = new Size(58, 46);
+            btnExportar.TabIndex = 13;
+            toolTip1.SetToolTip(btnExportar, "Exportar e imprimir");
+            btnExportar.UseVisualStyleBackColor = false;
+            btnExportar.Click += btnExportar_Click;
             // 
             // cmbMov
             // 
@@ -152,27 +175,60 @@
             dtpDesde.Size = new Size(125, 29);
             dtpDesde.TabIndex = 7;
             // 
+            // lblPagina
+            // 
+            lblPagina.Anchor = AnchorStyles.None;
+            lblPagina.Font = new Font("Segoe UI", 12F);
+            lblPagina.Location = new Point(1510, 12);
+            lblPagina.Name = "lblPagina";
+            lblPagina.Size = new Size(119, 21);
+            lblPagina.TabIndex = 15;
+            lblPagina.Text = "Pagina 1/1";
+            lblPagina.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // btnSiguiente
+            // 
+            btnSiguiente.Anchor = AnchorStyles.None;
+            btnSiguiente.Location = new Point(1635, 10);
+            btnSiguiente.Name = "btnSiguiente";
+            btnSiguiente.Size = new Size(29, 29);
+            btnSiguiente.TabIndex = 14;
+            btnSiguiente.Text = ">";
+            btnSiguiente.UseVisualStyleBackColor = true;
+            btnSiguiente.Click += btnSiguiente_Click;
+            // 
+            // btnAnterior
+            // 
+            btnAnterior.Anchor = AnchorStyles.None;
+            btnAnterior.Location = new Point(1475, 10);
+            btnAnterior.Name = "btnAnterior";
+            btnAnterior.Size = new Size(29, 29);
+            btnAnterior.TabIndex = 13;
+            btnAnterior.Text = "<";
+            btnAnterior.UseVisualStyleBackColor = true;
+            btnAnterior.Click += btnAnterior_Click;
+            // 
             // dgvAuditoria
             // 
+            dgvAuditoria.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             dgvAuditoria.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dgvAuditoria.BackgroundColor = Color.White;
             dgvAuditoria.BorderStyle = BorderStyle.None;
-            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = Color.Indigo;
-            dataGridViewCellStyle1.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-            dataGridViewCellStyle1.ForeColor = Color.White;
-            dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
-            dgvAuditoria.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle3.BackColor = Color.Indigo;
+            dataGridViewCellStyle3.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            dataGridViewCellStyle3.ForeColor = Color.White;
+            dataGridViewCellStyle3.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle3.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle3.WrapMode = DataGridViewTriState.True;
+            dgvAuditoria.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle3;
             dgvAuditoria.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dgvAuditoria.Columns.AddRange(new DataGridViewColumn[] { tipo, fechaMov, producto, deposito, lote, serie, cantidad, stockAnterior, stockPosterior, remitoIng, remitoEgr, usuario, detalle });
-            dgvAuditoria.Dock = DockStyle.Fill;
             dgvAuditoria.EnableHeadersVisualStyles = false;
             dgvAuditoria.Location = new Point(0, 154);
             dgvAuditoria.Name = "dgvAuditoria";
             dgvAuditoria.ReadOnly = true;
-            dgvAuditoria.Size = new Size(1456, 524);
+            dgvAuditoria.Size = new Size(1696, 727);
             dgvAuditoria.TabIndex = 8;
             // 
             // tipo
@@ -255,33 +311,16 @@
             // 
             // panel3
             // 
-            panel3.Controls.Add(btnExportar);
+            panel3.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            panel3.Controls.Add(lblPagina);
+            panel3.Controls.Add(btnSiguiente);
             panel3.Controls.Add(iconBtnBack);
-            panel3.Dock = DockStyle.Bottom;
-            panel3.Location = new Point(0, 610);
+            panel3.Controls.Add(btnAnterior);
+            panel3.Location = new Point(0, 876);
             panel3.Margin = new Padding(3, 2, 3, 2);
             panel3.Name = "panel3";
-            panel3.Size = new Size(1456, 68);
+            panel3.Size = new Size(1696, 68);
             panel3.TabIndex = 10;
-            // 
-            // btnExportar
-            // 
-            btnExportar.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            btnExportar.BackColor = Color.Transparent;
-            btnExportar.Cursor = Cursors.Hand;
-            btnExportar.FlatAppearance.BorderSize = 0;
-            btnExportar.FlatStyle = FlatStyle.Flat;
-            btnExportar.IconChar = FontAwesome.Sharp.IconChar.Print;
-            btnExportar.IconColor = Color.Black;
-            btnExportar.IconFont = FontAwesome.Sharp.IconFont.Auto;
-            btnExportar.IconSize = 50;
-            btnExportar.Location = new Point(1373, 11);
-            btnExportar.Name = "btnExportar";
-            btnExportar.Size = new Size(58, 46);
-            btnExportar.TabIndex = 13;
-            toolTip1.SetToolTip(btnExportar, "Exportar e imprimir");
-            btnExportar.UseVisualStyleBackColor = false;
-            btnExportar.Click += btnExportar_Click;
             // 
             // iconBtnBack
             // 
@@ -312,7 +351,7 @@
             Controls.Add(groupBox1);
             Controls.Add(panel1);
             Name = "UC_Auditoria";
-            Size = new Size(1456, 678);
+            Size = new Size(1696, 944);
             Load += UC_Auditoria_Load_1;
             panel1.ResumeLayout(false);
             groupBox1.ResumeLayout(false);
@@ -351,5 +390,10 @@
         private DataGridViewTextBoxColumn usuario;
         private DataGridViewTextBoxColumn detalle;
         private DateTimePicker dtpHasta;
+        private Button button2;
+        private Label label2;
+        private Button btnAnterior;
+        private Button btnSiguiente;
+        private Label lblPagina;
     }
 }

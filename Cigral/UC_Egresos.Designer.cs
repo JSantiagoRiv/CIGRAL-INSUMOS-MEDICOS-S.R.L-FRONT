@@ -28,12 +28,13 @@
         /// </summary>
         private void InitializeComponent()
         {
-            DataGridViewCellStyle dataGridViewCellStyle19 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle20 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle21 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle22 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle23 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle24 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle4 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle5 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle6 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle7 = new DataGridViewCellStyle();
             panel3 = new Panel();
             iconBtnBack = new FontAwesome.Sharp.IconButton();
             btnConfirmar = new Button();
@@ -44,6 +45,8 @@
             dateTimePicker1 = new DateTimePicker();
             label3 = new Label();
             groupBox1 = new GroupBox();
+            txtComprobante = new TextBox();
+            label7 = new Label();
             btnAgregarCliente = new FontAwesome.Sharp.IconButton();
             cmbCliente = new ComboBox();
             label6 = new Label();
@@ -53,6 +56,8 @@
             label5 = new Label();
             labelTitulo = new Label();
             panel2 = new Panel();
+            linkLabel1 = new LinkLabel();
+            label1 = new Label();
             panel1 = new Panel();
             dgvEgreso = new DataGridView();
             Id = new DataGridViewTextBoxColumn();
@@ -61,8 +66,8 @@
             Vencimiento = new DataGridViewTextBoxColumn();
             Serie = new DataGridViewTextBoxColumn();
             Cantidad = new DataGridViewTextBoxColumn();
-            label1 = new Label();
-            linkLabel1 = new LinkLabel();
+            ColInfo = new DataGridViewTextBoxColumn();
+            ColAcciones = new DataGridViewButtonColumn();
             panel3.SuspendLayout();
             groupBox1.SuspendLayout();
             panel2.SuspendLayout();
@@ -76,10 +81,10 @@
             panel3.Controls.Add(btnConfirmar);
             panel3.Controls.Add(button1);
             panel3.Dock = DockStyle.Bottom;
-            panel3.Location = new Point(0, 610);
+            panel3.Location = new Point(0, 876);
             panel3.Margin = new Padding(3, 2, 3, 2);
             panel3.Name = "panel3";
-            panel3.Size = new Size(1456, 68);
+            panel3.Size = new Size(1696, 68);
             panel3.TabIndex = 9;
             // 
             // iconBtnBack
@@ -111,7 +116,7 @@
             btnConfirmar.FlatStyle = FlatStyle.Flat;
             btnConfirmar.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
             btnConfirmar.ForeColor = Color.White;
-            btnConfirmar.Location = new Point(1255, 10);
+            btnConfirmar.Location = new Point(1495, 10);
             btnConfirmar.Margin = new Padding(3, 2, 3, 2);
             btnConfirmar.Name = "btnConfirmar";
             btnConfirmar.Size = new Size(178, 50);
@@ -131,7 +136,7 @@
             button1.FlatStyle = FlatStyle.Flat;
             button1.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
             button1.ForeColor = Color.White;
-            button1.Location = new Point(1045, 10);
+            button1.Location = new Point(1285, 10);
             button1.Margin = new Padding(3, 2, 3, 2);
             button1.Name = "button1";
             button1.Size = new Size(178, 50);
@@ -146,7 +151,7 @@
             txtEscaner.Location = new Point(252, 39);
             txtEscaner.Margin = new Padding(3, 2, 3, 2);
             txtEscaner.Name = "txtEscaner";
-            txtEscaner.Size = new Size(895, 36);
+            txtEscaner.Size = new Size(1135, 36);
             txtEscaner.TabIndex = 1;
             txtEscaner.TextAlign = HorizontalAlignment.Center;
             txtEscaner.KeyDown += txtEscaner_KeyDown;
@@ -167,12 +172,11 @@
             label4.AutoSize = true;
             label4.Font = new Font("Segoe UI", 12F);
             label4.ForeColor = Color.Black;
-            label4.Location = new Point(575, 16);
+            label4.Location = new Point(695, 16);
             label4.Name = "label4";
             label4.Size = new Size(201, 21);
             label4.TabIndex = 0;
             label4.Text = "Escanee el código de barras";
-            
             // 
             // dateTimePicker1
             // 
@@ -193,10 +197,11 @@
             label3.Size = new Size(53, 21);
             label3.TabIndex = 4;
             label3.Text = "Fecha:";
-            
             // 
             // groupBox1
             // 
+            groupBox1.Controls.Add(txtComprobante);
+            groupBox1.Controls.Add(label7);
             groupBox1.Controls.Add(btnAgregarCliente);
             groupBox1.Controls.Add(cmbCliente);
             groupBox1.Controls.Add(label6);
@@ -213,10 +218,29 @@
             groupBox1.Margin = new Padding(3, 2, 3, 2);
             groupBox1.Name = "groupBox1";
             groupBox1.Padding = new Padding(3, 2, 3, 2);
-            groupBox1.Size = new Size(1456, 98);
+            groupBox1.Size = new Size(1696, 98);
             groupBox1.TabIndex = 6;
             groupBox1.TabStop = false;
             groupBox1.Text = "Datos del Cliente";
+            // 
+            // txtComprobante
+            // 
+            txtComprobante.Enabled = false;
+            txtComprobante.Font = new Font("Segoe UI", 12F);
+            txtComprobante.Location = new Point(1015, 35);
+            txtComprobante.Name = "txtComprobante";
+            txtComprobante.Size = new Size(159, 29);
+            txtComprobante.TabIndex = 14;
+            // 
+            // label7
+            // 
+            label7.AutoSize = true;
+            label7.Font = new Font("Segoe UI", 12F);
+            label7.Location = new Point(839, 39);
+            label7.Name = "label7";
+            label7.Size = new Size(176, 21);
+            label7.TabIndex = 13;
+            label7.Text = "Comprobante Asocidao:";
             // 
             // btnAgregarCliente
             // 
@@ -248,7 +272,7 @@
             // 
             label6.AutoSize = true;
             label6.Font = new Font("Segoe UI", 12F);
-            label6.Location = new Point(1136, 37);
+            label6.Location = new Point(1401, 38);
             label6.Name = "label6";
             label6.Size = new Size(75, 21);
             label6.TabIndex = 10;
@@ -259,7 +283,7 @@
             cmbDeposito.DropDownStyle = ComboBoxStyle.DropDownList;
             cmbDeposito.Font = new Font("Segoe UI", 12F);
             cmbDeposito.FormattingEnabled = true;
-            cmbDeposito.Location = new Point(1217, 35);
+            cmbDeposito.Location = new Point(1482, 36);
             cmbDeposito.Name = "cmbDeposito";
             cmbDeposito.Size = new Size(191, 29);
             cmbDeposito.TabIndex = 9;
@@ -268,7 +292,7 @@
             // 
             chkConRemito.AutoSize = true;
             chkConRemito.Font = new Font("Segoe UI", 12F);
-            chkConRemito.Location = new Point(848, 37);
+            chkConRemito.Location = new Point(1185, 37);
             chkConRemito.Name = "chkConRemito";
             chkConRemito.Size = new Size(159, 25);
             chkConRemito.TabIndex = 8;
@@ -304,7 +328,7 @@
             labelTitulo.BackColor = Color.Transparent;
             labelTitulo.Font = new Font("Segoe UI", 18F, FontStyle.Bold | FontStyle.Underline);
             labelTitulo.ForeColor = Color.White;
-            labelTitulo.Location = new Point(527, 10);
+            labelTitulo.Location = new Point(647, 10);
             labelTitulo.Name = "labelTitulo";
             labelTitulo.Size = new Size(320, 31);
             labelTitulo.TabIndex = 0;
@@ -322,8 +346,30 @@
             panel2.Location = new Point(0, 154);
             panel2.Margin = new Padding(0);
             panel2.Name = "panel2";
-            panel2.Size = new Size(1456, 139);
+            panel2.Size = new Size(1696, 139);
             panel2.TabIndex = 7;
+            // 
+            // linkLabel1
+            // 
+            linkLabel1.Anchor = AnchorStyles.None;
+            linkLabel1.AutoSize = true;
+            linkLabel1.Location = new Point(944, 101);
+            linkLabel1.Name = "linkLabel1";
+            linkLabel1.Size = new Size(62, 15);
+            linkLabel1.TabIndex = 3;
+            linkLabel1.TabStop = true;
+            linkLabel1.Text = "Click aqui.";
+            linkLabel1.LinkClicked += linkLabel1_LinkClicked;
+            // 
+            // label1
+            // 
+            label1.Anchor = AnchorStyles.None;
+            label1.AutoSize = true;
+            label1.Location = new Point(599, 101);
+            label1.Name = "label1";
+            label1.Size = new Size(349, 15);
+            label1.TabIndex = 2;
+            label1.Text = "¿El producto al que desea dar egreso no posee código de barras? ";
             // 
             // panel1
             // 
@@ -333,23 +379,23 @@
             panel1.Location = new Point(0, 0);
             panel1.Margin = new Padding(3, 2, 3, 2);
             panel1.Name = "panel1";
-            panel1.Size = new Size(1456, 56);
+            panel1.Size = new Size(1696, 56);
             panel1.TabIndex = 5;
             // 
             // dgvEgreso
             // 
             dgvEgreso.BackgroundColor = Color.White;
             dgvEgreso.BorderStyle = BorderStyle.None;
-            dataGridViewCellStyle19.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle19.BackColor = Color.Firebrick;
-            dataGridViewCellStyle19.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-            dataGridViewCellStyle19.ForeColor = Color.White;
-            dataGridViewCellStyle19.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle19.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle19.WrapMode = DataGridViewTriState.True;
-            dgvEgreso.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle19;
+            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = Color.Firebrick;
+            dataGridViewCellStyle1.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            dataGridViewCellStyle1.ForeColor = Color.White;
+            dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
+            dgvEgreso.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             dgvEgreso.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvEgreso.Columns.AddRange(new DataGridViewColumn[] { Id, Producto, Lote, Vencimiento, Serie, Cantidad });
+            dgvEgreso.Columns.AddRange(new DataGridViewColumn[] { Id, Producto, Lote, Vencimiento, Serie, Cantidad, ColInfo, ColAcciones });
             dgvEgreso.Dock = DockStyle.Fill;
             dgvEgreso.EnableHeadersVisualStyles = false;
             dgvEgreso.Location = new Point(0, 293);
@@ -357,14 +403,15 @@
             dgvEgreso.Name = "dgvEgreso";
             dgvEgreso.RowHeadersVisible = false;
             dgvEgreso.RowHeadersWidth = 51;
-            dgvEgreso.Size = new Size(1456, 385);
+            dgvEgreso.Size = new Size(1696, 651);
             dgvEgreso.TabIndex = 12;
+            dgvEgreso.CellContentClick += dgvEgreso_CellContentClick;
             // 
             // Id
             // 
-            dataGridViewCellStyle20.SelectionBackColor = Color.White;
-            dataGridViewCellStyle20.SelectionForeColor = Color.Black;
-            Id.DefaultCellStyle = dataGridViewCellStyle20;
+            dataGridViewCellStyle2.SelectionBackColor = Color.White;
+            dataGridViewCellStyle2.SelectionForeColor = Color.Black;
+            Id.DefaultCellStyle = dataGridViewCellStyle2;
             Id.HeaderText = "Id";
             Id.Name = "Id";
             Id.Visible = false;
@@ -372,71 +419,75 @@
             // Producto
             // 
             Producto.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            dataGridViewCellStyle21.SelectionBackColor = Color.White;
-            dataGridViewCellStyle21.SelectionForeColor = Color.Black;
-            Producto.DefaultCellStyle = dataGridViewCellStyle21;
+            dataGridViewCellStyle3.SelectionBackColor = Color.White;
+            dataGridViewCellStyle3.SelectionForeColor = Color.Black;
+            Producto.DefaultCellStyle = dataGridViewCellStyle3;
             Producto.HeaderText = "Producto";
             Producto.MinimumWidth = 6;
             Producto.Name = "Producto";
             // 
             // Lote
             // 
-            Lote.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            dataGridViewCellStyle22.SelectionBackColor = Color.White;
-            dataGridViewCellStyle22.SelectionForeColor = Color.Black;
-            Lote.DefaultCellStyle = dataGridViewCellStyle22;
+            Lote.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
+            dataGridViewCellStyle4.SelectionBackColor = Color.White;
+            dataGridViewCellStyle4.SelectionForeColor = Color.Black;
+            Lote.DefaultCellStyle = dataGridViewCellStyle4;
             Lote.HeaderText = "Lote";
             Lote.MinimumWidth = 6;
             Lote.Name = "Lote";
+            Lote.Width = 120;
             // 
             // Vencimiento
             // 
-            Vencimiento.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            dataGridViewCellStyle23.SelectionBackColor = Color.White;
-            dataGridViewCellStyle23.SelectionForeColor = Color.Black;
-            Vencimiento.DefaultCellStyle = dataGridViewCellStyle23;
+            Vencimiento.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
+            dataGridViewCellStyle5.SelectionBackColor = Color.White;
+            dataGridViewCellStyle5.SelectionForeColor = Color.Black;
+            Vencimiento.DefaultCellStyle = dataGridViewCellStyle5;
             Vencimiento.HeaderText = "Vencimiento";
             Vencimiento.MinimumWidth = 6;
             Vencimiento.Name = "Vencimiento";
+            Vencimiento.Width = 120;
             // 
             // Serie
             // 
-            Serie.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            dataGridViewCellStyle24.SelectionBackColor = Color.White;
-            dataGridViewCellStyle24.SelectionForeColor = Color.Black;
-            Serie.DefaultCellStyle = dataGridViewCellStyle24;
+            Serie.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
+            dataGridViewCellStyle6.SelectionBackColor = Color.White;
+            dataGridViewCellStyle6.SelectionForeColor = Color.Black;
+            Serie.DefaultCellStyle = dataGridViewCellStyle6;
             Serie.HeaderText = "Serie";
             Serie.MinimumWidth = 6;
             Serie.Name = "Serie";
+            Serie.Width = 120;
             // 
             // Cantidad
             // 
-            Cantidad.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            Cantidad.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
             Cantidad.HeaderText = "Cantidad";
             Cantidad.MinimumWidth = 6;
             Cantidad.Name = "Cantidad";
+            Cantidad.Width = 120;
             // 
-            // label1
+            // ColInfo
             // 
-            label1.Anchor = AnchorStyles.None;
-            label1.AutoSize = true;
-            label1.Location = new Point(479, 101);
-            label1.Name = "label1";
-            label1.Size = new Size(349, 15);
-            label1.TabIndex = 2;
-            label1.Text = "¿El producto al que desea dar egreso no posee código de barras? ";
+            ColInfo.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
+            ColInfo.HeaderText = "Información Adicional";
+            ColInfo.Name = "ColInfo";
+            ColInfo.ReadOnly = true;
+            ColInfo.Width = 300;
             // 
-            // linkLabel1
+            // ColAcciones
             // 
-            linkLabel1.Anchor = AnchorStyles.None;
-            linkLabel1.AutoSize = true;
-            linkLabel1.Location = new Point(824, 101);
-            linkLabel1.Name = "linkLabel1";
-            linkLabel1.Size = new Size(62, 15);
-            linkLabel1.TabIndex = 3;
-            linkLabel1.TabStop = true;
-            linkLabel1.Text = "Click aqui.";
-            linkLabel1.LinkClicked += linkLabel1_LinkClicked;
+            dataGridViewCellStyle7.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle7.ForeColor = Color.Red;
+            dataGridViewCellStyle7.SelectionBackColor = Color.Transparent;
+            dataGridViewCellStyle7.SelectionForeColor = Color.Red;
+            ColAcciones.DefaultCellStyle = dataGridViewCellStyle7;
+            ColAcciones.FlatStyle = FlatStyle.Popup;
+            ColAcciones.HeaderText = "Acciones";
+            ColAcciones.Name = "ColAcciones";
+            ColAcciones.ReadOnly = true;
+            ColAcciones.Text = "ELIMINAR";
+            ColAcciones.UseColumnTextForButtonValue = true;
             // 
             // UC_Egresos
             // 
@@ -449,7 +500,7 @@
             Controls.Add(panel1);
             Margin = new Padding(3, 2, 3, 2);
             Name = "UC_Egresos";
-            Size = new Size(1456, 678);
+            Size = new Size(1696, 944);
             Load += UC_Egresos_Load;
             panel3.ResumeLayout(false);
             groupBox1.ResumeLayout(false);
@@ -482,15 +533,19 @@
         private CheckBox chkConRemito;
         private ComboBox cmbDeposito;
         private Label label6;
+        private ComboBox cmbCliente;
+        private FontAwesome.Sharp.IconButton btnAgregarCliente;
+        private LinkLabel linkLabel1;
+        private Label label1;
         private DataGridViewTextBoxColumn Id;
         private DataGridViewTextBoxColumn Producto;
         private DataGridViewTextBoxColumn Lote;
         private DataGridViewTextBoxColumn Vencimiento;
         private DataGridViewTextBoxColumn Serie;
         private DataGridViewTextBoxColumn Cantidad;
-        private ComboBox cmbCliente;
-        private FontAwesome.Sharp.IconButton btnAgregarCliente;
-        private LinkLabel linkLabel1;
-        private Label label1;
+        private DataGridViewTextBoxColumn ColInfo;
+        private DataGridViewButtonColumn ColAcciones;
+        private TextBox txtComprobante;
+        private Label label7;
     }
 }

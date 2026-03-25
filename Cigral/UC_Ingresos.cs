@@ -56,7 +56,7 @@ namespace Cigral
         /// </summary>
         private async void buttonConfirm_Click(object sender, EventArgs e)
         {
-            // 🔥 1. HACEMOS TODAS LAS VALIDACIONES PRIMERO
+            // 1. HACEMOS TODAS LAS VALIDACIONES PRIMERO
             dgvIngreso.EndEdit();
             dgvIngreso.CurrentCell = null; // Truco extra: "Desenfocamos" la celda para asegurar que los datos en edición se apliquen.
 
@@ -103,6 +103,42 @@ namespace Cigral
             {
                 MessageBox.Show("No hay productos escaneados para ingresar.", "Remito Vacío", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
+            }
+
+            // VALIDACIÓN FILA POR FILA 
+            foreach (DataGridViewRow fila in dgvIngreso.Rows)
+            {
+                if (fila.IsNewRow) continue;
+
+                string nombreProducto = fila.Cells["Producto"].Value?.ToString() ?? "Desconocido";
+
+                // Validar CANTIDAD (Que sea un número válido y mayor a 0)
+                string cantidadStr = fila.Cells["Cantidad"].Value?.ToString() ?? "";
+                if (string.IsNullOrWhiteSpace(cantidadStr) || !int.TryParse(cantidadStr, out int cant) || cant <= 0)
+                {
+                    MessageBox.Show($"Por favor, ingresá una cantidad válida y mayor a cero para el producto '{nombreProducto}'.", "Cantidad Inválida", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                // Validar VENCIMIENTO (Solo si escribió algo, verificamos que sea una fecha real)
+                string fechaStr = fila.Cells["Vencimiento"].Value?.ToString() ?? "";
+                if (!string.IsNullOrWhiteSpace(fechaStr))
+                {
+                    if (!DateTime.TryParse(fechaStr, out DateTime fechaValida))
+                    {
+                        MessageBox.Show($"La fecha de vencimiento ingresada para '{nombreProducto}' no tiene un formato válido (Ej: 31/12/2026).", "Formato Incorrecto", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        return;
+                    }
+                }
+
+                // (Opcional) Validar LOTE 
+                 string loteStr = fila.Cells["Lote"].Value?.ToString() ?? "";
+                if (string.IsNullOrWhiteSpace(loteStr))
+                {
+                    MessageBox.Show($"Falta ingresar el Lote para '{nombreProducto}'.", "Dato Incompleto", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return; 
+                } 
+                
             }
 
             // 2. PREGUNTAMOS SI ESTÁ SEGURO
@@ -169,6 +205,7 @@ namespace Cigral
                         DepositoId = depositoSeleccionado,
                         EntidadId = (int)comboProv.SelectedValue,
                         NumeroRemito = textRemito.Text,
+                        ComprobanteAsociado = txtComprobante.Text.Trim(),
                         Observaciones = "Ingreso desde el sistema",
                         Detalles = new List<RemitoDetalleRequest>()
                     };
@@ -336,6 +373,13 @@ namespace Cigral
                 // 1. LLAMA AL PARSER
                 var productoParseado = await ApiServices.ParsearCodigoBarras(codigoCrudo);
 
+                if (productoParseado == null)
+                {
+                    MessageBox.Show("Hubo un error al intentar decodificar el código de barras.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+                    
+                   
                 // 2. VALIDAR SERIE DUPLICADA EN LA GRILLA
                 foreach (DataGridViewRow fila in dgvIngreso.Rows)
                 {
@@ -505,6 +549,7 @@ namespace Cigral
         {
             comboProv.Enabled = chkConRemito.Checked;
             btnAgregarProveedor.Enabled = chkConRemito.Checked;
+            txtComprobante.Enabled = chkConRemito.Checked;
 
             if (chkConRemito.Checked)
             {
@@ -516,6 +561,7 @@ namespace Cigral
                 textRemito.ReadOnly = false;
                 textRemito.Clear();
                 comboProv.SelectedIndex = -1;
+                txtComprobante.Clear();
             }
         }
 

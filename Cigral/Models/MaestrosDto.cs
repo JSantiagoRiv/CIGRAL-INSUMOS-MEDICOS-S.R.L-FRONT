@@ -26,9 +26,13 @@ namespace Cigral.Models
     //Molde maestro para anrir cualquier respuesta del sv que venga dividida en páginas.
     public class PaginadoResponse<T>
     {
-        public List<T> Items { get; set; }                 //Lista real de elementos de esa página.
-        public int PageNumber { get; set; }                //En que número de página estamos.
-        public int PageSize { get; set; }                  //Cuántos elementos trae cada página como máximo.
+        public List<T> items { get; set; }
+        public int totalCount { get; set; }
+        public int pageNumber { get; set; }
+        public int pageSize { get; set; }
+        public int totalPages { get; set; }
+        public bool hasPreviousPage { get; set; }
+        public bool hasNextPage { get; set; }
     }
 
 
@@ -205,9 +209,6 @@ namespace Cigral.Models
         public int orden { get; set; }
         public string mensaje { get; set; }
     }
-
-
-
 
 
 }

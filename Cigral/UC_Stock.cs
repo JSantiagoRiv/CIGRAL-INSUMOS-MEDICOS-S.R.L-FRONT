@@ -17,6 +17,14 @@ namespace Cigral
     /// </summary>
     public partial class UC_Stock : UserControl
     {
+
+        // --- VARIABLES DE PAGINACIÓN ---
+        private int _paginaActual = 1;
+        private int _filasPorPagina = 25;
+        private int _totalPaginas = 1;
+        private List<ExistenciaDto> _listaCompleta = new List<ExistenciaDto>();
+
+
         public UC_Stock()
         {
             InitializeComponent();
@@ -68,6 +76,9 @@ namespace Cigral
                 // 4. Dispara a la API (Trae la lista cruda filtrada por texto y ordenada)
                 var listaFiltrada = await ApiServices.ObtenerExistencias(textoABuscar, false, false, ordenBackend, descendente);
 
+                //Para quw no se rompa
+                if (this.IsDisposed) return;
+
                 // --- PARTE B: FILTROS LOCALES RÁPIDOS ---
 
                 // A) Ocultar Stock Cero
@@ -80,7 +91,7 @@ namespace Cigral
                 // B) Ocultar Vencidos
                 if (chkVencidos.Checked)
                 {
-                    // Nos queda con los que cumplen UNA de estas condiciones:
+                    // queda con los que cumplen UNA de estas condiciones:
                     // - No tienen fecha de vencimiento asignada (!HasValue)
                     // - O tienen fecha, y esa fecha es igual o mayor a hoy (no están vencidos)
                     listaFiltrada = listaFiltrada.Where(p =>
@@ -104,12 +115,18 @@ namespace Cigral
 
                 // --- PARTE C: ACTUALIZACIÓN VISUAL ---
 
-                // Dibuja la grilla
-                ActualizarGrilla(listaFiltrada);
+                // 1. Guardamos la lista ya filtrada en la caja principal para que la paginación la lea
+                _listaCompleta = listaFiltrada;
 
-                // Actualizael contador del Label sumando el stock físico real de la lista filtrada
-                int totalFisico = listaFiltrada.Sum(p => p.Cantidad);
+                // 2. Actualizamos el contador del Label sumando el stock físico real
+                int totalFisico = _listaCompleta.Sum(p => p.Cantidad);
                 lblTotalProductos.Text = $"Total de productos: {totalFisico}";
+
+                // 3. Como cambiaron los filtros (el usuario buscó algo), reseteamos a la página 1 a la fuerza
+                _paginaActual = 1;
+
+                // 4. En vez de mandar la lista directa a la grilla, llamamos a la función que la corta de a 25
+                MostrarPaginaActual();
             }
             catch (Exception ex)
             {
@@ -286,6 +303,53 @@ namespace Cigral
                 principal.ResetearMenu();
             }
             this.Dispose();
+        }
+
+        private void MostrarPaginaActual()
+        {
+            if (_listaCompleta == null || _listaCompleta.Count == 0)
+            {
+                lblPagina.Text = "Página 0 de 0";
+                btnAnterior.Enabled = false;
+                btnSiguiente.Enabled = false;
+                ActualizarGrilla(new List<ExistenciaDto>());
+                return;
+            }
+
+            // Calculamos cuántas páginas hay en total
+            _totalPaginas = (int)Math.Ceiling((double)_listaCompleta.Count / _filasPorPagina);
+
+            // Cortamos la lista usando LINQ
+            var porcion = _listaCompleta
+                            .Skip((_paginaActual - 1) * _filasPorPagina)
+                            .Take(_filasPorPagina)
+                            .ToList();
+
+            // Dibujamos la grilla
+            ActualizarGrilla(porcion);
+
+            // Actualizamos botones (asegurate de tener los controles en el diseño)
+            lblPagina.Text = $"Página {_paginaActual} de {_totalPaginas}";
+            btnAnterior.Enabled = _paginaActual > 1;
+            btnSiguiente.Enabled = _paginaActual < _totalPaginas;
+        }
+
+        private void btnAnterior_Click(object sender, EventArgs e)
+        {
+            if (_paginaActual > 1)
+            {
+                _paginaActual--;
+                MostrarPaginaActual();
+            }
+        }
+
+        private void btnSiguiente_Click(object sender, EventArgs e)
+        {
+            if (_paginaActual < _totalPaginas)
+            {
+                _paginaActual++;
+                MostrarPaginaActual();
+            }
         }
 
         

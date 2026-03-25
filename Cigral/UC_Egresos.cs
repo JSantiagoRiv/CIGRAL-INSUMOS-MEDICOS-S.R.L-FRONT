@@ -40,6 +40,7 @@ namespace Cigral
                 cmbCliente.Enabled = true;
                 btnAgregarCliente.Enabled = true;
                 cmbCliente.Focus();
+                txtComprobante.Enabled = chkConRemito.Checked;
 
                 Cursor = Cursors.WaitCursor;
                 try
@@ -60,6 +61,7 @@ namespace Cigral
                 cmbCliente.SelectedIndex = -1; // Deseleccionamos el cliente
                 cmbCliente.Enabled = false;    // Bloqueamos el combo
                 btnAgregarCliente.Enabled = false; // Bloqueamos el +
+                txtComprobante.Clear();
             }
         }
 
@@ -166,7 +168,7 @@ namespace Cigral
                                 // Pisamos la cantidad original de la caja con las unidades que tipeó (ej: 2)
                                 cantidadFinalEscaneada = elegida;
                             }
-                            
+
 
                             // --- PASO 4: LO AGREGAMOS A LA GRILLA DE EGRESOS ---
                             bool productoYaEnGrilla = false;
@@ -182,7 +184,7 @@ namespace Cigral
                                 {
                                     int cantidadActual = Convert.ToInt32(filaExistente.Cells["Cantidad"].Value);
 
-                                    
+
                                     int cantidadNueva = cantidadFinalEscaneada;
 
                                     if ((cantidadActual + cantidadNueva) > productoIdeal.Cantidad)
@@ -213,7 +215,7 @@ namespace Cigral
                                     fila.Cells["Vencimiento"].Value = productoIdeal.FechaVencimiento.Value.ToString("dd/MM/yyyy");
                                 }
 
-                                
+
                                 int cantEscaner = cantidadFinalEscaneada;
                                 fila.Cells["Cantidad"].Value = cantEscaner > productoIdeal.Cantidad ? productoIdeal.Cantidad : cantEscaner;
                             }
@@ -277,7 +279,7 @@ namespace Cigral
 
                             dgvEgreso.Rows.Remove(fila);
 
-                            return; // Cortamos el proceso acá, no se descuenta stock ni se hace el remito
+                            return; // Corta el proceso acá, no se descuenta stock ni se hace el remito
                         }
                     }
                 }
@@ -308,6 +310,7 @@ namespace Cigral
                         entidadId = Convert.ToInt32(cmbCliente.SelectedValue), // AHORA SÍ MANDAMOS EL ID REAL
                         numeroRemito = txtRemito.Text,
                         observaciones = "Generado por sistema",
+                        comprobanteAsociado = txtComprobante.Text.Trim(),
                         detalles = new List<RemitoEgresoDetalleDto>()
                     };
 
@@ -353,10 +356,14 @@ namespace Cigral
                 }
 
                 // CAMINO B: MOVIMIENTO INTERNO (SIN REMITO)
+
                 else
                 {
                     int itemsProcesados = 0;
                     int itemsConError = 0;
+
+                    List<DataGridViewRow> filasParaBorrar = new List<DataGridViewRow>();
+                    List<string> nombresFallidos = new List<string>();
 
                     foreach (DataGridViewRow fila in dgvEgreso.Rows)
                     {
@@ -380,11 +387,31 @@ namespace Cigral
                             }
                         }
 
-                        bool exito = await ApiServices.DisminuirStock(dto);
-                        if (exito) itemsProcesados++;
-                        else itemsConError++;
+                        // 1. Captura el nombre ANTES de llamar a la API
+                        string nombreProd = fila.Cells["Producto"].Value?.ToString() ?? "Desconocido";
+
+                        // 2. Le manda el nombre a tu ApiServices actualizado
+                        bool exito = await ApiServices.DisminuirStock(dto, nombreProd);
+
+                        if (exito)
+                        {
+                            itemsProcesados++;
+                            filasParaBorrar.Add(fila);
+                        }
+                        else
+                        {
+                            itemsConError++;
+                            fila.DefaultCellStyle.BackColor = Color.FromArgb(255, 192, 192);
+                            nombresFallidos.Add(nombreProd);
+                        }
                     }
 
+                    foreach (var filaExito in filasParaBorrar)
+                    {
+                        dgvEgreso.Rows.Remove(filaExito);
+                    }
+
+                    // --- MENSAJES FINALES ---
                     if (itemsConError == 0)
                     {
                         MessageBox.Show($"¡Stock descontado exitosamente! ({itemsProcesados} items).", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -392,7 +419,15 @@ namespace Cigral
                     }
                     else
                     {
-                        MessageBox.Show($"Se procesaron {itemsProcesados} productos, pero fallaron {itemsConError}.", "Aviso Parcial", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        // 3. Eliminamos la frase final del texto y lo dejamos limpio
+                        string mensajeAviso = $"Se procesaron {itemsProcesados} productos correctamente.\n\nSin embargo, fallaron {itemsConError} productos:\n";
+
+                        foreach (var nombre in nombresFallidos)
+                        {
+                            mensajeAviso += $"- {nombre}\n";
+                        }
+
+                        MessageBox.Show(mensajeAviso, "Aviso Parcial", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     }
                 }
             }
@@ -784,6 +819,26 @@ namespace Cigral
 
             // 5. Mostramos la ventana
             buscadorStock.ShowDialog();
+        }
+
+        private void dgvEgreso_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            // 1. Si el usuario hizo clic en los títulos de arriba o afuera de la grilla, ignoramos el clic.
+            if (e.RowIndex < 0) return;
+
+            // 2. Nos fijamos si la columna que tocó es exactamente la del botón "ELIMINAR"
+            // (Si le pusiste otro "Name" a la columna en el Paso 1, cambialo acá donde dice "ColAcciones")
+            if (dgvEgreso.Columns[e.ColumnIndex].Name == "ColAcciones")
+            {
+                // 3. Le tiramos una confirmación por las dudas (siempre es buena práctica para evitar clics por accidente)
+                DialogResult respuesta = MessageBox.Show("¿Quitar este producto de la lista de egreso?", "Confirmar Eliminación", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+                if (respuesta == DialogResult.Yes)
+                {
+                    // 4. Lo borramos de la grilla localmente
+                    dgvEgreso.Rows.RemoveAt(e.RowIndex);
+                }
+            }
         }
     }
 }

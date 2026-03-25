@@ -17,8 +17,13 @@ namespace Cigral
     /// </summary>
     public partial class UC_Auditoria : UserControl
     {
+
+        private int _paginaActual = 1;
+        private int _filasPorPagina = 25;
         public UC_Auditoria()
         {
+
+
             InitializeComponent();
 
             // Nota: Acá se agregan items manualmente, pero luego ConfigurarComboBox() 
@@ -58,7 +63,7 @@ namespace Cigral
         /// </summary>
         private void ConfigurarComboBox()
         {
-            // Le armamos las opciones a mano (Acá podés cambiar el 1 y el 2 si el backend usa otros números)
+            // opciones (cambiar el 1 y el 2 si el backend usa otros números)
             var opciones = new List<dynamic>
             {
                 new { Id = 0, Nombre = "Todos" },
@@ -75,6 +80,7 @@ namespace Cigral
             {
                 if (cmbMov.SelectedValue != null)
                 {
+                    _paginaActual = 1;
                     int tipoSeleccionado = (int)cmbMov.SelectedValue;
                     await CargarGrillaAuditoria(tipoSeleccionado);
                 }
@@ -93,16 +99,20 @@ namespace Cigral
             {
                 dgvAuditoria.Rows.Clear();
 
-                // Le manda el tipo (si es 0, le mandamos null para que el backend traiga todos)
                 int? parametroTipo = tipo == 0 ? (int?)null : tipo;
 
-                var lista = await ApiServices.ObtenerAuditoria(parametroTipo);
+                // 1. Aca le pasa las variables de página a la API
+                var respuesta = await ApiServices.ObtenerAuditoria(parametroTipo, _paginaActual, _filasPorPagina);
 
-                if (lista == null) return;
+                
+                // Para que no se rompa al navegar
+                if (this.IsDisposed) return;
 
-                foreach (var item in lista)
+                if (respuesta == null || respuesta.items == null) return;
+
+                // 2. Llena la grilla
+                foreach (var item in respuesta.items)
                 {
-                    
                     dgvAuditoria.Rows.Add(
                         item.tipo,
                         item.fechaMovimiento.ToString("dd/MM/yyyy HH:mm"),
@@ -112,13 +122,21 @@ namespace Cigral
                         item.numeroSerie,
                         item.cantidad,
                         item.stockAnterior,
-                        item.stockNuevo, // E }n el diseño dice "Stock Posterior"
+                        item.stockNuevo,
                         item.remitoIngresoId,
                         item.remitoEgresoId,
                         item.usuario,
-                        item.observaciones // En el diseño dice "Detalles"
+                        item.observaciones
                     );
                 }
+
+                // 3. Actualiza los botones y el texto de abajo
+                int totalPaginas = respuesta.totalPages == 0 ? 1 : respuesta.totalPages;
+                lblPagina.Text = $"Página {respuesta.pageNumber} de {totalPaginas}";
+
+                // Apaga o prende según lo que diga el back
+                btnAnterior.Enabled = respuesta.hasPreviousPage;
+                btnSiguiente.Enabled = respuesta.hasNextPage;
             }
             catch (Exception ex)
             {
@@ -216,6 +234,20 @@ namespace Cigral
 
             // Cierra la pantalla
             this.Dispose();
+        }
+
+        private async void btnAnterior_Click(object sender, EventArgs e)
+        {
+            _paginaActual--;
+            int tipoActual = cmbMov.SelectedValue != null ? (int)cmbMov.SelectedValue : 0;
+            await CargarGrillaAuditoria(tipoActual);
+        }
+
+        private async void btnSiguiente_Click(object sender, EventArgs e)
+        {
+            _paginaActual++;
+            int tipoActual = cmbMov.SelectedValue != null ? (int)cmbMov.SelectedValue : 0;
+            await CargarGrillaAuditoria(tipoActual);
         }
     }
 }

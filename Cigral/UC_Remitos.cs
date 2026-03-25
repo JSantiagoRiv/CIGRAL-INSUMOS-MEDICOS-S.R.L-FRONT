@@ -15,6 +15,10 @@ namespace Cigral
     /// </summary>
     public partial class UC_Remitos : UserControl
     {
+
+        private int _paginaActual = 1;
+        private int _filasPorPagina = 25;
+
         // Semáforo para evitar que dos búsquedas se ejecuten al mismo tiempo y rompan la grilla
         private bool _estaBuscando = false;
 
@@ -52,7 +56,7 @@ namespace Cigral
         /// </summary>
         private async void EjecutarBusqueda()
         {
-            // SEMÁFORO: Si ya hay una búsqueda en curso, ignora esta nueva petición
+            // Si hay una búsqueda en curso, ignora esta nueva petición
             if (_estaBuscando) return;
             _estaBuscando = true; // Pone el semáforo en rojo
 
@@ -63,24 +67,32 @@ namespace Cigral
             {
                 bool buscarIngresos = rbIngresos.Checked;
 
-                // La aplicación manda la petición y sigue funcionando sin congelarse
-                var lista = await ApiServices.ObtenerHistorialRemitos(
+                // Le manda a la API en qué página estamos y cuántas filas queremos
+                var respuesta = await ApiServices.ObtenerHistorialRemitos(
                     buscarIngresos,
                     dtpDesde.Value.Date,
                     dtpHasta.Value.Date,
-                    txtNroRemito.Text.Trim()
+                    txtNroRemito.Text.Trim(),
+                    _paginaActual,
+                    _filasPorPagina
                 );
 
-                // chquea si el usuario ya cambió de pantalla.
-                // Si la pantalla se destruyó de la RAM (IsDisposed), corta la ejecución acá mismo.
+                // chequea si el usuario ya cambió de pantalla.
                 if (this.IsDisposed) return;
 
-                // Si llega acá, es porque el usuario sigue en la pantalla de Remitos
+                // le pasa SOLO la lista interna (.items)
                 dgvRemitos.DataSource = null;
                 dgvRemitos.Columns.Clear();
-                dgvRemitos.DataSource = lista;
+                dgvRemitos.DataSource = respuesta.items;
 
                 FormatearGrilla(buscarIngresos);
+
+
+                int totalPaginas = respuesta.totalPages == 0 ? 1 : respuesta.totalPages;
+                lblPagina.Text = $"Página {respuesta.pageNumber} de {totalPaginas}";
+
+                btnAnterior.Enabled = respuesta.hasPreviousPage;
+                btnSiguiente.Enabled = respuesta.hasNextPage;
             }
             catch (Exception ex)
             {
@@ -95,7 +107,7 @@ namespace Cigral
                 // Solo reactiva los controles y el semáforo si la pantalla sigue viva
                 if (!this.IsDisposed)
                 {
-                    _estaBuscando = false; // Semáforo en verde
+                    _estaBuscando = false; // Semáforo verde
                     btnBuscar.Enabled = true;
                     Cursor = Cursors.Default;
                 }
@@ -119,6 +131,7 @@ namespace Cigral
 
             // B. Pone títulos limpios
             if (dgvRemitos.Columns["numeroRemito"] != null) dgvRemitos.Columns["numeroRemito"].HeaderText = "Nro. Remito";
+            if (dgvRemitos.Columns["comprobanteAsociado"] != null) dgvRemitos.Columns["comprobanteAsociado"].HeaderText = "Comprobante Asociado";
             if (dgvRemitos.Columns["fecha"] != null) dgvRemitos.Columns["fecha"].HeaderText = "Fecha";
             if (dgvRemitos.Columns["depositoNombre"] != null) dgvRemitos.Columns["depositoNombre"].HeaderText = "Depósito";
             if (dgvRemitos.Columns["entidadNombre"] != null) dgvRemitos.Columns["entidadNombre"].HeaderText = "Entidad";
@@ -185,6 +198,7 @@ namespace Cigral
         // Búsqueda al hacer clic en el botón manualmente
         private void btnBuscar_Click(object sender, EventArgs e)
         {
+            _paginaActual = 1; // Resetea la página
             EjecutarBusqueda();
         }
 
@@ -193,6 +207,7 @@ namespace Cigral
         {
             if (rbIngresos.Checked)
             {
+                _paginaActual = 1;
                 EjecutarBusqueda();
             }
         }
@@ -200,18 +215,38 @@ namespace Cigral
         // Búsqueda automática al cambiar a la pestaña de Egresos
         private void rbEgresos_CheckedChanged(object sender, EventArgs e)
         {
-            EjecutarBusqueda();
+            if (rbEgresos.Checked)
+            {
+                _paginaActual = 1;
+                EjecutarBusqueda();
+            }
         }
 
         // Búsqueda automática al cambiar la fecha de inicio
         private void dtpDesde_ValueChanged(object sender, EventArgs e)
         {
+            _paginaActual = 1;
             EjecutarBusqueda();
         }
 
         // Búsqueda automática al cambiar la fecha de fin
         private void dtpHasta_ValueChanged(object sender, EventArgs e)
         {
+            _paginaActual = 1;
+            EjecutarBusqueda();
+        }
+
+
+        // --- BOTONES DE PAGINACIÓN ---
+        private void btnAnterior_Click(object sender, EventArgs e)
+        {
+            _paginaActual--;
+            EjecutarBusqueda();
+        }
+
+        private void btnSiguiente_Click(object sender, EventArgs e)
+        {
+            _paginaActual++;
             EjecutarBusqueda();
         }
     }

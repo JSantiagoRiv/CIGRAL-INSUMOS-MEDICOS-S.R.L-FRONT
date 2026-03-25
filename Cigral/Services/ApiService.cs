@@ -9,6 +9,7 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static System.Net.WebRequestMethods;
 
 namespace Cigral.Services
 {
@@ -287,14 +288,19 @@ namespace Cigral.Services
         /// <summary>
         /// Consulta el historial general de remitos generados en el sistema (con soporte para paginación y filtros).
         /// </summary>
-        public static async Task<List<RemitoHistorialDto>> ObtenerHistorialRemitos(bool esIngreso, DateTime? fechaDesde = null, DateTime? fechaHasta = null, string nroRemito = "")
+        /// <summary>
+        /// Consulta el historial general de remitos generados en el sistema (con paginación de servidor).
+        /// </summary>
+        public static async Task<PaginadoResponse<RemitoHistorialDto>> ObtenerHistorialRemitos(bool esIngreso, DateTime? fechaDesde = null, DateTime? fechaHasta = null, string nroRemito = "", int pageNumber = 1, int pageSize = 25)
         {
             using (HttpClient client = GetClient())
             {
                 try
                 {
                     string tipoEndpoint = esIngreso ? "ingreso" : "egreso";
-                    string url = $"{BaseUrl}/Remitos/{tipoEndpoint}?PageNumber=1&PageSize=100";
+
+                    // 1. Armamos la URL dinámica con los parámetros de página
+                    string url = $"{BaseUrl}/Remitos/{tipoEndpoint}?PageNumber={pageNumber}&PageSize={pageSize}";
 
                     if (fechaDesde.HasValue) url += $"&FechaDesde={fechaDesde.Value.ToString("yyyy-MM-dd")}";
                     if (fechaHasta.HasValue) url += $"&FechaHasta={fechaHasta.Value.ToString("yyyy-MM-dd")}";
@@ -305,19 +311,24 @@ namespace Cigral.Services
 
                     if (response.IsSuccessStatusCode)
                     {
-                        var resultado = JsonConvert.DeserializeObject<RemitoPaginadoResponse>(json);
-                        return resultado?.items ?? new List<RemitoHistorialDto>();
+                        // 2. Usamos el súper-molde genérico
+                        var resultado = JsonConvert.DeserializeObject<PaginadoResponse<RemitoHistorialDto>>(json);
+
+                        if (resultado == null || resultado.items == null)
+                            return new PaginadoResponse<RemitoHistorialDto> { items = new List<RemitoHistorialDto>() };
+
+                        return resultado;
                     }
                     else
                     {
                         await MostrarErrorBackend(response, "Error al traer historial de remitos");
-                        return new List<RemitoHistorialDto>();
+                        return new PaginadoResponse<RemitoHistorialDto> { items = new List<RemitoHistorialDto>() };
                     }
                 }
                 catch (Exception ex)
                 {
                     MessageBox.Show($"Error interno al buscar remitos:\n{ex.Message}", "Error de Conexión", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return new List<RemitoHistorialDto>();
+                    return new PaginadoResponse<RemitoHistorialDto> { items = new List<RemitoHistorialDto>() };
                 }
             }
         }
@@ -357,7 +368,8 @@ namespace Cigral.Services
         /// <summary>
         /// Disminuye el stock de un producto individualmente (movimiento interno).
         /// </summary>
-        public static async Task<bool> DisminuirStock(DisminuirStockDto item)
+        // Le agregamos el parámetro 'nombreProducto'
+        public static async Task<bool> DisminuirStock(DisminuirStockDto item, string nombreProducto = "Producto")
         {
             using (HttpClient client = GetClient())
             {
@@ -370,7 +382,8 @@ namespace Cigral.Services
                     if (response.IsSuccessStatusCode) return true;
                     else
                     {
-                        await MostrarErrorBackend(response, "Error al disminuir stock");
+                        //Le manda al título de la ventana de error
+                        await MostrarErrorBackend(response, $"Error al descontar: {nombreProducto}");
                         return false;
                     }
                 }
@@ -404,7 +417,7 @@ namespace Cigral.Services
                     {
                         var json = await response.Content.ReadAsStringAsync();
                         var paquete = JsonConvert.DeserializeObject<PaginadoResponse<ExistenciaDto>>(json);
-                        if (paquete != null && paquete.Items != null) return paquete.Items;
+                        if (paquete != null && paquete.items != null) return paquete.items;
                     }
                     return new List<ExistenciaDto>();
                 }
@@ -636,7 +649,7 @@ namespace Cigral.Services
                     {
                         var json = await response.Content.ReadAsStringAsync();
                         var paquete = JsonConvert.DeserializeObject<PaginadoResponse<ProveedorDto>>(json);
-                        if (paquete != null && paquete.Items != null) return paquete.Items;
+                        if (paquete != null && paquete.items != null) return paquete.items;
                     }
                     return new List<ProveedorDto>();
                 }
@@ -762,13 +775,18 @@ namespace Cigral.Services
         /// <summary>
         /// Consulta la tabla de auditoría para ver los movimientos históricos de stock.
         /// </summary>
-        public static async Task<List<AuditoriaItemDto>> ObtenerAuditoria(int? tipoMovimiento = null)
+        /// <summary>
+        /// Consulta la tabla de auditoría para ver los movimientos históricos de stock (con paginación de servidor).
+        /// </summary>
+        public static async Task<PaginadoResponse<AuditoriaItemDto>> ObtenerAuditoria(int? tipoMovimiento = null, int pageNumber = 1, int pageSize = 25)
         {
             using (HttpClient client = GetClient())
             {
                 try
                 {
-                    string url = $"{BaseUrl}/Auditoria?PageNumber=1&PageSize=100";
+                    // 1. Armamos la URL con las variables de paginación dinámicas en vez de fijas
+                    string url = $"{BaseUrl}/Auditoria?PageNumber={pageNumber}&PageSize={pageSize}";
+
                     if (tipoMovimiento.HasValue && tipoMovimiento.Value > 0) url += $"&Tipo={tipoMovimiento.Value}";
 
                     var response = await client.GetAsync(url);
@@ -776,25 +794,28 @@ namespace Cigral.Services
 
                     if (response.IsSuccessStatusCode)
                     {
-                        var resultado = JsonConvert.DeserializeObject<AuditoriaResponseDto>(json);
+                        // 2. Usa el súper-molde genérico que armamos antes
+                        var resultado = JsonConvert.DeserializeObject<PaginadoResponse<AuditoriaItemDto>>(json);
 
-                        if (resultado == null || resultado.items == null || resultado.items.Count == 0)
+                        // Si viene vacío, devuelve el molde con una lista vacía para que no rompa
+                        if (resultado == null || resultado.items == null)
                         {
-                            MessageBox.Show("El servidor contestó OK, pero dice que hay 0 movimientos registrados con este filtro.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                            return new List<AuditoriaItemDto>();
+                            return new PaginadoResponse<AuditoriaItemDto> { items = new List<AuditoriaItemDto>() };
                         }
-                        return resultado.items;
+
+                        // 3. Devuelv el PAQUETE COMPLETO (lista + totalPages + etc)
+                        return resultado;
                     }
                     else
                     {
                         MessageBox.Show($"El servidor rebotó la consulta de auditoría.\nStatus: {response.StatusCode}\nDetalle:\n{json}", "Error del Backend", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                        return new List<AuditoriaItemDto>();
+                        return new PaginadoResponse<AuditoriaItemDto> { items = new List<AuditoriaItemDto>() };
                     }
                 }
                 catch (Exception ex)
                 {
                     MessageBox.Show($"Error interno al leer los datos de auditoría:\n{ex.Message}", "Error de Conversión", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return new List<AuditoriaItemDto>();
+                    return new PaginadoResponse<AuditoriaItemDto> { items = new List<AuditoriaItemDto>() };
                 }
             }
         }
@@ -811,7 +832,7 @@ namespace Cigral.Services
             {
                 string errorJson = await response.Content.ReadAsStringAsync();
 
-                // 1. Errores de Validación (Listas/Grillas) - Ej: Stock Insuficiente en varias filas
+                // Errores de Validación (Listas/Grillas) - Ej: Stock Insuficiente en varias filas
                 if (response.StatusCode == System.Net.HttpStatusCode.UnprocessableEntity && errorJson.Contains("\"errores\":"))
                 {
                     var valError = JsonConvert.DeserializeObject<Cigral.Models.ValidationErrorResponse>(errorJson);
@@ -830,7 +851,36 @@ namespace Cigral.Services
                     }
                 }
 
-                // 2. Errores de Dominio Estándar (Los del documento de tu compañero)
+
+                // Errores de Formato del Framework(HTTP 400 BadRequest)
+                // Ocurre cuando se mandan tipos de datos incorrectos (ej: un string vacío en vez de null para una fecha)
+                if (response.StatusCode == System.Net.HttpStatusCode.BadRequest && errorJson.Contains("\"errors\":"))
+                {
+                    var badRequestObj = JObject.Parse(errorJson);
+                    var diccionarioErrores = badRequestObj["errors"];
+
+                    if (diccionarioErrores != null)
+                    {
+                        string mensajeLimpio = "Por favor, verificá el formato de los datos ingresados:\n\n";
+
+                        // Recorre todas las propiedades que fallaron (FechaVencimiento, etc)
+                        foreach (var propiedad in diccionarioErrores.Children<JProperty>())
+                        {
+                            foreach (var error in propiedad.Value)
+                            {
+                                mensajeLimpio += $"- {error}\n";
+                            }
+                        }
+
+                        MessageBox.Show(mensajeLimpio, "Datos Inválidos", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        return filasConError; // Retorna vacío porque no tenemos el número de fila acá
+                    }
+                }
+
+
+
+
+                // Errores de Dominio Estándar 
                 var errorObj = JsonConvert.DeserializeObject<Cigral.Models.DomainErrorResponse>(errorJson);
 
                 if (errorObj != null && !string.IsNullOrEmpty(errorObj.code) && !string.IsNullOrEmpty(errorObj.message))
@@ -840,7 +890,7 @@ namespace Cigral.Services
                 }
                 else
                 {
-                    // 3. Fallo catastrófico (Base de datos caída, etc)
+                    // 3. Fallo (Base de datos caída, etc)
                     MessageBox.Show($"Error no controlado en el servidor.\nStatus: {response.StatusCode}\nDetalle: {errorJson}",
                                     "Fallo del Servidor", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }

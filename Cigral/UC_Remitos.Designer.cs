@@ -42,6 +42,9 @@
             rbIngresos = new RadioButton();
             dgvRemitos = new DataGridView();
             panel3 = new Panel();
+            lblPagina = new Label();
+            btnSiguiente = new Button();
+            btnAnterior = new Button();
             iconBtnBack = new FontAwesome.Sharp.IconButton();
             panel1.SuspendLayout();
             groupBox1.SuspendLayout();
@@ -57,7 +60,7 @@
             panel1.Location = new Point(0, 0);
             panel1.Margin = new Padding(3, 2, 3, 2);
             panel1.Name = "panel1";
-            panel1.Size = new Size(1456, 56);
+            panel1.Size = new Size(1696, 56);
             panel1.TabIndex = 6;
             // 
             // labelTitulo
@@ -66,7 +69,7 @@
             labelTitulo.BackColor = Color.Transparent;
             labelTitulo.Font = new Font("Segoe UI", 18F, FontStyle.Bold | FontStyle.Underline);
             labelTitulo.ForeColor = Color.White;
-            labelTitulo.Location = new Point(527, 10);
+            labelTitulo.Location = new Point(647, 10);
             labelTitulo.Name = "labelTitulo";
             labelTitulo.Size = new Size(320, 31);
             labelTitulo.TabIndex = 0;
@@ -90,7 +93,7 @@
             groupBox1.Margin = new Padding(3, 2, 3, 2);
             groupBox1.Name = "groupBox1";
             groupBox1.Padding = new Padding(3, 2, 3, 2);
-            groupBox1.Size = new Size(1456, 98);
+            groupBox1.Size = new Size(1696, 98);
             groupBox1.TabIndex = 7;
             groupBox1.TabStop = false;
             groupBox1.Text = "Filtros de Busqueda";
@@ -202,19 +205,55 @@
             dgvRemitos.ReadOnly = true;
             dgvRemitos.RowHeadersVisible = false;
             dgvRemitos.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvRemitos.Size = new Size(1456, 524);
+            dgvRemitos.Size = new Size(1696, 790);
             dgvRemitos.TabIndex = 8;
             dgvRemitos.CellContentClick += dgvRemitos_CellContentClick;
             // 
             // panel3
             // 
+            panel3.Controls.Add(lblPagina);
+            panel3.Controls.Add(btnSiguiente);
+            panel3.Controls.Add(btnAnterior);
             panel3.Controls.Add(iconBtnBack);
             panel3.Dock = DockStyle.Bottom;
-            panel3.Location = new Point(0, 610);
+            panel3.Location = new Point(0, 876);
             panel3.Margin = new Padding(3, 2, 3, 2);
             panel3.Name = "panel3";
-            panel3.Size = new Size(1456, 68);
+            panel3.Size = new Size(1696, 68);
             panel3.TabIndex = 9;
+            // 
+            // lblPagina
+            // 
+            lblPagina.Anchor = AnchorStyles.Right;
+            lblPagina.Font = new Font("Segoe UI", 12F);
+            lblPagina.Location = new Point(1510, 12);
+            lblPagina.Name = "lblPagina";
+            lblPagina.Size = new Size(119, 21);
+            lblPagina.TabIndex = 23;
+            lblPagina.Text = "Página 1/1";
+            lblPagina.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // btnSiguiente
+            // 
+            btnSiguiente.Anchor = AnchorStyles.Right;
+            btnSiguiente.Location = new Point(1635, 10);
+            btnSiguiente.Name = "btnSiguiente";
+            btnSiguiente.Size = new Size(29, 29);
+            btnSiguiente.TabIndex = 22;
+            btnSiguiente.Text = ">";
+            btnSiguiente.UseVisualStyleBackColor = true;
+            btnSiguiente.Click += btnSiguiente_Click;
+            // 
+            // btnAnterior
+            // 
+            btnAnterior.Anchor = AnchorStyles.Right;
+            btnAnterior.Location = new Point(1475, 10);
+            btnAnterior.Name = "btnAnterior";
+            btnAnterior.Size = new Size(29, 29);
+            btnAnterior.TabIndex = 21;
+            btnAnterior.Text = "<";
+            btnAnterior.UseVisualStyleBackColor = true;
+            btnAnterior.Click += btnAnterior_Click;
             // 
             // iconBtnBack
             // 
@@ -242,7 +281,7 @@
             Controls.Add(groupBox1);
             Controls.Add(panel1);
             Name = "UC_Remitos";
-            Size = new Size(1456, 678);
+            Size = new Size(1696, 944);
             Load += UC_Remitos_Load;
             panel1.ResumeLayout(false);
             groupBox1.ResumeLayout(false);
@@ -269,5 +308,8 @@
         private DataGridView dgvRemitos;
         private Panel panel3;
         private FontAwesome.Sharp.IconButton iconBtnBack;
+        private Label lblPagina;
+        private Button btnSiguiente;
+        private Button btnAnterior;
     }
 }
