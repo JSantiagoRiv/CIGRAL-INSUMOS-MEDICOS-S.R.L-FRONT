@@ -34,6 +34,8 @@
             pictureBox1 = new PictureBox();
             panelContainer = new Panel();
             panel1 = new Panel();
+            btnEntidades = new FontAwesome.Sharp.IconButton();
+            pictureBox2 = new PictureBox();
             btnHistorialRemitos = new FontAwesome.Sharp.IconButton();
             label2 = new Label();
             btnInicio = new FontAwesome.Sharp.IconButton();
@@ -41,7 +43,6 @@
             btnAuditoria = new FontAwesome.Sharp.IconButton();
             btnStock = new FontAwesome.Sharp.IconButton();
             iconButtonIngreso = new FontAwesome.Sharp.IconButton();
-            pictureBox2 = new PictureBox();
             panelHeader.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             panel1.SuspendLayout();
@@ -96,6 +97,7 @@
             // panel1
             // 
             panel1.BackColor = Color.LightSlateGray;
+            panel1.Controls.Add(btnEntidades);
             panel1.Controls.Add(pictureBox2);
             panel1.Controls.Add(btnHistorialRemitos);
             panel1.Controls.Add(label2);
@@ -110,6 +112,34 @@
             panel1.Name = "panel1";
             panel1.Size = new Size(208, 944);
             panel1.TabIndex = 2;
+            // 
+            // btnEntidades
+            // 
+            btnEntidades.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            btnEntidades.IconChar = FontAwesome.Sharp.IconChar.Info;
+            btnEntidades.IconColor = Color.Black;
+            btnEntidades.IconFont = FontAwesome.Sharp.IconFont.Auto;
+            btnEntidades.ImageAlign = ContentAlignment.MiddleLeft;
+            btnEntidades.Location = new Point(1, 480);
+            btnEntidades.Margin = new Padding(3, 2, 3, 2);
+            btnEntidades.Name = "btnEntidades";
+            btnEntidades.Size = new Size(207, 92);
+            btnEntidades.TabIndex = 10;
+            btnEntidades.Text = "GESTION DE ENTIDADES (F6)";
+            btnEntidades.TextAlign = ContentAlignment.MiddleLeft;
+            btnEntidades.TextImageRelation = TextImageRelation.ImageBeforeText;
+            btnEntidades.UseVisualStyleBackColor = true;
+            btnEntidades.Click += btnEntidades_Click;
+            // 
+            // pictureBox2
+            // 
+            pictureBox2.Image = (Image)resources.GetObject("pictureBox2.Image");
+            pictureBox2.Location = new Point(3, 768);
+            pictureBox2.Name = "pictureBox2";
+            pictureBox2.Size = new Size(202, 140);
+            pictureBox2.SizeMode = PictureBoxSizeMode.StretchImage;
+            pictureBox2.TabIndex = 9;
+            pictureBox2.TabStop = false;
             // 
             // btnHistorialRemitos
             // 
@@ -147,7 +177,7 @@
             btnInicio.IconColor = Color.Black;
             btnInicio.IconFont = FontAwesome.Sharp.IconFont.Auto;
             btnInicio.ImageAlign = ContentAlignment.MiddleLeft;
-            btnInicio.Location = new Point(0, 480);
+            btnInicio.Location = new Point(0, 576);
             btnInicio.Margin = new Padding(3, 2, 3, 2);
             btnInicio.Name = "btnInicio";
             btnInicio.Size = new Size(207, 92);
@@ -230,16 +260,6 @@
             iconButtonIngreso.UseVisualStyleBackColor = true;
             iconButtonIngreso.Click += iconButton2_Click;
             // 
-            // pictureBox2
-            // 
-            pictureBox2.Image = (Image)resources.GetObject("pictureBox2.Image");
-            pictureBox2.Location = new Point(3, 768);
-            pictureBox2.Name = "pictureBox2";
-            pictureBox2.Size = new Size(202, 140);
-            pictureBox2.SizeMode = PictureBoxSizeMode.StretchImage;
-            pictureBox2.TabIndex = 9;
-            pictureBox2.TabStop = false;
-            // 
             // FormMain
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -278,5 +298,6 @@
         private FontAwesome.Sharp.IconButton btnInicio;
         private FontAwesome.Sharp.IconButton btnHistorialRemitos;
         private PictureBox pictureBox2;
+        private FontAwesome.Sharp.IconButton btnEntidades;
     }
 }
