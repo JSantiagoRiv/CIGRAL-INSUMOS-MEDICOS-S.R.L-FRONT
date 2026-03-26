@@ -101,10 +101,13 @@ namespace Cigral
 
                 int? parametroTipo = tipo == 0 ? (int?)null : tipo;
 
-                // 1. Aca le pasa las variables de página a la API
-                var respuesta = await ApiServices.ObtenerAuditoria(parametroTipo, _paginaActual, _filasPorPagina);
+                // Leemos lo que escribió el usuario
+                string textoBuscado = txtBusquedaNombre.Text;
 
-                
+                // Le pasamos el textoBuscado a la API
+                var respuesta = await ApiServices.ObtenerAuditoria(parametroTipo, textoBuscado, _paginaActual, _filasPorPagina);
+
+
                 // Para que no se rompa al navegar
                 if (this.IsDisposed) return;
 
@@ -246,6 +249,34 @@ namespace Cigral
         private async void btnSiguiente_Click(object sender, EventArgs e)
         {
             _paginaActual++;
+            int tipoActual = cmbMov.SelectedValue != null ? (int)cmbMov.SelectedValue : 0;
+            await CargarGrillaAuditoria(tipoActual);
+        }
+
+        private void txtBusquedaNombre_TextChanged(object sender, EventArgs e)
+        {
+            timerBusqueda.Stop();
+            timerBusqueda.Start();
+        }
+
+        private async void txtBusquedaNombre_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                e.SuppressKeyPress = true;
+                timerBusqueda.Stop();
+
+                _paginaActual = 1;
+                int tipoActual = cmbMov.SelectedValue != null ? (int)cmbMov.SelectedValue : 0;
+                await CargarGrillaAuditoria(tipoActual);
+            }
+        }
+
+        private async void timerBusqueda_Tick(object sender, EventArgs e)
+        {
+            timerBusqueda.Stop();
+
+            _paginaActual = 1;
             int tipoActual = cmbMov.SelectedValue != null ? (int)cmbMov.SelectedValue : 0;
             await CargarGrillaAuditoria(tipoActual);
         }
