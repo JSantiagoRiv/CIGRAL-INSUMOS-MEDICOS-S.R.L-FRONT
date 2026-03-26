@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            components = new System.ComponentModel.Container();
             DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
             DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
             DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
@@ -45,10 +46,11 @@
             dateTimePicker1 = new DateTimePicker();
             label3 = new Label();
             groupBox1 = new GroupBox();
+            lstClientes = new ListBox();
+            txtBuscarCliente = new TextBox();
             txtComprobante = new TextBox();
             label7 = new Label();
             btnAgregarCliente = new FontAwesome.Sharp.IconButton();
-            cmbCliente = new ComboBox();
             label6 = new Label();
             cmbDeposito = new ComboBox();
             chkConRemito = new CheckBox();
@@ -68,6 +70,7 @@
             Cantidad = new DataGridViewTextBoxColumn();
             ColInfo = new DataGridViewTextBoxColumn();
             ColAcciones = new DataGridViewButtonColumn();
+            timerBusquedaCliente = new System.Windows.Forms.Timer(components);
             panel3.SuspendLayout();
             groupBox1.SuspendLayout();
             panel2.SuspendLayout();
@@ -200,10 +203,11 @@
             // 
             // groupBox1
             // 
+            groupBox1.Controls.Add(lstClientes);
+            groupBox1.Controls.Add(txtBuscarCliente);
             groupBox1.Controls.Add(txtComprobante);
             groupBox1.Controls.Add(label7);
             groupBox1.Controls.Add(btnAgregarCliente);
-            groupBox1.Controls.Add(cmbCliente);
             groupBox1.Controls.Add(label6);
             groupBox1.Controls.Add(cmbDeposito);
             groupBox1.Controls.Add(chkConRemito);
@@ -223,11 +227,32 @@
             groupBox1.TabStop = false;
             groupBox1.Text = "Datos del Cliente";
             // 
+            // lstClientes
+            // 
+            lstClientes.Font = new Font("Segoe UI", 12F);
+            lstClientes.FormattingEnabled = true;
+            lstClientes.Location = new Point(84, 71);
+            lstClientes.Name = "lstClientes";
+            lstClientes.Size = new Size(179, 277);
+            lstClientes.TabIndex = 16;
+            lstClientes.Visible = false;
+            lstClientes.Click += lstClientes_Click;
+            lstClientes.SelectedIndexChanged += lstClientes_SelectedIndexChanged;
+            // 
+            // txtBuscarCliente
+            // 
+            txtBuscarCliente.Font = new Font("Segoe UI", 12F);
+            txtBuscarCliente.Location = new Point(84, 36);
+            txtBuscarCliente.Name = "txtBuscarCliente";
+            txtBuscarCliente.Size = new Size(179, 29);
+            txtBuscarCliente.TabIndex = 15;
+            txtBuscarCliente.TextChanged += txtBuscarCliente_TextChanged;
+            // 
             // txtComprobante
             // 
             txtComprobante.Enabled = false;
             txtComprobante.Font = new Font("Segoe UI", 12F);
-            txtComprobante.Location = new Point(1015, 35);
+            txtComprobante.Location = new Point(1021, 35);
             txtComprobante.Name = "txtComprobante";
             txtComprobante.Size = new Size(159, 29);
             txtComprobante.TabIndex = 14;
@@ -240,7 +265,7 @@
             label7.Name = "label7";
             label7.Size = new Size(176, 21);
             label7.TabIndex = 13;
-            label7.Text = "Comprobante Asocidao:";
+            label7.Text = "Comprobante Asociado:";
             // 
             // btnAgregarCliente
             // 
@@ -250,23 +275,13 @@
             btnAgregarCliente.IconColor = Color.Black;
             btnAgregarCliente.IconFont = FontAwesome.Sharp.IconFont.Solid;
             btnAgregarCliente.IconSize = 25;
-            btnAgregarCliente.Location = new Point(266, 35);
+            btnAgregarCliente.Location = new Point(266, 36);
             btnAgregarCliente.Margin = new Padding(0, 3, 3, 3);
             btnAgregarCliente.Name = "btnAgregarCliente";
             btnAgregarCliente.Size = new Size(33, 29);
             btnAgregarCliente.TabIndex = 12;
             btnAgregarCliente.UseVisualStyleBackColor = true;
             btnAgregarCliente.Click += btnAgregarCliente_Click;
-            // 
-            // cmbCliente
-            // 
-            cmbCliente.Enabled = false;
-            cmbCliente.Font = new Font("Segoe UI", 12F);
-            cmbCliente.FormattingEnabled = true;
-            cmbCliente.Location = new Point(84, 35);
-            cmbCliente.Name = "cmbCliente";
-            cmbCliente.Size = new Size(176, 29);
-            cmbCliente.TabIndex = 11;
             // 
             // label6
             // 
@@ -292,7 +307,7 @@
             // 
             chkConRemito.AutoSize = true;
             chkConRemito.Font = new Font("Segoe UI", 12F);
-            chkConRemito.Location = new Point(1185, 37);
+            chkConRemito.Location = new Point(1197, 37);
             chkConRemito.Name = "chkConRemito";
             chkConRemito.Size = new Size(159, 25);
             chkConRemito.TabIndex = 8;
@@ -489,6 +504,11 @@
             ColAcciones.Text = "ELIMINAR";
             ColAcciones.UseColumnTextForButtonValue = true;
             // 
+            // timerBusquedaCliente
+            // 
+            timerBusquedaCliente.Interval = 250;
+            timerBusquedaCliente.Tick += timerBusquedaCliente_Tick;
+            // 
             // UC_Egresos
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -533,7 +553,6 @@
         private CheckBox chkConRemito;
         private ComboBox cmbDeposito;
         private Label label6;
-        private ComboBox cmbCliente;
         private FontAwesome.Sharp.IconButton btnAgregarCliente;
         private LinkLabel linkLabel1;
         private Label label1;
@@ -547,5 +566,8 @@
         private DataGridViewButtonColumn ColAcciones;
         private TextBox txtComprobante;
         private Label label7;
+        private TextBox txtBuscarCliente;
+        private ListBox lstClientes;
+        private System.Windows.Forms.Timer timerBusquedaCliente;
     }
 }

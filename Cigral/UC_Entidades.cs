@@ -40,7 +40,8 @@ namespace Cigral
             RazonSocial.DataPropertyName = "RazonSocial";
             Cuit.DataPropertyName = "Cuit";
             TipoEntidad.DataPropertyName = "TipoEntidad";
-            try {
+            try
+            {
                 await CargarEntidades(); // Carga los datos al iniciar el control.
             }
             finally
@@ -49,7 +50,7 @@ namespace Cigral
             }
 
 
-            }
+        }
 
         private async Task CargarEntidades()
         {
@@ -136,7 +137,8 @@ namespace Cigral
             PantallaCarga pantallaCarga = new PantallaCarga();
             pantallaCarga.Show(this);
 
-            try { 
+            try
+            {
                 var entidadModificada = new EntidadDto
                 {
                     IdOriginal = idParaLaApi, // Usamos el ID oculto para identificar qué entidad modificar
@@ -150,7 +152,7 @@ namespace Cigral
                 };
 
                 var resultado = await ApiServices.UpdateEntidad(entidadModificada);
-            
+
                 if (resultado != 0)
                 {
                     await CargarEntidades();
@@ -166,6 +168,152 @@ namespace Cigral
             {
                 pantallaCarga.Close();
                 this.Enabled = true;
+            }
+        }
+
+        private void label5_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private async void btnAgregarCliente_Click(object sender, EventArgs e)
+        {
+            Form prompt = new Form()
+            {
+                Width = 400,
+                Height = 350,
+                FormBorderStyle = FormBorderStyle.FixedDialog,
+                Text = "Alta de Cliente Nuevo",
+                StartPosition = FormStartPosition.CenterScreen,
+                MaximizeBox = false,
+                MinimizeBox = false
+            };
+
+            Label lblRazon = new Label() { Left = 20, Top = 20, Width = 100, Text = "Razón Social:" }; TextBox txtRazon = new TextBox() { Left = 130, Top = 20, Width = 230 };
+            Label lblGln = new Label() { Left = 20, Top = 50, Width = 100, Text = "GLN (13 núm):" }; TextBox txtGln = new TextBox() { Left = 130, Top = 50, Width = 230 };
+            Label lblEmail = new Label() { Left = 20, Top = 80, Width = 100, Text = "Email:" }; TextBox txtEmail = new TextBox() { Left = 130, Top = 80, Width = 230 };
+            Label lblCuit = new Label() { Left = 20, Top = 110, Width = 100, Text = "CUIT:" }; TextBox txtCuit = new TextBox() { Left = 130, Top = 110, Width = 230 };
+            Label lblTel = new Label() { Left = 20, Top = 140, Width = 100, Text = "Teléfono:" }; TextBox txtTel = new TextBox() { Left = 130, Top = 140, Width = 230 };
+            Label lblDir = new Label() { Left = 20, Top = 170, Width = 100, Text = "Dirección:" }; TextBox txtDir = new TextBox() { Left = 130, Top = 170, Width = 230 };
+            Button confirmation = new Button() { Text = "Guardar", Left = 260, Top = 220, Width = 100, DialogResult = DialogResult.OK, Cursor = Cursors.Hand };
+
+            EventHandler capitalizar = (senderObj, ev) =>
+            {
+                TextBox txt = senderObj as TextBox;
+                if (txt.Text.Length == 1) { txt.Text = txt.Text.ToUpper(); txt.SelectionStart = txt.Text.Length; }
+            };
+            txtRazon.TextChanged += capitalizar; txtDir.TextChanged += capitalizar;
+
+            prompt.Controls.Add(lblRazon); prompt.Controls.Add(txtRazon);
+            prompt.Controls.Add(lblGln); prompt.Controls.Add(txtGln);
+            prompt.Controls.Add(lblEmail); prompt.Controls.Add(txtEmail);
+            prompt.Controls.Add(lblCuit); prompt.Controls.Add(txtCuit);
+            prompt.Controls.Add(lblTel); prompt.Controls.Add(txtTel);
+            prompt.Controls.Add(lblDir); prompt.Controls.Add(txtDir);
+            prompt.Controls.Add(confirmation);
+            prompt.AcceptButton = confirmation;
+
+            if (prompt.ShowDialog() == DialogResult.OK)
+            {
+                if (string.IsNullOrWhiteSpace(txtRazon.Text) || string.IsNullOrWhiteSpace(txtEmail.Text))
+                {
+                    MessageBox.Show("La Razón Social y el Email son obligatorios.", "Faltan datos", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                Cursor = Cursors.WaitCursor;
+                try
+                {
+                    var nuevoCliente = new ClienteDto
+                    {
+                        razonSocial = txtRazon.Text.Trim(),
+                        gln = txtGln.Text.Trim(),
+                        email = txtEmail.Text.Trim(),
+                        cuit = txtCuit.Text.Trim(),
+                        telefono = txtTel.Text.Trim(),
+                        direccion = txtDir.Text.Trim()
+                    };
+
+                    int idNuevo = await ApiServices.CrearClienteExpress(nuevoCliente);
+
+                    if (idNuevo > 0)
+                    {
+                        MessageBox.Show("¡Cliente creado con éxito!", "Excelente", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        await CargarEntidades(); // Refresca la grilla principal
+                    }
+                }
+                catch (Exception ex) { MessageBox.Show("Error: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error); }
+                finally { Cursor = Cursors.Default; }
+            }
+        }
+
+        private async void btnAgregarProveedor_Click(object sender, EventArgs e)
+        {
+            Form prompt = new Form()
+            {
+                Width = 400,
+                Height = 350,
+                FormBorderStyle = FormBorderStyle.FixedDialog,
+                Text = "Alta de Proveedor Nuevo",
+                StartPosition = FormStartPosition.CenterScreen,
+                MaximizeBox = false,
+                MinimizeBox = false
+            };
+
+            Label lblRazon = new Label() { Left = 20, Top = 20, Width = 100, Text = "Razón Social:" }; TextBox txtRazon = new TextBox() { Left = 130, Top = 20, Width = 230 };
+            Label lblGln = new Label() { Left = 20, Top = 50, Width = 100, Text = "GLN (13 núm):" }; TextBox txtGln = new TextBox() { Left = 130, Top = 50, Width = 230 };
+            Label lblEmail = new Label() { Left = 20, Top = 80, Width = 100, Text = "Email:" }; TextBox txtEmail = new TextBox() { Left = 130, Top = 80, Width = 230 };
+            Label lblCuit = new Label() { Left = 20, Top = 110, Width = 100, Text = "CUIT:" }; TextBox txtCuit = new TextBox() { Left = 130, Top = 110, Width = 230 };
+            Label lblTel = new Label() { Left = 20, Top = 140, Width = 100, Text = "Teléfono:" }; TextBox txtTel = new TextBox() { Left = 130, Top = 140, Width = 230 };
+            Label lblDir = new Label() { Left = 20, Top = 170, Width = 100, Text = "Dirección:" }; TextBox txtDir = new TextBox() { Left = 130, Top = 170, Width = 230 };
+            Button confirmation = new Button() { Text = "Guardar", Left = 260, Top = 220, Width = 100, DialogResult = DialogResult.OK, Cursor = Cursors.Hand };
+
+            EventHandler capitalizar = (senderObj, ev) => {
+                TextBox txt = senderObj as TextBox;
+                if (txt.Text.Length == 1) { txt.Text = txt.Text.ToUpper(); txt.SelectionStart = txt.Text.Length; }
+            };
+            txtRazon.TextChanged += capitalizar; txtDir.TextChanged += capitalizar;
+
+            prompt.Controls.Add(lblRazon); prompt.Controls.Add(txtRazon);
+            prompt.Controls.Add(lblGln); prompt.Controls.Add(txtGln);
+            prompt.Controls.Add(lblEmail); prompt.Controls.Add(txtEmail);
+            prompt.Controls.Add(lblCuit); prompt.Controls.Add(txtCuit);
+            prompt.Controls.Add(lblTel); prompt.Controls.Add(txtTel);
+            prompt.Controls.Add(lblDir); prompt.Controls.Add(txtDir);
+            prompt.Controls.Add(confirmation);
+            prompt.AcceptButton = confirmation;
+
+            if (prompt.ShowDialog() == DialogResult.OK)
+            {
+                if (string.IsNullOrWhiteSpace(txtRazon.Text) || string.IsNullOrWhiteSpace(txtEmail.Text))
+                {
+                    MessageBox.Show("La Razón Social y el Email son obligatorios.", "Faltan datos", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                Cursor = Cursors.WaitCursor;
+                try
+                {
+                    var nuevoProveedor = new ProveedorDto
+                    {
+                        RazonSocial = txtRazon.Text.Trim(),
+                        Gln = txtGln.Text.Trim(),
+                        Email = txtEmail.Text.Trim(),
+                        Cuit = txtCuit.Text.Trim(),
+                        Telefono = txtTel.Text.Trim(),
+                        Direccion = txtDir.Text.Trim()
+                    };
+
+                    int idNuevo = await ApiServices.CrearProveedorExpress(nuevoProveedor);
+
+                    if (idNuevo > 0)
+                    {
+                        MessageBox.Show("¡Proveedor creado con éxito!", "Excelente", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        await CargarEntidades(); // Refresca la grilla principal
+                    }
+                }
+                catch (Exception ex) { MessageBox.Show("Error: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error); }
+                finally { Cursor = Cursors.Default; }
             }
         }
     }

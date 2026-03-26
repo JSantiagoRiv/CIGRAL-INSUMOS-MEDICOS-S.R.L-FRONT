@@ -116,7 +116,7 @@
             // btnEntidades
             // 
             btnEntidades.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-            btnEntidades.IconChar = FontAwesome.Sharp.IconChar.Info;
+            btnEntidades.IconChar = FontAwesome.Sharp.IconChar.Users;
             btnEntidades.IconColor = Color.Black;
             btnEntidades.IconFont = FontAwesome.Sharp.IconFont.Auto;
             btnEntidades.ImageAlign = ContentAlignment.MiddleLeft;
@@ -177,7 +177,7 @@
             btnInicio.IconColor = Color.Black;
             btnInicio.IconFont = FontAwesome.Sharp.IconFont.Auto;
             btnInicio.ImageAlign = ContentAlignment.MiddleLeft;
-            btnInicio.Location = new Point(0, 576);
+            btnInicio.Location = new Point(1, 576);
             btnInicio.Margin = new Padding(3, 2, 3, 2);
             btnInicio.Name = "btnInicio";
             btnInicio.Size = new Size(207, 92);

@@ -29,13 +29,11 @@
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
             panel1 = new Panel();
             labelTitulo = new Label();
             groupBox1 = new GroupBox();
-            lblPagina = new Label();
-            btnSiguiente = new Button();
-            btnAnterior = new Button();
+            btnExcel = new FontAwesome.Sharp.IconButton();
             label3 = new Label();
             cmbDireccionOrden = new ComboBox();
             label1 = new Label();
@@ -47,8 +45,14 @@
             chkOcultarCero = new CheckBox();
             iconBtnSearch = new FontAwesome.Sharp.IconButton();
             label2 = new Label();
-            btnExcel = new FontAwesome.Sharp.IconButton();
+            lblPagina = new Label();
+            btnSiguiente = new Button();
+            btnAnterior = new Button();
             dgvStock = new DataGridView();
+            panel3 = new Panel();
+            iconBtnBack = new FontAwesome.Sharp.IconButton();
+            timerBusqueda = new System.Windows.Forms.Timer(components);
+            toolTip1 = new ToolTip(components);
             Id = new DataGridViewTextBoxColumn();
             CodProd = new DataGridViewTextBoxColumn();
             Producto = new DataGridViewTextBoxColumn();
@@ -57,10 +61,6 @@
             Cantidad = new DataGridViewTextBoxColumn();
             Vencimiento = new DataGridViewTextBoxColumn();
             Estado = new DataGridViewTextBoxColumn();
-            panel3 = new Panel();
-            iconBtnBack = new FontAwesome.Sharp.IconButton();
-            timerBusqueda = new System.Windows.Forms.Timer(components);
-            toolTip1 = new ToolTip(components);
             panel1.SuspendLayout();
             groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dgvStock).BeginInit();
@@ -115,38 +115,24 @@
             groupBox1.TabStop = false;
             groupBox1.Text = "Stock de Productos";
             // 
-            // lblPagina
+            // btnExcel
             // 
-            lblPagina.Anchor = AnchorStyles.Right;
-            lblPagina.Font = new Font("Segoe UI", 12F);
-            lblPagina.Location = new Point(1510, 12);
-            lblPagina.Name = "lblPagina";
-            lblPagina.Size = new Size(119, 21);
-            lblPagina.TabIndex = 20;
-            lblPagina.Text = "Página 1/1";
-            lblPagina.TextAlign = ContentAlignment.MiddleCenter;
-            // 
-            // btnSiguiente
-            // 
-            btnSiguiente.Anchor = AnchorStyles.Right;
-            btnSiguiente.Location = new Point(1635, 10);
-            btnSiguiente.Name = "btnSiguiente";
-            btnSiguiente.Size = new Size(29, 29);
-            btnSiguiente.TabIndex = 19;
-            btnSiguiente.Text = ">";
-            btnSiguiente.UseVisualStyleBackColor = true;
-            btnSiguiente.Click += btnSiguiente_Click;
-            // 
-            // btnAnterior
-            // 
-            btnAnterior.Anchor = AnchorStyles.Right;
-            btnAnterior.Location = new Point(1475, 10);
-            btnAnterior.Name = "btnAnterior";
-            btnAnterior.Size = new Size(29, 29);
-            btnAnterior.TabIndex = 18;
-            btnAnterior.Text = "<";
-            btnAnterior.UseVisualStyleBackColor = true;
-            btnAnterior.Click += btnAnterior_Click;
+            btnExcel.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            btnExcel.BackColor = Color.Transparent;
+            btnExcel.Cursor = Cursors.Hand;
+            btnExcel.FlatAppearance.BorderSize = 0;
+            btnExcel.FlatStyle = FlatStyle.Flat;
+            btnExcel.IconChar = FontAwesome.Sharp.IconChar.Print;
+            btnExcel.IconColor = Color.Black;
+            btnExcel.IconFont = FontAwesome.Sharp.IconFont.Auto;
+            btnExcel.IconSize = 50;
+            btnExcel.Location = new Point(1617, 68);
+            btnExcel.Name = "btnExcel";
+            btnExcel.Size = new Size(47, 51);
+            btnExcel.TabIndex = 14;
+            toolTip1.SetToolTip(btnExcel, "Exportar a Excel");
+            btnExcel.UseVisualStyleBackColor = false;
+            btnExcel.Click += btnExcel_Click;
             // 
             // label3
             // 
@@ -276,37 +262,51 @@
             label2.TabIndex = 0;
             label2.Text = "Buscar Productos:";
             // 
-            // btnExcel
+            // lblPagina
             // 
-            btnExcel.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            btnExcel.BackColor = Color.Transparent;
-            btnExcel.Cursor = Cursors.Hand;
-            btnExcel.FlatAppearance.BorderSize = 0;
-            btnExcel.FlatStyle = FlatStyle.Flat;
-            btnExcel.IconChar = FontAwesome.Sharp.IconChar.Print;
-            btnExcel.IconColor = Color.Black;
-            btnExcel.IconFont = FontAwesome.Sharp.IconFont.Auto;
-            btnExcel.IconSize = 50;
-            btnExcel.Location = new Point(1617, 68);
-            btnExcel.Name = "btnExcel";
-            btnExcel.Size = new Size(47, 51);
-            btnExcel.TabIndex = 14;
-            toolTip1.SetToolTip(btnExcel, "Exportar a Excel");
-            btnExcel.UseVisualStyleBackColor = false;
-            btnExcel.Click += btnExcel_Click;
+            lblPagina.Anchor = AnchorStyles.Right;
+            lblPagina.Font = new Font("Segoe UI", 12F);
+            lblPagina.Location = new Point(1510, 12);
+            lblPagina.Name = "lblPagina";
+            lblPagina.Size = new Size(119, 21);
+            lblPagina.TabIndex = 20;
+            lblPagina.Text = "Página 1/1";
+            lblPagina.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // btnSiguiente
+            // 
+            btnSiguiente.Anchor = AnchorStyles.Right;
+            btnSiguiente.Location = new Point(1635, 10);
+            btnSiguiente.Name = "btnSiguiente";
+            btnSiguiente.Size = new Size(29, 29);
+            btnSiguiente.TabIndex = 19;
+            btnSiguiente.Text = ">";
+            btnSiguiente.UseVisualStyleBackColor = true;
+            btnSiguiente.Click += btnSiguiente_Click;
+            // 
+            // btnAnterior
+            // 
+            btnAnterior.Anchor = AnchorStyles.Right;
+            btnAnterior.Location = new Point(1475, 10);
+            btnAnterior.Name = "btnAnterior";
+            btnAnterior.Size = new Size(29, 29);
+            btnAnterior.TabIndex = 18;
+            btnAnterior.Text = "<";
+            btnAnterior.UseVisualStyleBackColor = true;
+            btnAnterior.Click += btnAnterior_Click;
             // 
             // dgvStock
             // 
             dgvStock.BackgroundColor = Color.White;
             dgvStock.BorderStyle = BorderStyle.None;
-            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = Color.SteelBlue;
-            dataGridViewCellStyle2.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-            dataGridViewCellStyle2.ForeColor = Color.White;
-            dataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = DataGridViewTriState.True;
-            dgvStock.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = Color.SteelBlue;
+            dataGridViewCellStyle1.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            dataGridViewCellStyle1.ForeColor = Color.White;
+            dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
+            dgvStock.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             dgvStock.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dgvStock.Columns.AddRange(new DataGridViewColumn[] { Id, CodProd, Producto, Lote, Serie, Cantidad, Vencimiento, Estado });
             dgvStock.Dock = DockStyle.Fill;
@@ -317,60 +317,6 @@
             dgvStock.RowHeadersWidth = 51;
             dgvStock.Size = new Size(1696, 756);
             dgvStock.TabIndex = 4;
-            // 
-            // Id
-            // 
-            Id.HeaderText = "Id";
-            Id.Name = "Id";
-            Id.Visible = false;
-            // 
-            // CodProd
-            // 
-            CodProd.HeaderText = "CodProd";
-            CodProd.Name = "CodProd";
-            CodProd.Visible = false;
-            // 
-            // Producto
-            // 
-            Producto.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            Producto.HeaderText = "Producto";
-            Producto.MinimumWidth = 6;
-            Producto.Name = "Producto";
-            // 
-            // Lote
-            // 
-            Lote.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            Lote.HeaderText = "Lote";
-            Lote.MinimumWidth = 6;
-            Lote.Name = "Lote";
-            // 
-            // Serie
-            // 
-            Serie.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            Serie.HeaderText = "Serie";
-            Serie.MinimumWidth = 6;
-            Serie.Name = "Serie";
-            // 
-            // Cantidad
-            // 
-            Cantidad.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            Cantidad.HeaderText = "Cantidad";
-            Cantidad.MinimumWidth = 6;
-            Cantidad.Name = "Cantidad";
-            // 
-            // Vencimiento
-            // 
-            Vencimiento.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            Vencimiento.HeaderText = "Vencimiento";
-            Vencimiento.MinimumWidth = 6;
-            Vencimiento.Name = "Vencimiento";
-            // 
-            // Estado
-            // 
-            Estado.HeaderText = "Estado";
-            Estado.MinimumWidth = 6;
-            Estado.Name = "Estado";
-            Estado.Width = 125;
             // 
             // panel3
             // 
@@ -384,7 +330,6 @@
             panel3.Name = "panel3";
             panel3.Size = new Size(1696, 68);
             panel3.TabIndex = 5;
-            
             // 
             // iconBtnBack
             // 
@@ -408,6 +353,65 @@
             // 
             timerBusqueda.Interval = 200;
             timerBusqueda.Tick += timerBusqueda_Tick;
+            // 
+            // Id
+            // 
+            Id.HeaderText = "Id";
+            Id.Name = "Id";
+            Id.Visible = false;
+            Id.Width = 150;
+            // 
+            // CodProd
+            // 
+            CodProd.HeaderText = "CodProd";
+            CodProd.Name = "CodProd";
+            CodProd.Visible = false;
+            // 
+            // Producto
+            // 
+            Producto.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            Producto.HeaderText = "Producto";
+            Producto.MinimumWidth = 6;
+            Producto.Name = "Producto";
+            // 
+            // Lote
+            // 
+            Lote.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
+            Lote.HeaderText = "Lote";
+            Lote.MinimumWidth = 6;
+            Lote.Name = "Lote";
+            Lote.Width = 150;
+            // 
+            // Serie
+            // 
+            Serie.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
+            Serie.HeaderText = "Serie";
+            Serie.MinimumWidth = 6;
+            Serie.Name = "Serie";
+            Serie.Width = 150;
+            // 
+            // Cantidad
+            // 
+            Cantidad.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
+            Cantidad.HeaderText = "Cantidad";
+            Cantidad.MinimumWidth = 6;
+            Cantidad.Name = "Cantidad";
+            Cantidad.Width = 150;
+            // 
+            // Vencimiento
+            // 
+            Vencimiento.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
+            Vencimiento.HeaderText = "Vencimiento";
+            Vencimiento.MinimumWidth = 6;
+            Vencimiento.Name = "Vencimiento";
+            Vencimiento.Width = 150;
+            // 
+            // Estado
+            // 
+            Estado.HeaderText = "Estado";
+            Estado.MinimumWidth = 6;
+            Estado.Name = "Estado";
+            Estado.Width = 125;
             // 
             // UC_Stock
             // 
@@ -454,6 +458,9 @@
         private ToolTip toolTip1;
         private ComboBox cmbDireccionOrden;
         private Label label3;
+        private Label lblPagina;
+        private Button btnSiguiente;
+        private Button btnAnterior;
         private DataGridViewTextBoxColumn Id;
         private DataGridViewTextBoxColumn CodProd;
         private DataGridViewTextBoxColumn Producto;
@@ -462,8 +469,5 @@
         private DataGridViewTextBoxColumn Cantidad;
         private DataGridViewTextBoxColumn Vencimiento;
         private DataGridViewTextBoxColumn Estado;
-        private Label lblPagina;
-        private Button btnSiguiente;
-        private Button btnAnterior;
     }
 }
