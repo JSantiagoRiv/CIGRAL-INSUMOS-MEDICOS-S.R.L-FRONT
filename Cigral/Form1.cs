@@ -126,6 +126,11 @@ namespace Cigral
                 btnEntidades.PerformClick();
             }
 
+            if (e.KeyCode == Keys.F7)
+            {
+                btnGestionProductos.PerformClick();
+            }
+
             if (e.KeyCode == Keys.F11)  //Incio
             {
                 btnInicio.PerformClick();
@@ -174,6 +179,12 @@ namespace Cigral
         {
             resaltarBoton(sender);
             MostrarPantalla(new UC_Entidades());
+        }
+
+        private void btnGestionProductos_Click(object sender, EventArgs e)
+        {
+            resaltarBoton(sender);
+            MostrarPantalla(new UC_Productos());
         }
     }
 }
