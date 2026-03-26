@@ -14,6 +14,8 @@ namespace Cigral
     {
 
         string Busqueda = string.Empty;
+        int idParaLaApi = 0; // Variable para almacenar el ID oculto
+        string tipoEntidad = string.Empty;
         public UC_Entidades()
         {
             InitializeComponent();
@@ -28,6 +30,8 @@ namespace Cigral
         private async void UC_Entidades_Load(object sender, EventArgs e)
         {
             // 1. FUNDAMENTAL: Evita que la tabla cree columnas automáticas para el ID y otros datos
+            Cursor.Current = Cursors.WaitCursor;
+
             dgvEntidades.AutoGenerateColumns = false;
 
             // 2. Vincular tus columnas visuales con las propiedades exactas de tu EntidadDto.
@@ -36,15 +40,31 @@ namespace Cigral
             RazonSocial.DataPropertyName = "RazonSocial";
             Cuit.DataPropertyName = "Cuit";
             TipoEntidad.DataPropertyName = "TipoEntidad";
+            try {
+                await CargarEntidades(); // Carga los datos al iniciar el control.
+            }
+            finally
+            {
+                Cursor.Current = Cursors.Default;
+            }
 
-            await CargarEntidades(); // Carga los datos al iniciar el control.
-        }
+
+            }
 
         private async Task CargarEntidades()
         {
-            var listaEntidades = await ApiServices.ObtenerEntidades(razonSocial: Busqueda);
-            dgvEntidades.DataSource = listaEntidades;
-            LimpiarCampos();
+            Cursor.Current = Cursors.WaitCursor;
+            try
+            {
+                var listaEntidades = await ApiServices.ObtenerEntidades(razonSocial: Busqueda);
+                dgvEntidades.DataSource = listaEntidades;
+                LimpiarCampos();
+            }
+            finally
+            {
+                Cursor.Current = Cursors.Default;
+            }
+            
         }
 
         private void LimpiarCampos()
@@ -92,7 +112,8 @@ namespace Cigral
                 EntidadDto entidadSeleccionada = (EntidadDto)fila.DataBoundItem;
 
                 // 3. ¡Listo! Aquí tienes tu ID extraído directamente del objeto
-                var idParaLaApi = entidadSeleccionada.IdOriginal;
+                idParaLaApi = entidadSeleccionada.IdOriginal;
+                tipoEntidad = entidadSeleccionada.TipoEntidad;
 
                 razonSocialBox.Text = entidadSeleccionada.RazonSocial;
                 emailBox.Text = entidadSeleccionada.Email;
@@ -100,6 +121,8 @@ namespace Cigral
                 cuitBox.Text = entidadSeleccionada.Cuit;
                 telefonoBox.Text = entidadSeleccionada.Telefono;
                 direccionBox.Text = entidadSeleccionada.Direccion;
+
+                modificarButton.Enabled = false; // Deshabilitar el botón hasta que se realice un cambio en los campos
 
                 // Aquí ya puedes hacer la petición a la base de datos o la API
                 // MessageBox.Show($"El ID oculto es: {idParaLaApi}");
@@ -110,6 +133,46 @@ namespace Cigral
         private void razonSocialBox_TextChanged(object sender, EventArgs e)
         {
             modificarButton.Enabled = true;
+        }
+
+        private async void modificarButton_Click(object sender, EventArgs e)
+        {
+            this.Enabled = false;
+            modificarButton.Enabled = false;
+            PantallaCarga pantallaCarga = new PantallaCarga();
+            pantallaCarga.Show(this);
+
+            try { 
+                var entidadModificada = new EntidadDto
+                {
+                    IdOriginal = idParaLaApi, // Usamos el ID oculto para identificar qué entidad modificar
+                    RazonSocial = razonSocialBox.Text,
+                    TipoEntidad = tipoEntidad,
+                    Email = emailBox.Text,
+                    Gln = glnBox.Text,
+                    Cuit = cuitBox.Text,
+                    Telefono = telefonoBox.Text,
+                    Direccion = direccionBox.Text
+                };
+
+                var resultado = await ApiServices.UpdateEntidad(entidadModificada);
+            
+                if (resultado != 0)
+                {
+                    await CargarEntidades();
+                    MessageBox.Show($"Entidad '{entidadModificada.RazonSocial}' actualizada correctamente.", "Actualización Exitosa", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    modificarButton.Enabled = false;
+                }
+                else
+                {
+                    modificarButton.Enabled = true;
+                }
+            }
+            finally
+            {
+                pantallaCarga.Close();
+                this.Enabled = true;
+            }
         }
     }
 }

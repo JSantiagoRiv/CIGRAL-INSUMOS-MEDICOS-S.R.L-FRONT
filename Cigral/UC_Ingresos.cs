@@ -147,6 +147,9 @@ namespace Cigral
 
             // 3. AHORA SÍ: BLOQUEAMOS EL BOTÓN CONTRA CLICS ANSIOSOS
             buttonConfirm.Enabled = false;
+            this.Enabled = false;
+            PantallaCarga pantallaCarga = new PantallaCarga();
+            pantallaCarga.Show(this);
             Cursor = Cursors.WaitCursor;
 
             try
@@ -305,6 +308,8 @@ namespace Cigral
                 // 4. VOLVEMOS A PRENDER EL BOTÓN
                 buttonConfirm.Enabled = true;
                 Cursor = Cursors.Default;
+                this.Enabled = true;
+                pantallaCarga.Close();
             }
         }
 
