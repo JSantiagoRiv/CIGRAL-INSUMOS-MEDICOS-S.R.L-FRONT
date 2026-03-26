@@ -270,6 +270,7 @@
             modificarButton.TabIndex = 25;
             modificarButton.Text = "Modificar";
             modificarButton.UseVisualStyleBackColor = true;
+            modificarButton.Click += modificarButton_Click;
             // 
             // UC_Entidades
             // 

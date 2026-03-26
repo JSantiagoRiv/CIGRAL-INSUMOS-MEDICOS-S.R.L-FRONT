@@ -290,7 +290,10 @@ namespace Cigral
 
             // APAGA EL BOTÓN ACÁ (Justo después de que el operario dijo "Sí, quiero confirmar")
             btnConfirmar.Enabled = false;
+            this.Enabled = false;
             Cursor = Cursors.WaitCursor;
+            PantallaCarga pantallaCarga = new PantallaCarga();
+            pantallaCarga.Show(this);
             int depositoSeleccionado = (int)cmbDeposito.SelectedValue;
 
             try
@@ -479,6 +482,8 @@ namespace Cigral
                 Cursor = Cursors.Default;
                 // 2. LO VOLVEMOS A PRENDER ACÁ (Así se habilita de vuelta termine bien o termine mal)
                 btnConfirmar.Enabled = true;
+                this.Enabled = true;
+                pantallaCarga.Close();
             }
         }
 

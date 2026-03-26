@@ -908,6 +908,8 @@ namespace Cigral.Services
             return filasConError;
         }
 
+        // MODULO ENTIDADES
+
         // Le agregamos "= null" para que los parámetros sean opcionales al llamarla
         public static async Task<List<EntidadDto>> ObtenerEntidades(string razonSocial = null, string cuit = null)
         {
@@ -945,7 +947,40 @@ namespace Cigral.Services
                 {
                     return new List<EntidadDto>();
                 }
+            } 
+        }
+
+        public static async Task<int> UpdateEntidad(EntidadDto entidad)
+        {
+            using (HttpClient client = GetClient())
+            {
+                try
+                {
+                    string json = JsonConvert.SerializeObject(entidad);
+                    var content = new StringContent(json, Encoding.UTF8, "application/json");
+                    
+                    var response = entidad.TipoEntidad=="Cliente" ? await client.PutAsync($"{BaseUrl}/Clientes/{entidad.IdOriginal}", content) : await client.PutAsync($"{BaseUrl}/Proveedores/{entidad.IdOriginal}", content);
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var jsonResponse = await response.Content.ReadAsStringAsync();
+                        var entidadResponse = JsonConvert.DeserializeObject<EntidadResponse>(jsonResponse);
+                        return entidadResponse.Id;
+                    }
+                    else
+                    {
+                        await MostrarErrorBackend(response, $"Error al actualizar algun campo de '{entidad.RazonSocial}'");
+                        return 0;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Fallo de conexión al modificar la entidad:\n{ex.Message}", "Fallo Crítico", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return 0;
+                }
             }
         }
+
+
     }
-}
+    }
