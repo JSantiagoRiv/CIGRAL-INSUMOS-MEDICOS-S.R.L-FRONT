@@ -807,7 +807,7 @@ namespace Cigral
                 if (buscador.IsDisposed) return;
 
                 // Mapeo dinámico para ajustar cómo se ven las columnas
-                var vistaResultados = lista.Select(x => new
+                var vistaResultados = lista.items.Select(x => new
                 {
                     ID = x.id,
                     Producto = x.nombre,
