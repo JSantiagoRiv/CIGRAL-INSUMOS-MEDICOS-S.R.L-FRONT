@@ -23,6 +23,8 @@ namespace Cigral.Services
 
         // --- DATOS EN MEMORIA DEL SISTEMA (SESIÓN) ---
         // Private Set: Cualquier pantalla puede leer quién está logueado, pero solo el Login puede modificarlos.
+
+        public static string AuthHeaderKey { get; set; }
         public static string TokenActual { get; private set; }
         public static string UsuarioActual { get; private set; }
         public static bool EsAdmin { get; private set; }
@@ -37,13 +39,15 @@ namespace Cigral.Services
             client.BaseAddress = new Uri(BaseUrl); // Indica la URL base
 
             // Si el Token no está vacío (el usuario pasó por el Login)
+            if (!string.IsNullOrEmpty(AuthHeaderKey))
+            {
+                client.DefaultRequestHeaders.Add("x-cigral-auth", AuthHeaderKey);
+            }
+
+            // 3. Si el usuario está logueado, inyectamos el JWT Bearer
             if (!string.IsNullOrEmpty(TokenActual))
             {
-                // Inyecta el token en la cabecera estándar de Autorización (Bearer Token)
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", TokenActual);
-
-                // También lo manda en una cabecera personalizada por requerimiento de la API
-                client.DefaultRequestHeaders.Add("x-cigral-auth", TokenActual);
             }
 
             return client;
@@ -902,6 +906,46 @@ namespace Cigral.Services
             }
 
             return filasConError;
+        }
+
+        // Le agregamos "= null" para que los parámetros sean opcionales al llamarla
+        public static async Task<List<EntidadDto>> ObtenerEntidades(string razonSocial = null, string cuit = null)
+        {
+            using (HttpClient client = GetClient())
+            {
+                try
+                {
+                    // 1. Iniciamos con la URL base y el paginado
+                    string url = $"{BaseUrl}/Clientes/entidades?pageSize=25";
+
+                    // 2. Agregamos Razón Social solo si no está vacía y la codificamos
+                    if (!string.IsNullOrWhiteSpace(razonSocial))
+                    {
+                        url += $"&RazonSocial={Uri.EscapeDataString(razonSocial)}";
+                    }
+
+                    // 3. Agregamos Cuit solo si no está vacío y lo codificamos
+                    if (!string.IsNullOrWhiteSpace(cuit))
+                    {
+                        url += $"&Cuit={Uri.EscapeDataString(cuit)}";
+                    }
+
+                    // 4. Hacemos la petición con la URL ya ensamblada y segura
+                    var response = await client.GetAsync(url);
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var json = await response.Content.ReadAsStringAsync();
+                        var paquete = JsonConvert.DeserializeObject<PaginadoResponse<EntidadDto>>(json);
+                        if (paquete != null && paquete.items != null) return paquete.items;
+                    }
+                    return new List<EntidadDto>();
+                }
+                catch
+                {
+                    return new List<EntidadDto>();
+                }
+            }
         }
     }
 }

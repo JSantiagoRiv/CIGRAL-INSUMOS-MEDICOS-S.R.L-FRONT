@@ -19,6 +19,20 @@ namespace Cigral.Models
         public string Direccion { get; set; }              // Dirección física.
     }
 
+    //Entidades.
+    //Molde para recibir datos basicos de una entidad desde la db.
+    public class EntidadDto
+    {
+        public int IdOriginal { get; set; }                        // Identificador único en la db.
+        public string TipoEntidad { get; set; }
+        public string RazonSocial { get; set; }            // Nombre de la empresa.
+        public string Gln { get; set; }                    // GLN del Proveedor.
+        public string Email { get; set; }                  // Email de contacto.
+        public string Cuit { get; set; }                   // Cuit del Proveedor.
+        public string Telefono { get; set; }               // Teléfono de contacto.
+        public string Direccion { get; set; }              // Dirección física.
+    }
+
 
 
 
