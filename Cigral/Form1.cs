@@ -123,7 +123,7 @@ namespace Cigral
 
             if (e.KeyCode == Keys.F6)
             {
-                btnEntidades.PerformClick();
+                btnEntidades.PerformClick(); // Entidades
             }
 
             if (e.KeyCode == Keys.F7)
@@ -135,6 +135,8 @@ namespace Cigral
             {
                 btnInicio.PerformClick();
             }
+
+            
         }
 
         // --- EVENTOS CLICK DE LOS BOTONES DEL MENÚ ---

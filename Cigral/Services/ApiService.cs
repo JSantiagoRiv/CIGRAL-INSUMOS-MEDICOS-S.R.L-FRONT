@@ -739,27 +739,45 @@ namespace Cigral.Services
         /// <summary>
         /// Trae la lista de clientes para armar remitos de egreso.
         /// </summary>
-        public static async Task<List<ClienteDto>> ObtenerClientes()
+        public static async Task<List<ClienteDto>> ObtenerClientes(string busqueda = "")
         {
             using (HttpClient client = GetClient())
             {
                 try
                 {
-                    var response = await client.GetAsync($"{BaseUrl}/Clientes");
+                    // 1. Armamos la URL base. Le pedimos 50 resultados para la lista.
+                    // (Asegurate de que sea /Cliente o /Clientes según tu API)
+                    string url = $"{BaseUrl}/Clientes?PageNumber=1&PageSize=50";
+
+                    // 2. Si el usuario tipeó algo, le agregamos el parámetro "RazonSocial" a la URL
+                    if (!string.IsNullOrWhiteSpace(busqueda))
+                    {
+                        url += $"&RazonSocial={Uri.EscapeDataString(busqueda.Trim())}";
+                    }
+
+                    var response = await client.GetAsync(url);
                     string json = await response.Content.ReadAsStringAsync();
 
                     if (response.IsSuccessStatusCode)
                     {
-                        var objetoJson = JObject.Parse(json);
-                        if (objetoJson["items"] != null) return objetoJson["items"].ToObject<List<ClienteDto>>();
+                        // 3. Como Swagger nos mostró que devuelve { "items": [...], "totalCount": ... }
+                        // Usamos 'dynamic' para ir directo a buscar la propiedad "items" sin tener que crear clases nuevas.
+                        dynamic resultado = Newtonsoft.Json.JsonConvert.DeserializeObject(json);
 
-                        return JsonConvert.DeserializeObject<List<ClienteDto>>(json);
+                        if (resultado != null && resultado.items != null)
+                        {
+                            // Transformamos esos "items" en tu lista de ClienteDto
+                            return resultado.items.ToObject<List<ClienteDto>>();
+                        }
+
+                        return new List<ClienteDto>();
                     }
+
                     return new List<ClienteDto>();
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
-                    MessageBox.Show($"Error al leer la lista de clientes:\n{ex.Message}", "Error Interno", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    // Si falla la red, devolvemos vacío para no romper la pantalla
                     return new List<ClienteDto>();
                 }
             }
