@@ -11,8 +11,8 @@ namespace Cigral
     /// </summary>
     public partial class FormMain : Form
     {
-        
-       // Variable global para guardar cuál es el botón del menú que está activo actualmente
+
+        // Variable global para guardar cuál es el botón del menú que está activo actualmente
         private IconButton currentBtn;
 
         public FormMain()
@@ -121,6 +121,11 @@ namespace Cigral
                 btnHistorialRemitos.PerformClick();  //Historial de Remitos
             }
 
+            if (e.KeyCode == Keys.F6)
+            {
+                btnEntidades.PerformClick();
+            }
+
             if (e.KeyCode == Keys.F11)  //Incio
             {
                 btnInicio.PerformClick();
@@ -165,6 +170,10 @@ namespace Cigral
             MostrarPantalla(new UC_Remitos());
         }
 
-       
+        private void btnEntidades_Click(object sender, EventArgs e)
+        {
+            resaltarBoton(sender);
+            MostrarPantalla(new UC_Entidades());
+        }
     }
 }
