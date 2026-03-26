@@ -28,17 +28,19 @@
         /// </summary>
         private void InitializeComponent()
         {
-            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle4 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle5 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle6 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle7 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle8 = new DataGridViewCellStyle();
+            components = new System.ComponentModel.Container();
+            DataGridViewCellStyle dataGridViewCellStyle9 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle10 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle11 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle12 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle13 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle14 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle15 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle16 = new DataGridViewCellStyle();
             panel1 = new Panel();
             labelTitulo = new Label();
             groupBox1 = new GroupBox();
+            txtBuscarCliente = new TextBox();
             txtComprobante = new TextBox();
             label6 = new Label();
             btnAgregarProveedor = new FontAwesome.Sharp.IconButton();
@@ -49,9 +51,9 @@
             label3 = new Label();
             textRemito = new TextBox();
             label1 = new Label();
-            comboProv = new ComboBox();
             label2 = new Label();
             panel2 = new Panel();
+            lstClientes = new ListBox();
             lblIngresoManual = new LinkLabel();
             label5 = new Label();
             textScanner = new TextBox();
@@ -69,6 +71,7 @@
             iconBtnBack = new FontAwesome.Sharp.IconButton();
             buttonCancel = new Button();
             buttonConfirm = new Button();
+            timerBusquedaCliente = new System.Windows.Forms.Timer(components);
             panel1.SuspendLayout();
             groupBox1.SuspendLayout();
             panel2.SuspendLayout();
@@ -101,6 +104,7 @@
             // 
             // groupBox1
             // 
+            groupBox1.Controls.Add(txtBuscarCliente);
             groupBox1.Controls.Add(txtComprobante);
             groupBox1.Controls.Add(label6);
             groupBox1.Controls.Add(btnAgregarProveedor);
@@ -111,7 +115,6 @@
             groupBox1.Controls.Add(label3);
             groupBox1.Controls.Add(textRemito);
             groupBox1.Controls.Add(label1);
-            groupBox1.Controls.Add(comboProv);
             groupBox1.Controls.Add(label2);
             groupBox1.Dock = DockStyle.Top;
             groupBox1.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
@@ -123,6 +126,16 @@
             groupBox1.TabIndex = 1;
             groupBox1.TabStop = false;
             groupBox1.Text = "Datos del Proveedor";
+            // 
+            // txtBuscarCliente
+            // 
+            txtBuscarCliente.Enabled = false;
+            txtBuscarCliente.Font = new Font("Segoe UI", 12F);
+            txtBuscarCliente.Location = new Point(90, 36);
+            txtBuscarCliente.Name = "txtBuscarCliente";
+            txtBuscarCliente.Size = new Size(179, 29);
+            txtBuscarCliente.TabIndex = 16;
+            txtBuscarCliente.TextChanged += txtBuscarCliente_TextChanged;
             // 
             // txtComprobante
             // 
@@ -232,18 +245,6 @@
             label1.TabIndex = 2;
             label1.Text = "Nro. de Remito:";
             // 
-            // comboProv
-            // 
-            comboProv.DropDownStyle = ComboBoxStyle.DropDownList;
-            comboProv.Enabled = false;
-            comboProv.Font = new Font("Segoe UI", 12F);
-            comboProv.FormattingEnabled = true;
-            comboProv.Location = new Point(97, 35);
-            comboProv.Margin = new Padding(3, 2, 3, 2);
-            comboProv.Name = "comboProv";
-            comboProv.Size = new Size(172, 29);
-            comboProv.TabIndex = 1;
-            // 
             // label2
             // 
             label2.AutoSize = true;
@@ -257,6 +258,7 @@
             // panel2
             // 
             panel2.BackColor = SystemColors.ScrollBar;
+            panel2.Controls.Add(lstClientes);
             panel2.Controls.Add(lblIngresoManual);
             panel2.Controls.Add(label5);
             panel2.Controls.Add(textScanner);
@@ -267,6 +269,17 @@
             panel2.Name = "panel2";
             panel2.Size = new Size(1696, 139);
             panel2.TabIndex = 2;
+            // 
+            // lstClientes
+            // 
+            lstClientes.Font = new Font("Segoe UI", 12F);
+            lstClientes.FormattingEnabled = true;
+            lstClientes.Location = new Point(90, -27);
+            lstClientes.Name = "lstClientes";
+            lstClientes.Size = new Size(179, 277);
+            lstClientes.TabIndex = 17;
+            lstClientes.Visible = false;
+            lstClientes.SelectedIndexChanged += lstClientes_SelectedIndexChanged_1;
             // 
             // lblIngresoManual
             // 
@@ -318,14 +331,14 @@
             // 
             dgvIngreso.BackgroundColor = Color.White;
             dgvIngreso.BorderStyle = BorderStyle.None;
-            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = Color.MediumSeaGreen;
-            dataGridViewCellStyle1.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-            dataGridViewCellStyle1.ForeColor = Color.White;
-            dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
-            dgvIngreso.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle9.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle9.BackColor = Color.MediumSeaGreen;
+            dataGridViewCellStyle9.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            dataGridViewCellStyle9.ForeColor = Color.White;
+            dataGridViewCellStyle9.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle9.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle9.WrapMode = DataGridViewTriState.True;
+            dgvIngreso.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle9;
             dgvIngreso.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dgvIngreso.Columns.AddRange(new DataGridViewColumn[] { id, Producto, Lote, Vencimiento, Serie, Cantidad, InfoAdicional, colEliminar });
             dgvIngreso.Dock = DockStyle.Fill;
@@ -340,9 +353,9 @@
             // 
             // id
             // 
-            dataGridViewCellStyle2.SelectionBackColor = Color.White;
-            dataGridViewCellStyle2.SelectionForeColor = Color.Black;
-            id.DefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle10.SelectionBackColor = Color.White;
+            dataGridViewCellStyle10.SelectionForeColor = Color.Black;
+            id.DefaultCellStyle = dataGridViewCellStyle10;
             id.HeaderText = "id";
             id.Name = "id";
             id.ReadOnly = true;
@@ -351,9 +364,9 @@
             // Producto
             // 
             Producto.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            dataGridViewCellStyle3.SelectionBackColor = Color.White;
-            dataGridViewCellStyle3.SelectionForeColor = Color.Black;
-            Producto.DefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle11.SelectionBackColor = Color.White;
+            dataGridViewCellStyle11.SelectionForeColor = Color.Black;
+            Producto.DefaultCellStyle = dataGridViewCellStyle11;
             Producto.FillWeight = 30.9278278F;
             Producto.HeaderText = "Producto";
             Producto.MinimumWidth = 6;
@@ -362,9 +375,9 @@
             // Lote
             // 
             Lote.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
-            dataGridViewCellStyle4.SelectionBackColor = Color.White;
-            dataGridViewCellStyle4.SelectionForeColor = Color.Black;
-            Lote.DefaultCellStyle = dataGridViewCellStyle4;
+            dataGridViewCellStyle12.SelectionBackColor = Color.White;
+            dataGridViewCellStyle12.SelectionForeColor = Color.Black;
+            Lote.DefaultCellStyle = dataGridViewCellStyle12;
             Lote.FillWeight = 376.2887F;
             Lote.HeaderText = "Lote";
             Lote.MinimumWidth = 6;
@@ -374,9 +387,9 @@
             // Vencimiento
             // 
             Vencimiento.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
-            dataGridViewCellStyle5.SelectionBackColor = Color.White;
-            dataGridViewCellStyle5.SelectionForeColor = Color.Black;
-            Vencimiento.DefaultCellStyle = dataGridViewCellStyle5;
+            dataGridViewCellStyle13.SelectionBackColor = Color.White;
+            dataGridViewCellStyle13.SelectionForeColor = Color.Black;
+            Vencimiento.DefaultCellStyle = dataGridViewCellStyle13;
             Vencimiento.FillWeight = 30.9278278F;
             Vencimiento.HeaderText = "Vencimiento";
             Vencimiento.MinimumWidth = 6;
@@ -386,9 +399,9 @@
             // Serie
             // 
             Serie.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
-            dataGridViewCellStyle6.SelectionBackColor = Color.White;
-            dataGridViewCellStyle6.SelectionForeColor = Color.Black;
-            Serie.DefaultCellStyle = dataGridViewCellStyle6;
+            dataGridViewCellStyle14.SelectionBackColor = Color.White;
+            dataGridViewCellStyle14.SelectionForeColor = Color.Black;
+            Serie.DefaultCellStyle = dataGridViewCellStyle14;
             Serie.FillWeight = 30.9278278F;
             Serie.HeaderText = "Serie";
             Serie.MinimumWidth = 6;
@@ -398,9 +411,9 @@
             // Cantidad
             // 
             Cantidad.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
-            dataGridViewCellStyle7.SelectionBackColor = Color.White;
-            dataGridViewCellStyle7.SelectionForeColor = Color.Black;
-            Cantidad.DefaultCellStyle = dataGridViewCellStyle7;
+            dataGridViewCellStyle15.SelectionBackColor = Color.White;
+            dataGridViewCellStyle15.SelectionForeColor = Color.Black;
+            Cantidad.DefaultCellStyle = dataGridViewCellStyle15;
             Cantidad.FillWeight = 30.9278278F;
             Cantidad.HeaderText = "Cantidad";
             Cantidad.MinimumWidth = 6;
@@ -418,13 +431,13 @@
             // 
             // colEliminar
             // 
-            dataGridViewCellStyle8.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle8.BackColor = Color.White;
-            dataGridViewCellStyle8.Font = new Font("Microsoft Sans Serif", 8.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            dataGridViewCellStyle8.ForeColor = Color.Red;
-            dataGridViewCellStyle8.SelectionBackColor = Color.Transparent;
-            dataGridViewCellStyle8.SelectionForeColor = Color.Red;
-            colEliminar.DefaultCellStyle = dataGridViewCellStyle8;
+            dataGridViewCellStyle16.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle16.BackColor = Color.White;
+            dataGridViewCellStyle16.Font = new Font("Microsoft Sans Serif", 8.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            dataGridViewCellStyle16.ForeColor = Color.Red;
+            dataGridViewCellStyle16.SelectionBackColor = Color.Transparent;
+            dataGridViewCellStyle16.SelectionForeColor = Color.Red;
+            colEliminar.DefaultCellStyle = dataGridViewCellStyle16;
             colEliminar.FlatStyle = FlatStyle.Popup;
             colEliminar.HeaderText = "Acciones";
             colEliminar.Name = "colEliminar";
@@ -500,6 +513,11 @@
             buttonConfirm.UseVisualStyleBackColor = false;
             buttonConfirm.Click += buttonConfirm_Click;
             // 
+            // timerBusquedaCliente
+            // 
+            timerBusquedaCliente.Interval = 200;
+            timerBusquedaCliente.Tick += timerBusquedaCliente_Tick;
+            // 
             // UC_Ingresos
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -533,7 +551,6 @@
         private Label label3;
         private TextBox textRemito;
         private Label label1;
-        private ComboBox comboProv;
         private DateTimePicker dateTimePicker1;
         private Panel panel2;
         private Label label4;
@@ -559,5 +576,8 @@
         private DataGridViewTextBoxColumn Cantidad;
         private DataGridViewTextBoxColumn InfoAdicional;
         private DataGridViewButtonColumn colEliminar;
+        private TextBox txtBuscarCliente;
+        private ListBox lstClientes;
+        private System.Windows.Forms.Timer timerBusquedaCliente;
     }
 }

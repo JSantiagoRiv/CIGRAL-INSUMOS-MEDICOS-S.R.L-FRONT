@@ -226,6 +226,7 @@
             groupBox1.TabIndex = 6;
             groupBox1.TabStop = false;
             groupBox1.Text = "Datos del Cliente";
+            groupBox1.Enter += groupBox1_Enter;
             // 
             // lstClientes
             // 
@@ -241,6 +242,7 @@
             // 
             // txtBuscarCliente
             // 
+            txtBuscarCliente.Enabled = false;
             txtBuscarCliente.Font = new Font("Segoe UI", 12F);
             txtBuscarCliente.Location = new Point(84, 36);
             txtBuscarCliente.Name = "txtBuscarCliente";
@@ -363,6 +365,7 @@
             panel2.Name = "panel2";
             panel2.Size = new Size(1696, 139);
             panel2.TabIndex = 7;
+            panel2.Paint += panel2_Paint;
             // 
             // linkLabel1
             // 

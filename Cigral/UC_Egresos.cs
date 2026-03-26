@@ -82,11 +82,45 @@ namespace Cigral
                 cmbDeposito.ValueMember = "Id";
                 cmbDeposito.SelectedIndex = -1;
 
-                // Ya no cargamos todos los clientes de golpe acá, porque tenemos el buscador en vivo
+                // --- NUEVA LÓGICA DE DEPÓSITO POR DEFECTO ---
+
+                // 1. Recuperamos el último ID guardado en las configuraciones
+                int idGuardado = Properties.Settings.Default.UltimoDepositoId;
+
+                if (idGuardado > 0)
+                {
+                    // Si hay un depósito guardado, lo seleccionamos
+                    cmbDeposito.SelectedValue = idGuardado;
+                }
+                else
+                {
+                    // Si es la primera vez (vale 0), lo dejamos vacío o seleccionamos el primero
+                    cmbDeposito.SelectedIndex = -1;
+                }
+
+                // 2. Nos suscribimos al evento para detectar cuando el usuario lo cambie manualmente.
+                // Usamos SelectionChangeCommitted en vez de SelectedIndexChanged para que 
+                // no se dispare accidentalmente mientras la lista se está rellenando por código.
+                cmbDeposito.SelectionChangeCommitted += CmbDeposito_SelectionChangeCommitted;
+
+                // --------------------------------------------
+
             }
             catch (Exception ex)
             {
                 MessageBox.Show("Error al cargar depósitos: " + ex.Message);
+            }
+        }
+
+        private void CmbDeposito_SelectionChangeCommitted(object sender, EventArgs e)
+        {
+            if (cmbDeposito.SelectedValue != null && int.TryParse(cmbDeposito.SelectedValue.ToString(), out int idSeleccionado))
+            {
+                // Actualizamos la variable global
+                Properties.Settings.Default.UltimoDepositoId = idSeleccionado;
+
+                // Guardamos físicamente el cambio para que sobreviva al cerrar la aplicación
+                Properties.Settings.Default.Save();
             }
         }
 
@@ -126,7 +160,7 @@ namespace Cigral
                     lstClientes.DisplayMember = "razonSocial";
                     lstClientes.ValueMember = "id";
 
-                    
+
                     lstClientes.Parent = this; // Hace que la lista sea hija de la pantalla principal, no de los paneles
                     Point posicionTextBox = txtBuscarCliente.Parent.PointToScreen(txtBuscarCliente.Location);
                     lstClientes.Location = this.PointToClient(new Point(posicionTextBox.X, posicionTextBox.Y + txtBuscarCliente.Height));
@@ -812,6 +846,21 @@ namespace Cigral
                     dgvEgreso.Rows.RemoveAt(e.RowIndex);
                 }
             }
+        }
+
+        private void panel2_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        private void groupBox1_Enter(object sender, EventArgs e)
+        {
+
+        }
+
+        private void panel3_Paint(object sender, PaintEventArgs e)
+        {
+
         }
     }
 }

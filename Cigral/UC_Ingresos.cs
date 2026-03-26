@@ -15,6 +15,9 @@ namespace Cigral
     /// </summary>
     public partial class UC_Ingresos : UserControl
     {
+
+        private int idClienteSeleccionado = 0;
+        private bool eligiendoDeLista = false;
         public UC_Ingresos()
         {
             InitializeComponent();
@@ -27,26 +30,59 @@ namespace Cigral
         /// </summary>
         private async void UC_Ingresos_Load(object sender, EventArgs e)
         {
-            // Cargamos listas desde la API
-            await CargarProveedores();
-
-            var depositos = await ApiServices.ObtenerDepositos();
-            cmbDeposito.DataSource = depositos;
-            cmbDeposito.DisplayMember = "Nombre"; // Lo que lee el usuario
-            cmbDeposito.ValueMember = "Id";       // El dato real que viaja a la BD
-
-            // Usamos ActiveControl en lugar de .Focus() porque en los UserControls 
-            // a veces el Focus() falla si la pantalla todavía se está dibujando.
             this.ActiveControl = textScanner;
+
+            try
+            {
+                var depositos = await ApiServices.ObtenerDepositos();
+                cmbDeposito.DataSource = depositos;
+                cmbDeposito.DisplayMember = "Nombre";
+                cmbDeposito.ValueMember = "Id";
+                cmbDeposito.SelectedIndex = -1;
+
+                // --- NUEVA LÓGICA DE DEPÓSITO POR DEFECTO ---
+
+                // 1. Recuperamos el último ID guardado en las configuraciones
+                int idGuardado = Properties.Settings.Default.UltimoDepositoId;
+
+                if (idGuardado > 0)
+                {
+                    // Si hay un depósito guardado, lo seleccionamos
+                    cmbDeposito.SelectedValue = idGuardado;
+                }
+                else
+                {
+                    // Si es la primera vez (vale 0), lo dejamos vacío o seleccionamos el primero
+                    cmbDeposito.SelectedIndex = -1;
+                }
+
+                // 2. Nos suscribimos al evento para detectar cuando el usuario lo cambie manualmente.
+                // Usamos SelectionChangeCommitted en vez de SelectedIndexChanged para que 
+                // no se dispare accidentalmente mientras la lista se está rellenando por código.
+                cmbDeposito.SelectionChangeCommitted += CmbDeposito_SelectionChangeCommitted;
+
+                // --------------------------------------------
+
+                this.ActiveControl = textScanner;
+
+                // Ya no cargamos todos los clientes de golpe acá, porque tenemos el buscador en vivo
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error al cargar depósitos: " + ex.Message);
+            }
         }
 
-        private async Task CargarProveedores()
+        private void CmbDeposito_SelectionChangeCommitted(object sender, EventArgs e)
         {
-            var lista = await ApiServices.ObtenerProveedores();
-            comboProv.DataSource = lista;
-            comboProv.DisplayMember = "RazonSocial";
-            comboProv.ValueMember = "Id";
-            comboProv.SelectedIndex = -1; // Arranca vacío
+            if (cmbDeposito.SelectedValue != null && int.TryParse(cmbDeposito.SelectedValue.ToString(), out int idSeleccionado))
+            {
+                // Actualizamos la variable global
+                Properties.Settings.Default.UltimoDepositoId = idSeleccionado;
+
+                // Guardamos físicamente el cambio para que sobreviva al cerrar la aplicación
+                Properties.Settings.Default.Save();
+            }
         }
 
         // --- LÓGICA DE GUARDADO ---
@@ -68,7 +104,7 @@ namespace Cigral
 
             if (chkConRemito.Checked)
             {
-                if (comboProv.SelectedValue == null)
+                if (idClienteSeleccionado == 0)
                 {
                     MessageBox.Show("Debe seleccionar un Proveedor para continuar.", "Falta Proveedor", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
@@ -132,13 +168,13 @@ namespace Cigral
                 }
 
                 // (Opcional) Validar LOTE 
-                 string loteStr = fila.Cells["Lote"].Value?.ToString() ?? "";
+                string loteStr = fila.Cells["Lote"].Value?.ToString() ?? "";
                 if (string.IsNullOrWhiteSpace(loteStr))
                 {
                     MessageBox.Show($"Falta ingresar el Lote para '{nombreProducto}'.", "Dato Incompleto", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    return; 
-                } 
-                
+                    return;
+                }
+
             }
 
             // 2. PREGUNTAMOS SI ESTÁ SEGURO
@@ -206,7 +242,7 @@ namespace Cigral
                     var requestRemito = new RemitoIngresoRequest
                     {
                         DepositoId = depositoSeleccionado,
-                        EntidadId = (int)comboProv.SelectedValue,
+                        EntidadId = (int)idClienteSeleccionado,
                         NumeroRemito = textRemito.Text,
                         ComprobanteAsociado = txtComprobante.Text.Trim(),
                         Observaciones = "Ingreso desde el sistema",
@@ -355,7 +391,7 @@ namespace Cigral
             dgvIngreso.Rows.Clear();
             textRemito.Clear();
             chkConRemito.Checked = false;
-            comboProv.SelectedIndex = -1;
+            idClienteSeleccionado = 0;
             textScanner.Focus();
         }
 
@@ -383,8 +419,8 @@ namespace Cigral
                     MessageBox.Show("Hubo un error al intentar decodificar el código de barras.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
-                    
-                   
+
+
                 // 2. VALIDAR SERIE DUPLICADA EN LA GRILLA
                 foreach (DataGridViewRow fila in dgvIngreso.Rows)
                 {
@@ -552,7 +588,7 @@ namespace Cigral
         /// </summary>
         private async void chkConRemito_CheckedChanged(object sender, EventArgs e)
         {
-            comboProv.Enabled = chkConRemito.Checked;
+            txtBuscarCliente.Enabled = chkConRemito.Checked;
             btnAgregarProveedor.Enabled = chkConRemito.Checked;
             txtComprobante.Enabled = chkConRemito.Checked;
 
@@ -565,7 +601,7 @@ namespace Cigral
             {
                 textRemito.ReadOnly = false;
                 textRemito.Clear();
-                comboProv.SelectedIndex = -1;
+                idClienteSeleccionado = 0;
                 txtComprobante.Clear();
             }
         }
@@ -733,8 +769,11 @@ namespace Cigral
 
                     if (idNuevo > 0)
                     {
-                        await CargarProveedores(); // Recarga la lista desde la BD
-                        comboProv.SelectedValue = idNuevo; // Autoselecciona el recién creado
+                        eligiendoDeLista = true;
+                        txtBuscarCliente.Text = txtRazon.Text;
+                        idClienteSeleccionado = idNuevo;
+                        eligiendoDeLista = false;
+
                         MessageBox.Show("¡Proveedor creado con éxito!", "Excelente", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
                 }
@@ -973,6 +1012,90 @@ namespace Cigral
                 dgvIngreso.CurrentCell = fila.Cells["Lote"];
                 dgvIngreso.BeginEdit(true);
             }
+        }
+
+        private void txtBuscarCliente_TextChanged(object sender, EventArgs e)
+        {
+            if (eligiendoDeLista) return;
+
+            idClienteSeleccionado = 0;
+
+            timerBusquedaCliente.Stop();
+            timerBusquedaCliente.Start();
+        }
+
+        private async void timerBusquedaCliente_Tick(object sender, EventArgs e)
+        {
+            timerBusquedaCliente.Stop();
+
+            string busqueda = txtBuscarCliente.Text.Trim();
+
+            if (busqueda.Length < 2)
+            {
+                lstClientes.Visible = false;
+                return;
+            }
+
+            Cursor = Cursors.WaitCursor;
+            try
+            {
+                // Buscamos en la API
+                var listaClientes = await ApiServices.ObtenerProveedores(busqueda);
+
+                if (listaClientes != null && listaClientes.Count > 0)
+                {
+                    lstClientes.DataSource = listaClientes;
+                    lstClientes.DisplayMember = "razonSocial";
+                    lstClientes.ValueMember = "id";
+
+
+                    lstClientes.Parent = this; // Hace que la lista sea hija de la pantalla principal, no de los paneles
+                    Point posicionTextBox = txtBuscarCliente.Parent.PointToScreen(txtBuscarCliente.Location);
+                    lstClientes.Location = this.PointToClient(new Point(posicionTextBox.X, posicionTextBox.Y + txtBuscarCliente.Height));
+
+                    lstClientes.Height = 120;
+                    lstClientes.Width = txtBuscarCliente.Width;
+
+                    lstClientes.BringToFront(); // Lo trae al frente de TODO
+                    lstClientes.Visible = true;
+                }
+                else
+                {
+                    lstClientes.Visible = false;
+                }
+            }
+            catch (Exception ex)
+            {
+                // Ignoramos micro-errores de red mientras escribe
+            }
+            finally
+            {
+                Cursor = Cursors.Default;
+            }
+        }
+
+        private void lstClientes_SelectedIndexChanged(object sender, EventArgs e) { }
+
+        private void lstClientes_Click(object sender, EventArgs e)
+        {
+            if (lstClientes.SelectedItem != null)
+            {
+                eligiendoDeLista = true;
+
+                // ATRAPAMOS EL ID OCULTO
+                idClienteSeleccionado = Convert.ToInt32(lstClientes.SelectedValue);
+
+                var cliente = (ClienteDto)lstClientes.SelectedItem;
+                txtBuscarCliente.Text = cliente.razonSocial;
+
+                lstClientes.Visible = false;
+                eligiendoDeLista = false;
+            }
+        }
+
+        private void lstClientes_SelectedIndexChanged_1(object sender, EventArgs e)
+        {
+
         }
     }
 }

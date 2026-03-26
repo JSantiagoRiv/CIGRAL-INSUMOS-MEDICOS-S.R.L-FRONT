@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -676,13 +677,19 @@ namespace Cigral.Services
         /// <summary>
         /// Trae la lista de proveedores.
         /// </summary>
-        public static async Task<List<ProveedorDto>> ObtenerProveedores()
+        public static async Task<List<ProveedorDto>> ObtenerProveedores(string busqueda)
         {
             using (HttpClient client = GetClient())
             {
                 try
                 {
-                    var response = await client.GetAsync($"{BaseUrl}/Proveedores?pageSize=100");
+                    string url = $"{BaseUrl}/Proveedores?pageSize=25&PageNumber=1";
+                    if (string.IsNullOrWhiteSpace(busqueda) == false)
+                    {
+                        url += $"&RazonSocial={Uri.EscapeDataString(busqueda.Trim())}";
+                    }
+                    var response = await client.GetAsync(url);
+                    
                     if (response.IsSuccessStatusCode)
                     {
                         var json = await response.Content.ReadAsStringAsync();
