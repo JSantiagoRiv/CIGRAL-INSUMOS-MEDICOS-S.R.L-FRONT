@@ -42,6 +42,7 @@ namespace Cigral
             // Trae los datos antes de setear los combos para que no hagan doble búsqueda accidental
             await CargarDatosFiltrados();
 
+
             cmbOrdenar.SelectedIndex = -1;       // -1 significa que arranca vacío (sin orden específico)
             cmbDireccionOrden.SelectedIndex = 0; // 0 es "Ascendente" por defecto
         }

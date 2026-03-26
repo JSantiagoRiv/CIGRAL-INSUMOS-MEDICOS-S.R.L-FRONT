@@ -33,6 +33,17 @@ namespace Cigral.Models
         public string Direccion { get; set; }              // Dirección física.
     }
 
+    public class EntidadResponse
+    {
+        public int Id { get; set; }                        // Identificador único en la db.
+        public string RazonSocial { get; set; }            // Nombre de la empresa.
+        public string Gln { get; set; }                    // GLN del Proveedor.
+        public string Email { get; set; }                  // Email de contacto.
+        public string Cuit { get; set; }                   // Cuit del Proveedor.
+        public string Telefono { get; set; }               // Teléfono de contacto.
+        public string Direccion { get; set; }              // Dirección física.
+    }
+
 
 
 
