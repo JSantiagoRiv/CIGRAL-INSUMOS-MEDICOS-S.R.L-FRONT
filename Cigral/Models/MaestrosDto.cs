@@ -213,8 +213,22 @@ namespace Cigral.Models
     {
         public int id { get; set; }
         public string nombre { get; set; }
+        public string marca { get; set; }
         public string gtin { get; set; }
         public string codigoGenerico { get; set; }
+        public string codigoInterno { get; set; }
+        public string descripcion { get; set; }
+    }
+
+    public class ProductoUpdateDto
+    {
+        public string nombre { get; set; }
+        public string marca { get; set; }
+        public string gtin { get; set; }
+        public string codigoGenerico { get; set; }
+        public string codigoInterno { get; set; }
+        public int precio { get; set; }
+        public string descripcion { get; set; }
     }
 
     // El molde principal que ataja toda la respuesta del servidor

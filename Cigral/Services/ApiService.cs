@@ -565,32 +565,66 @@ namespace Cigral.Services
         /// <summary>
         /// Busca productos en el catálogo maestro usando el texto ingresado.
         /// </summary>
-        public static async Task<List<ProductoResponseDto>> ObtenerProductosCatalogo(string filtroNombre)
+        public static async Task<PaginadoResponse<ProductoResponseDto>> ObtenerProductosCatalogo(string filtroNombre, int pageNumber = 1, int pageSize = 25)
         {
             using (HttpClient client = GetClient())
             {
                 try
                 {
-                    string url = $"{BaseUrl}/Productos?Nombre={filtroNombre}&PageNumber=1&PageSize=100";
+                    string url = $"{BaseUrl}/Productos?PageNumber={pageNumber}&PageSize={pageSize}";
+
+                    if(!string.IsNullOrWhiteSpace(filtroNombre)) url += $"&Nombre={Uri.EscapeDataString(filtroNombre.Trim())}";
+
                     var response = await client.GetAsync(url);
                     string json = await response.Content.ReadAsStringAsync();
 
                     if (response.IsSuccessStatusCode)
                     {
-                        var resultado = JsonConvert.DeserializeObject<ProductoPaginadoResponse>(json);
-                        if (resultado == null || resultado.items == null) return new List<ProductoResponseDto>();
-                        return resultado.items;
+                        var resultado = JsonConvert.DeserializeObject<PaginadoResponse<ProductoResponseDto>>(json);
+                        if (resultado == null || resultado.items == null) return new PaginadoResponse<ProductoResponseDto>();
+                        return resultado;
                     }
                     else
                     {
                         MessageBox.Show($"El servidor rebotó la búsqueda en el catálogo.\nStatus: {response.StatusCode}\nDetalle:\n{json}", "Error del Backend", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                        return new List<ProductoResponseDto>();
+                        return new PaginadoResponse<ProductoResponseDto>();
                     }
                 }
                 catch (Exception ex)
                 {
                     MessageBox.Show($"Error interno al buscar en el catálogo:\n{ex.Message}", "Error de Conexión", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return new List<ProductoResponseDto>();
+                    return new PaginadoResponse<ProductoResponseDto>();
+                }
+            }
+        }
+
+        public static async Task<int> UpdateProducto(ProductoUpdateDto producto, int id)
+        {
+            using (HttpClient client = GetClient())
+            {
+                try
+                {
+                    string json = JsonConvert.SerializeObject(producto);
+                    var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                    var response = await client.PutAsync($"{BaseUrl}/Productos/{id}", content);
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var jsonResponse = await response.Content.ReadAsStringAsync();
+                        var productoResponse = JsonConvert.DeserializeObject<ProductoResponseDto>(jsonResponse);
+                        return productoResponse.id;
+                    }
+                    else
+                    {
+                        await MostrarErrorBackend(response, $"Error al actualizar algun campo de '{producto.nombre}'");
+                        return 0;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Fallo de conexión al modificar el producto:\n{ex.Message}", "Fallo Crítico", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return 0;
                 }
             }
         }

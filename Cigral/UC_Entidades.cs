@@ -47,9 +47,7 @@ namespace Cigral
             {
                 Cursor.Current = Cursors.Default;
             }
-
-
-            }
+        }
 
         private async Task CargarEntidades()
         {
