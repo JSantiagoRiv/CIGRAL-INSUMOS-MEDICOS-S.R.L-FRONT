@@ -29,10 +29,12 @@
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
             panel1 = new Panel();
             labelTitulo = new Label();
             groupBox1 = new GroupBox();
+            txtBusquedaNombre = new TextBox();
+            lblBusquedaNombre = new Label();
             dtpHasta = new DateTimePicker();
             btnExportar = new FontAwesome.Sharp.IconButton();
             cmbMov = new ComboBox();
@@ -59,6 +61,7 @@
             panel3 = new Panel();
             iconBtnBack = new FontAwesome.Sharp.IconButton();
             toolTip1 = new ToolTip(components);
+            timerBusqueda = new System.Windows.Forms.Timer(components);
             panel1.SuspendLayout();
             groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dgvAuditoria).BeginInit();
@@ -91,6 +94,8 @@
             // 
             // groupBox1
             // 
+            groupBox1.Controls.Add(txtBusquedaNombre);
+            groupBox1.Controls.Add(lblBusquedaNombre);
             groupBox1.Controls.Add(dtpHasta);
             groupBox1.Controls.Add(btnExportar);
             groupBox1.Controls.Add(cmbMov);
@@ -107,6 +112,27 @@
             groupBox1.TabIndex = 7;
             groupBox1.TabStop = false;
             groupBox1.Text = "Consultar Auditoria";
+            // 
+            // txtBusquedaNombre
+            // 
+            txtBusquedaNombre.Font = new Font("Segoe UI", 12F);
+            txtBusquedaNombre.Location = new Point(774, 37);
+            txtBusquedaNombre.Name = "txtBusquedaNombre";
+            txtBusquedaNombre.PlaceholderText = "Ingrese Nombre del Producto";
+            txtBusquedaNombre.Size = new Size(234, 29);
+            txtBusquedaNombre.TabIndex = 15;
+            txtBusquedaNombre.TextChanged += txtBusquedaNombre_TextChanged;
+            txtBusquedaNombre.KeyDown += txtBusquedaNombre_KeyDown;
+            // 
+            // lblBusquedaNombre
+            // 
+            lblBusquedaNombre.AutoSize = true;
+            lblBusquedaNombre.Font = new Font("Segoe UI", 12F);
+            lblBusquedaNombre.Location = new Point(647, 40);
+            lblBusquedaNombre.Name = "lblBusquedaNombre";
+            lblBusquedaNombre.Size = new Size(121, 21);
+            lblBusquedaNombre.TabIndex = 14;
+            lblBusquedaNombre.Text = "Buscar Nombre:";
             // 
             // dtpHasta
             // 
@@ -214,14 +240,14 @@
             dgvAuditoria.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dgvAuditoria.BackgroundColor = Color.White;
             dgvAuditoria.BorderStyle = BorderStyle.None;
-            dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle3.BackColor = Color.Indigo;
-            dataGridViewCellStyle3.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-            dataGridViewCellStyle3.ForeColor = Color.White;
-            dataGridViewCellStyle3.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle3.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle3.WrapMode = DataGridViewTriState.True;
-            dgvAuditoria.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = Color.Indigo;
+            dataGridViewCellStyle1.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            dataGridViewCellStyle1.ForeColor = Color.White;
+            dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
+            dgvAuditoria.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             dgvAuditoria.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dgvAuditoria.Columns.AddRange(new DataGridViewColumn[] { tipo, fechaMov, producto, deposito, lote, serie, cantidad, stockAnterior, stockPosterior, remitoIng, remitoEgr, usuario, detalle });
             dgvAuditoria.EnableHeadersVisualStyles = false;
@@ -342,6 +368,11 @@
             iconBtnBack.UseVisualStyleBackColor = false;
             iconBtnBack.Click += iconBtnBack_Click_1;
             // 
+            // timerBusqueda
+            // 
+            timerBusqueda.Interval = 200;
+            timerBusqueda.Tick += timerBusqueda_Tick;
+            // 
             // UC_Auditoria
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -395,5 +426,8 @@
         private Button btnAnterior;
         private Button btnSiguiente;
         private Label lblPagina;
+        private Label lblBusquedaNombre;
+        private TextBox txtBusquedaNombre;
+        private System.Windows.Forms.Timer timerBusqueda;
     }
 }

@@ -34,6 +34,7 @@
             pictureBox1 = new PictureBox();
             panelContainer = new Panel();
             panel1 = new Panel();
+            btnGestionProductos = new FontAwesome.Sharp.IconButton();
             btnEntidades = new FontAwesome.Sharp.IconButton();
             pictureBox2 = new PictureBox();
             btnHistorialRemitos = new FontAwesome.Sharp.IconButton();
@@ -88,7 +89,7 @@
             // 
             panelContainer.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             panelContainer.Font = new Font("Segoe UI", 9F);
-            panelContainer.Location = new Point(208, 97);
+            panelContainer.Location = new Point(208, 104);
             panelContainer.Margin = new Padding(0);
             panelContainer.Name = "panelContainer";
             panelContainer.Size = new Size(1696, 944);
@@ -97,6 +98,7 @@
             // panel1
             // 
             panel1.BackColor = Color.LightSlateGray;
+            panel1.Controls.Add(btnGestionProductos);
             panel1.Controls.Add(btnEntidades);
             panel1.Controls.Add(pictureBox2);
             panel1.Controls.Add(btnHistorialRemitos);
@@ -113,10 +115,28 @@
             panel1.Size = new Size(208, 944);
             panel1.TabIndex = 2;
             // 
+            // btnGestionProductos
+            // 
+            btnGestionProductos.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            btnGestionProductos.IconChar = FontAwesome.Sharp.IconChar.Info;
+            btnGestionProductos.IconColor = Color.Black;
+            btnGestionProductos.IconFont = FontAwesome.Sharp.IconFont.Auto;
+            btnGestionProductos.ImageAlign = ContentAlignment.MiddleLeft;
+            btnGestionProductos.Location = new Point(1, 575);
+            btnGestionProductos.Margin = new Padding(3, 2, 3, 2);
+            btnGestionProductos.Name = "btnGestionProductos";
+            btnGestionProductos.Size = new Size(207, 92);
+            btnGestionProductos.TabIndex = 11;
+            btnGestionProductos.Text = "GESTION DE PRODUCTOS (F7)";
+            btnGestionProductos.TextAlign = ContentAlignment.MiddleLeft;
+            btnGestionProductos.TextImageRelation = TextImageRelation.ImageBeforeText;
+            btnGestionProductos.UseVisualStyleBackColor = true;
+            btnGestionProductos.Click += btnGestionProductos_Click;
+            // 
             // btnEntidades
             // 
             btnEntidades.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-            btnEntidades.IconChar = FontAwesome.Sharp.IconChar.Info;
+            btnEntidades.IconChar = FontAwesome.Sharp.IconChar.Users;
             btnEntidades.IconColor = Color.Black;
             btnEntidades.IconFont = FontAwesome.Sharp.IconFont.Auto;
             btnEntidades.ImageAlign = ContentAlignment.MiddleLeft;
@@ -177,7 +197,7 @@
             btnInicio.IconColor = Color.Black;
             btnInicio.IconFont = FontAwesome.Sharp.IconFont.Auto;
             btnInicio.ImageAlign = ContentAlignment.MiddleLeft;
-            btnInicio.Location = new Point(0, 576);
+            btnInicio.Location = new Point(1, 576);
             btnInicio.Margin = new Padding(3, 2, 3, 2);
             btnInicio.Name = "btnInicio";
             btnInicio.Size = new Size(207, 92);
@@ -299,5 +319,6 @@
         private FontAwesome.Sharp.IconButton btnHistorialRemitos;
         private PictureBox pictureBox2;
         private FontAwesome.Sharp.IconButton btnEntidades;
+        private FontAwesome.Sharp.IconButton btnGestionProductos;
     }
 }

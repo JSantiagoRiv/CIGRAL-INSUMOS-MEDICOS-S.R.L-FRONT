@@ -79,7 +79,6 @@
             label3.Size = new Size(92, 21);
             label3.TabIndex = 6;
             label3.Text = "Contraseña:";
-            
             // 
             // textPassword
             // 
@@ -138,8 +137,7 @@
             Margin = new Padding(3, 2, 3, 2);
             Name = "Login";
             StartPosition = FormStartPosition.CenterScreen;
-            Text = "Form2";
-            
+            Text = "Login";
             ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
             ResumeLayout(false);
             PerformLayout();

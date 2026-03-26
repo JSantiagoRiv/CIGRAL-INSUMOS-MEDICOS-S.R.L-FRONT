@@ -51,6 +51,8 @@
             direccionBox = new TextBox();
             label7 = new Label();
             modificarButton = new Button();
+            btnAgregarProveedor = new Button();
+            btnAgregarCliente = new Button();
             panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dgvEntidades).BeginInit();
             SuspendLayout();
@@ -122,19 +124,21 @@
             // 
             // txtBuscar
             // 
+            txtBuscar.Anchor = AnchorStyles.None;
             txtBuscar.Font = new Font("Segoe UI", 12F);
-            txtBuscar.Location = new Point(190, 110);
+            txtBuscar.Location = new Point(168, 123);
             txtBuscar.Name = "txtBuscar";
             txtBuscar.PlaceholderText = "Ingrese Razón Social o Cuit";
-            txtBuscar.Size = new Size(417, 29);
+            txtBuscar.Size = new Size(262, 29);
             txtBuscar.TabIndex = 14;
             txtBuscar.TextChanged += txtBuscar_TextChanged;
             // 
             // label2
             // 
+            label2.Anchor = AnchorStyles.None;
             label2.AutoSize = true;
             label2.Font = new Font("Segoe UI", 12F);
-            label2.Location = new Point(51, 109);
+            label2.Location = new Point(47, 126);
             label2.Name = "label2";
             label2.Size = new Size(115, 21);
             label2.TabIndex = 13;
@@ -148,7 +152,7 @@
             // razonSocialBox
             // 
             razonSocialBox.Font = new Font("Segoe UI", 12F);
-            razonSocialBox.Location = new Point(901, 180);
+            razonSocialBox.Location = new Point(879, 161);
             razonSocialBox.Name = "razonSocialBox";
             razonSocialBox.Size = new Size(417, 29);
             razonSocialBox.TabIndex = 16;
@@ -157,10 +161,10 @@
             // label1
             // 
             label1.AutoSize = true;
-            label1.Font = new Font("Segoe UI", 12F);
-            label1.Location = new Point(762, 179);
+            label1.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+            label1.Location = new Point(762, 161);
             label1.Name = "label1";
-            label1.Size = new Size(101, 21);
+            label1.Size = new Size(111, 21);
             label1.TabIndex = 15;
             label1.Text = "Razón Social:";
             label1.Click += label1_Click;
@@ -168,7 +172,7 @@
             // glnBox
             // 
             glnBox.Font = new Font("Segoe UI", 12F);
-            glnBox.Location = new Point(901, 253);
+            glnBox.Location = new Point(879, 491);
             glnBox.Name = "glnBox";
             glnBox.Size = new Size(417, 29);
             glnBox.TabIndex = 18;
@@ -177,10 +181,10 @@
             // label3
             // 
             label3.AutoSize = true;
-            label3.Font = new Font("Segoe UI", 12F);
-            label3.Location = new Point(762, 252);
+            label3.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+            label3.Location = new Point(827, 494);
             label3.Name = "label3";
-            label3.Size = new Size(44, 21);
+            label3.Size = new Size(46, 21);
             label3.TabIndex = 17;
             label3.Text = "GLN:";
             label3.Click += label3_Click;
@@ -188,7 +192,7 @@
             // emailBox
             // 
             emailBox.Font = new Font("Segoe UI", 12F);
-            emailBox.Location = new Point(901, 325);
+            emailBox.Location = new Point(879, 348);
             emailBox.Name = "emailBox";
             emailBox.Size = new Size(417, 29);
             emailBox.TabIndex = 20;
@@ -197,17 +201,17 @@
             // label4
             // 
             label4.AutoSize = true;
-            label4.Font = new Font("Segoe UI", 12F);
-            label4.Location = new Point(762, 324);
+            label4.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+            label4.Location = new Point(816, 351);
             label4.Name = "label4";
-            label4.Size = new Size(51, 21);
+            label4.Size = new Size(57, 21);
             label4.TabIndex = 19;
             label4.Text = "Email:";
             // 
             // telefonoBox
             // 
             telefonoBox.Font = new Font("Segoe UI", 12F);
-            telefonoBox.Location = new Point(901, 483);
+            telefonoBox.Location = new Point(879, 285);
             telefonoBox.Name = "telefonoBox";
             telefonoBox.Size = new Size(417, 29);
             telefonoBox.TabIndex = 22;
@@ -216,27 +220,28 @@
             // label5
             // 
             label5.AutoSize = true;
-            label5.Font = new Font("Segoe UI", 12F);
-            label5.Location = new Point(762, 482);
+            label5.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+            label5.Location = new Point(792, 288);
             label5.Name = "label5";
-            label5.Size = new Size(71, 21);
+            label5.Size = new Size(81, 21);
             label5.TabIndex = 21;
             label5.Text = "Teléfono:";
+            label5.Click += label5_Click;
             // 
             // label6
             // 
             label6.AutoSize = true;
-            label6.Font = new Font("Segoe UI", 12F);
-            label6.Location = new Point(762, 401);
+            label6.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+            label6.Location = new Point(828, 424);
             label6.Name = "label6";
-            label6.Size = new Size(41, 21);
+            label6.Size = new Size(45, 21);
             label6.TabIndex = 21;
             label6.Text = "Cuit:";
             // 
             // cuitBox
             // 
             cuitBox.Font = new Font("Segoe UI", 12F);
-            cuitBox.Location = new Point(901, 402);
+            cuitBox.Location = new Point(879, 421);
             cuitBox.Name = "cuitBox";
             cuitBox.Size = new Size(417, 29);
             cuitBox.TabIndex = 22;
@@ -245,7 +250,7 @@
             // direccionBox
             // 
             direccionBox.Font = new Font("Segoe UI", 12F);
-            direccionBox.Location = new Point(901, 567);
+            direccionBox.Location = new Point(879, 223);
             direccionBox.Name = "direccionBox";
             direccionBox.Size = new Size(417, 29);
             direccionBox.TabIndex = 24;
@@ -254,27 +259,62 @@
             // label7
             // 
             label7.AutoSize = true;
-            label7.Font = new Font("Segoe UI", 12F);
-            label7.Location = new Point(762, 566);
+            label7.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+            label7.Location = new Point(786, 226);
             label7.Name = "label7";
-            label7.Size = new Size(78, 21);
+            label7.Size = new Size(87, 21);
             label7.TabIndex = 23;
             label7.Text = "Dirección:";
             // 
             // modificarButton
             // 
+            modificarButton.BackColor = Color.Khaki;
             modificarButton.Enabled = false;
-            modificarButton.Location = new Point(1452, 561);
+            modificarButton.FlatStyle = FlatStyle.Flat;
+            modificarButton.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            modificarButton.ForeColor = Color.Black;
+            modificarButton.Location = new Point(1031, 541);
             modificarButton.Name = "modificarButton";
-            modificarButton.Size = new Size(135, 34);
+            modificarButton.Size = new Size(83, 34);
             modificarButton.TabIndex = 25;
-            modificarButton.Text = "Modificar";
-            modificarButton.UseVisualStyleBackColor = true;
+            modificarButton.Text = "EDITAR";
+            modificarButton.UseVisualStyleBackColor = false;
+            modificarButton.Click += modificarButton_Click;
+            // 
+            // btnAgregarProveedor
+            // 
+            btnAgregarProveedor.Anchor = AnchorStyles.None;
+            btnAgregarProveedor.BackColor = Color.LimeGreen;
+            btnAgregarProveedor.FlatStyle = FlatStyle.Flat;
+            btnAgregarProveedor.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+            btnAgregarProveedor.Location = new Point(572, 122);
+            btnAgregarProveedor.Name = "btnAgregarProveedor";
+            btnAgregarProveedor.Size = new Size(130, 30);
+            btnAgregarProveedor.TabIndex = 27;
+            btnAgregarProveedor.Text = "+ PROVEEDOR";
+            btnAgregarProveedor.UseVisualStyleBackColor = false;
+            btnAgregarProveedor.Click += btnAgregarProveedor_Click;
+            // 
+            // btnAgregarCliente
+            // 
+            btnAgregarCliente.Anchor = AnchorStyles.None;
+            btnAgregarCliente.BackColor = Color.LimeGreen;
+            btnAgregarCliente.FlatStyle = FlatStyle.Flat;
+            btnAgregarCliente.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+            btnAgregarCliente.Location = new Point(436, 122);
+            btnAgregarCliente.Name = "btnAgregarCliente";
+            btnAgregarCliente.Size = new Size(130, 30);
+            btnAgregarCliente.TabIndex = 28;
+            btnAgregarCliente.Text = "+ CLIENTE";
+            btnAgregarCliente.UseVisualStyleBackColor = false;
+            btnAgregarCliente.Click += btnAgregarCliente_Click;
             // 
             // UC_Entidades
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
+            Controls.Add(btnAgregarCliente);
+            Controls.Add(btnAgregarProveedor);
             Controls.Add(modificarButton);
             Controls.Add(direccionBox);
             Controls.Add(label7);
@@ -325,5 +365,8 @@
         private TextBox direccionBox;
         private Label label7;
         private Button modificarButton;
+        private Button button1;
+        private Button btnAgregarProveedor;
+        private Button btnAgregarCliente;
     }
 }

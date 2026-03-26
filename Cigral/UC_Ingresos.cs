@@ -147,6 +147,9 @@ namespace Cigral
 
             // 3. AHORA SÍ: BLOQUEAMOS EL BOTÓN CONTRA CLICS ANSIOSOS
             buttonConfirm.Enabled = false;
+            this.Enabled = false;
+            PantallaCarga pantallaCarga = new PantallaCarga();
+            pantallaCarga.Show(this);
             Cursor = Cursors.WaitCursor;
 
             try
@@ -305,6 +308,8 @@ namespace Cigral
                 // 4. VOLVEMOS A PRENDER EL BOTÓN
                 buttonConfirm.Enabled = true;
                 Cursor = Cursors.Default;
+                this.Enabled = true;
+                pantallaCarga.Close();
             }
         }
 
@@ -791,13 +796,18 @@ namespace Cigral
 
             Func<Task> realizarBusqueda = async () =>
             {
+                // Salvavidas por si el usuario cierra la ventana muy rápido
+                if (buscador.IsDisposed) return;
+
                 buscador.Cursor = Cursors.WaitCursor;
                 dgv.DataSource = null;
 
                 var lista = await ApiServices.ObtenerProductosCatalogo(txtBuscar.Text.Trim());
 
+                if (buscador.IsDisposed) return;
+
                 // Mapeo dinámico para ajustar cómo se ven las columnas
-                var vistaResultados = lista.Select(x => new
+                var vistaResultados = lista.items.Select(x => new
                 {
                     ID = x.id,
                     Producto = x.nombre,
@@ -808,8 +818,40 @@ namespace Cigral
                 buscador.Cursor = Cursors.Default;
             };
 
-            btnBuscar.Click += async (s, ev) => await realizarBusqueda();
-            buscador.AcceptButton = btnBuscar;
+            // LÓGICA DEL BUSCADOR EN TIEMPO REAL
+
+            // 1. Creamos el timer por código
+            System.Windows.Forms.Timer timerBusqueda = new System.Windows.Forms.Timer();
+            timerBusqueda.Interval = 200; // 200 milisegundos
+
+            // 2. Busca.
+            timerBusqueda.Tick += async (s, ev) =>
+            {
+                timerBusqueda.Stop();
+                await realizarBusqueda();
+            };
+
+            // 3. Resetea el timer.
+            txtBuscar.TextChanged += (s, ev) =>
+            {
+                timerBusqueda.Stop();
+                timerBusqueda.Start();
+            };
+
+            // 4. Si el usuario aprieta Enter antes de que pasen los 200ms
+            txtBuscar.KeyDown += async (s, ev) =>
+            {
+                if (ev.KeyCode == Keys.Enter)
+                {
+                    ev.SuppressKeyPress = true; // Saca el ruidito de error
+                    timerBusqueda.Stop();
+                    await realizarBusqueda();
+                }
+            };
+
+            // 5. Oculta el botón Buscar y estiramos la barra
+            btnBuscar.Visible = false;
+            txtBuscar.Width = 470;
 
             dgv.CellMouseDoubleClick += (s, ev) =>
             {

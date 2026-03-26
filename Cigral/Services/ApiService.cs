@@ -565,32 +565,66 @@ namespace Cigral.Services
         /// <summary>
         /// Busca productos en el catálogo maestro usando el texto ingresado.
         /// </summary>
-        public static async Task<List<ProductoResponseDto>> ObtenerProductosCatalogo(string filtroNombre)
+        public static async Task<PaginadoResponse<ProductoResponseDto>> ObtenerProductosCatalogo(string filtroNombre, int pageNumber = 1, int pageSize = 25)
         {
             using (HttpClient client = GetClient())
             {
                 try
                 {
-                    string url = $"{BaseUrl}/Productos?Nombre={filtroNombre}&PageNumber=1&PageSize=100";
+                    string url = $"{BaseUrl}/Productos?PageNumber={pageNumber}&PageSize={pageSize}";
+
+                    if(!string.IsNullOrWhiteSpace(filtroNombre)) url += $"&Nombre={Uri.EscapeDataString(filtroNombre.Trim())}";
+
                     var response = await client.GetAsync(url);
                     string json = await response.Content.ReadAsStringAsync();
 
                     if (response.IsSuccessStatusCode)
                     {
-                        var resultado = JsonConvert.DeserializeObject<ProductoPaginadoResponse>(json);
-                        if (resultado == null || resultado.items == null) return new List<ProductoResponseDto>();
-                        return resultado.items;
+                        var resultado = JsonConvert.DeserializeObject<PaginadoResponse<ProductoResponseDto>>(json);
+                        if (resultado == null || resultado.items == null) return new PaginadoResponse<ProductoResponseDto>();
+                        return resultado;
                     }
                     else
                     {
                         MessageBox.Show($"El servidor rebotó la búsqueda en el catálogo.\nStatus: {response.StatusCode}\nDetalle:\n{json}", "Error del Backend", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                        return new List<ProductoResponseDto>();
+                        return new PaginadoResponse<ProductoResponseDto>();
                     }
                 }
                 catch (Exception ex)
                 {
                     MessageBox.Show($"Error interno al buscar en el catálogo:\n{ex.Message}", "Error de Conexión", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return new List<ProductoResponseDto>();
+                    return new PaginadoResponse<ProductoResponseDto>();
+                }
+            }
+        }
+
+        public static async Task<int> UpdateProducto(ProductoUpdateDto producto, int id)
+        {
+            using (HttpClient client = GetClient())
+            {
+                try
+                {
+                    string json = JsonConvert.SerializeObject(producto);
+                    var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                    var response = await client.PutAsync($"{BaseUrl}/Productos/{id}", content);
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var jsonResponse = await response.Content.ReadAsStringAsync();
+                        var productoResponse = JsonConvert.DeserializeObject<ProductoResponseDto>(jsonResponse);
+                        return productoResponse.id;
+                    }
+                    else
+                    {
+                        await MostrarErrorBackend(response, $"Error al actualizar algun campo de '{producto.nombre}'");
+                        return 0;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Fallo de conexión al modificar el producto:\n{ex.Message}", "Fallo Crítico", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return 0;
                 }
             }
         }
@@ -705,27 +739,45 @@ namespace Cigral.Services
         /// <summary>
         /// Trae la lista de clientes para armar remitos de egreso.
         /// </summary>
-        public static async Task<List<ClienteDto>> ObtenerClientes()
+        public static async Task<List<ClienteDto>> ObtenerClientes(string busqueda = "")
         {
             using (HttpClient client = GetClient())
             {
                 try
                 {
-                    var response = await client.GetAsync($"{BaseUrl}/Clientes");
+                    // 1. Armamos la URL base. Le pedimos 50 resultados para la lista.
+                    // (Asegurate de que sea /Cliente o /Clientes según tu API)
+                    string url = $"{BaseUrl}/Clientes?PageNumber=1&PageSize=50";
+
+                    // 2. Si el usuario tipeó algo, le agregamos el parámetro "RazonSocial" a la URL
+                    if (!string.IsNullOrWhiteSpace(busqueda))
+                    {
+                        url += $"&RazonSocial={Uri.EscapeDataString(busqueda.Trim())}";
+                    }
+
+                    var response = await client.GetAsync(url);
                     string json = await response.Content.ReadAsStringAsync();
 
                     if (response.IsSuccessStatusCode)
                     {
-                        var objetoJson = JObject.Parse(json);
-                        if (objetoJson["items"] != null) return objetoJson["items"].ToObject<List<ClienteDto>>();
+                        // 3. Como Swagger nos mostró que devuelve { "items": [...], "totalCount": ... }
+                        // Usamos 'dynamic' para ir directo a buscar la propiedad "items" sin tener que crear clases nuevas.
+                        dynamic resultado = Newtonsoft.Json.JsonConvert.DeserializeObject(json);
 
-                        return JsonConvert.DeserializeObject<List<ClienteDto>>(json);
+                        if (resultado != null && resultado.items != null)
+                        {
+                            // Transformamos esos "items" en tu lista de ClienteDto
+                            return resultado.items.ToObject<List<ClienteDto>>();
+                        }
+
+                        return new List<ClienteDto>();
                     }
+
                     return new List<ClienteDto>();
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
-                    MessageBox.Show($"Error al leer la lista de clientes:\n{ex.Message}", "Error Interno", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    // Si falla la red, devolvemos vacío para no romper la pantalla
                     return new List<ClienteDto>();
                 }
             }
@@ -782,7 +834,7 @@ namespace Cigral.Services
         /// <summary>
         /// Consulta la tabla de auditoría para ver los movimientos históricos de stock (con paginación de servidor).
         /// </summary>
-        public static async Task<PaginadoResponse<AuditoriaItemDto>> ObtenerAuditoria(int? tipoMovimiento = null, int pageNumber = 1, int pageSize = 25)
+        public static async Task<PaginadoResponse<AuditoriaItemDto>> ObtenerAuditoria(int? tipoMovimiento = null, string nombreProducto = "", int pageNumber = 1, int pageSize = 25)
         {
             using (HttpClient client = GetClient())
             {
@@ -792,6 +844,9 @@ namespace Cigral.Services
                     string url = $"{BaseUrl}/Auditoria?PageNumber={pageNumber}&PageSize={pageSize}";
 
                     if (tipoMovimiento.HasValue && tipoMovimiento.Value > 0) url += $"&Tipo={tipoMovimiento.Value}";
+
+                    if (!string.IsNullOrWhiteSpace(nombreProducto))
+                        url += $"&NombreProducto={Uri.EscapeDataString(nombreProducto.Trim())}";
 
                     var response = await client.GetAsync(url);
                     string json = await response.Content.ReadAsStringAsync();
@@ -908,6 +963,8 @@ namespace Cigral.Services
             return filasConError;
         }
 
+        // MODULO ENTIDADES
+
         // Le agregamos "= null" para que los parámetros sean opcionales al llamarla
         public static async Task<List<EntidadDto>> ObtenerEntidades(string razonSocial = null, string cuit = null)
         {
@@ -945,7 +1002,40 @@ namespace Cigral.Services
                 {
                     return new List<EntidadDto>();
                 }
+            } 
+        }
+
+        public static async Task<int> UpdateEntidad(EntidadDto entidad)
+        {
+            using (HttpClient client = GetClient())
+            {
+                try
+                {
+                    string json = JsonConvert.SerializeObject(entidad);
+                    var content = new StringContent(json, Encoding.UTF8, "application/json");
+                    
+                    var response = entidad.TipoEntidad=="Cliente" ? await client.PutAsync($"{BaseUrl}/Clientes/{entidad.IdOriginal}", content) : await client.PutAsync($"{BaseUrl}/Proveedores/{entidad.IdOriginal}", content);
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var jsonResponse = await response.Content.ReadAsStringAsync();
+                        var entidadResponse = JsonConvert.DeserializeObject<EntidadResponse>(jsonResponse);
+                        return entidadResponse.Id;
+                    }
+                    else
+                    {
+                        await MostrarErrorBackend(response, $"Error al actualizar algun campo de '{entidad.RazonSocial}'");
+                        return 0;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Fallo de conexión al modificar la entidad:\n{ex.Message}", "Fallo Crítico", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return 0;
+                }
             }
         }
+
+
     }
-}
+    }
