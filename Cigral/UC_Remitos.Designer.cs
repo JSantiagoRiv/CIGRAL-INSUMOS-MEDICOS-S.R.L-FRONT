@@ -28,10 +28,10 @@
         /// </summary>
         private void InitializeComponent()
         {
+            components = new System.ComponentModel.Container();
             panel1 = new Panel();
             labelTitulo = new Label();
             groupBox1 = new GroupBox();
-            btnBuscar = new Button();
             label3 = new Label();
             txtNroRemito = new TextBox();
             dtpHasta = new DateTimePicker();
@@ -46,6 +46,7 @@
             btnSiguiente = new Button();
             btnAnterior = new Button();
             iconBtnBack = new FontAwesome.Sharp.IconButton();
+            timerBusqueda = new System.Windows.Forms.Timer(components);
             panel1.SuspendLayout();
             groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dgvRemitos).BeginInit();
@@ -78,7 +79,6 @@
             // 
             // groupBox1
             // 
-            groupBox1.Controls.Add(btnBuscar);
             groupBox1.Controls.Add(label3);
             groupBox1.Controls.Add(txtNroRemito);
             groupBox1.Controls.Add(dtpHasta);
@@ -98,17 +98,6 @@
             groupBox1.TabStop = false;
             groupBox1.Text = "Filtros de Busqueda";
             // 
-            // btnBuscar
-            // 
-            btnBuscar.Font = new Font("Segoe UI", 12F);
-            btnBuscar.Location = new Point(986, 38);
-            btnBuscar.Name = "btnBuscar";
-            btnBuscar.Size = new Size(75, 27);
-            btnBuscar.TabIndex = 8;
-            btnBuscar.Text = "Buscar";
-            btnBuscar.UseVisualStyleBackColor = true;
-            btnBuscar.Click += btnBuscar_Click;
-            // 
             // label3
             // 
             label3.AutoSize = true;
@@ -124,7 +113,8 @@
             txtNroRemito.Font = new Font("Segoe UI", 12F);
             txtNroRemito.Location = new Point(824, 37);
             txtNroRemito.Name = "txtNroRemito";
-            txtNroRemito.Size = new Size(156, 29);
+            txtNroRemito.PlaceholderText = "Ingrese Nro. de Remito";
+            txtNroRemito.Size = new Size(170, 29);
             txtNroRemito.TabIndex = 6;
             // 
             // dtpHasta
@@ -272,6 +262,11 @@
             iconBtnBack.TabIndex = 2;
             iconBtnBack.UseVisualStyleBackColor = false;
             // 
+            // timerBusqueda
+            // 
+            timerBusqueda.Interval = 200;
+            timerBusqueda.Tick += timerBusqueda_Tick;
+            // 
             // UC_Remitos
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -300,7 +295,6 @@
         private RadioButton rbEgresos;
         private DateTimePicker dtpDesde;
         private Label label1;
-        private Button btnBuscar;
         private Label label3;
         private TextBox txtNroRemito;
         private DateTimePicker dtpHasta;
@@ -311,5 +305,6 @@
         private Label lblPagina;
         private Button btnSiguiente;
         private Button btnAnterior;
+        private System.Windows.Forms.Timer timerBusqueda;
     }
 }

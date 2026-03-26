@@ -53,18 +53,12 @@ namespace Cigral
 
         private async Task CargarEntidades()
         {
-            Cursor.Current = Cursors.WaitCursor;
-            try
-            {
-                var listaEntidades = await ApiServices.ObtenerEntidades(razonSocial: Busqueda);
-                dgvEntidades.DataSource = listaEntidades;
-                LimpiarCampos();
-            }
-            finally
-            {
-                Cursor.Current = Cursors.Default;
-            }
-            
+            var listaEntidades = await ApiServices.ObtenerEntidades(razonSocial: Busqueda);
+
+            if (this.IsDisposed) return;
+
+            dgvEntidades.DataSource = listaEntidades;
+            LimpiarCampos();
         }
 
         private void LimpiarCampos()
