@@ -43,6 +43,9 @@ namespace Cigral
         private async Task CargarEntidades()
         {
             var listaEntidades = await ApiServices.ObtenerEntidades(razonSocial: Busqueda);
+
+            if (this.IsDisposed) return;
+
             dgvEntidades.DataSource = listaEntidades;
             LimpiarCampos();
         }
@@ -110,6 +113,11 @@ namespace Cigral
         private void razonSocialBox_TextChanged(object sender, EventArgs e)
         {
             modificarButton.Enabled = true;
+        }
+
+        private void modificarButton_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

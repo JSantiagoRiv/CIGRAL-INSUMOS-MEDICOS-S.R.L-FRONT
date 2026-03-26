@@ -25,6 +25,10 @@ namespace Cigral
         public UC_Remitos()
         {
             InitializeComponent();
+
+            txtNroRemito.TextChanged += txtNroRemito_TextChanged;
+            txtNroRemito.KeyDown += txtNroRemito_KeyDown;
+            timerBusqueda.Tick += timerBusqueda_Tick;
         }
 
         // --- INICIALIZACIÓN ---
@@ -60,7 +64,7 @@ namespace Cigral
             if (_estaBuscando) return;
             _estaBuscando = true; // Pone el semáforo en rojo
 
-            btnBuscar.Enabled = false;
+            
             Cursor = Cursors.WaitCursor;
 
             try
@@ -108,7 +112,7 @@ namespace Cigral
                 if (!this.IsDisposed)
                 {
                     _estaBuscando = false; // Semáforo verde
-                    btnBuscar.Enabled = true;
+                   
                     Cursor = Cursors.Default;
                 }
             }
@@ -195,12 +199,7 @@ namespace Cigral
             }
         }
 
-        // Búsqueda al hacer clic en el botón manualmente
-        private void btnBuscar_Click(object sender, EventArgs e)
-        {
-            _paginaActual = 1; // Resetea la página
-            EjecutarBusqueda();
-        }
+        // --- EVENTOS REACTIVOS ---
 
         // Búsqueda automática al cambiar a la pestaña de Ingresos
         private void rbIngresos_CheckedChanged(object sender, EventArgs e)
@@ -236,8 +235,38 @@ namespace Cigral
             EjecutarBusqueda();
         }
 
+        // --- BÚSQUEDA EN TIEMPO REAL POR NRO DE REMITO ---
+
+        private void txtNroRemito_TextChanged(object sender, EventArgs e)
+        {
+            // Reiniciamos el reloj. Si tipean otra letra antes de los 200ms, el reloj vuelve a cero.
+            timerBusqueda.Stop();
+            timerBusqueda.Start();
+        }
+
+        private void txtNroRemito_KeyDown(object sender, KeyEventArgs e)
+        {
+            // Si el usuario aprieta Enter antes de que pasen los 200ms
+            if (e.KeyCode == Keys.Enter)
+            {
+                e.SuppressKeyPress = true; // Evita el "plink" de error de Windows
+                timerBusqueda.Stop();
+
+                _paginaActual = 1;
+                EjecutarBusqueda();
+            }
+        }
+
+        private void timerBusqueda_Tick(object sender, EventArgs e)
+        {
+            timerBusqueda.Stop(); // Frenamos el timer para que dispare una sola vez
+
+            _paginaActual = 1; // Volvemos a la página 1
+            EjecutarBusqueda();
+        }
 
         // --- BOTONES DE PAGINACIÓN ---
+
         private void btnAnterior_Click(object sender, EventArgs e)
         {
             _paginaActual--;

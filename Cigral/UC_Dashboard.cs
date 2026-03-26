@@ -44,6 +44,8 @@ namespace Cigral
                 // Desde hace -10.000 días (pasado) hasta 1.500 días (futuro), obligando a que traiga los vencidos
                 var listaCompleta = await ApiServices.ObtenerVencimientos(-10000, 1500, true);
 
+                if (this.IsDisposed) return;
+
                 // Recorremos la lista una sola vez y repartimos
                 foreach (var item in listaCompleta)
                 {

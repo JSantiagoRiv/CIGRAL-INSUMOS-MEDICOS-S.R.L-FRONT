@@ -123,10 +123,10 @@
             // txtBuscar
             // 
             txtBuscar.Font = new Font("Segoe UI", 12F);
-            txtBuscar.Location = new Point(190, 110);
+            txtBuscar.Location = new Point(168, 106);
             txtBuscar.Name = "txtBuscar";
             txtBuscar.PlaceholderText = "Ingrese Razón Social o Cuit";
-            txtBuscar.Size = new Size(417, 29);
+            txtBuscar.Size = new Size(534, 29);
             txtBuscar.TabIndex = 14;
             txtBuscar.TextChanged += txtBuscar_TextChanged;
             // 
@@ -134,7 +134,7 @@
             // 
             label2.AutoSize = true;
             label2.Font = new Font("Segoe UI", 12F);
-            label2.Location = new Point(51, 109);
+            label2.Location = new Point(47, 109);
             label2.Name = "label2";
             label2.Size = new Size(115, 21);
             label2.TabIndex = 13;
@@ -148,7 +148,7 @@
             // razonSocialBox
             // 
             razonSocialBox.Font = new Font("Segoe UI", 12F);
-            razonSocialBox.Location = new Point(901, 180);
+            razonSocialBox.Location = new Point(901, 161);
             razonSocialBox.Name = "razonSocialBox";
             razonSocialBox.Size = new Size(417, 29);
             razonSocialBox.TabIndex = 16;
@@ -158,7 +158,7 @@
             // 
             label1.AutoSize = true;
             label1.Font = new Font("Segoe UI", 12F);
-            label1.Location = new Point(762, 179);
+            label1.Location = new Point(762, 161);
             label1.Name = "label1";
             label1.Size = new Size(101, 21);
             label1.TabIndex = 15;
@@ -168,7 +168,7 @@
             // glnBox
             // 
             glnBox.Font = new Font("Segoe UI", 12F);
-            glnBox.Location = new Point(901, 253);
+            glnBox.Location = new Point(901, 223);
             glnBox.Name = "glnBox";
             glnBox.Size = new Size(417, 29);
             glnBox.TabIndex = 18;
@@ -178,7 +178,7 @@
             // 
             label3.AutoSize = true;
             label3.Font = new Font("Segoe UI", 12F);
-            label3.Location = new Point(762, 252);
+            label3.Location = new Point(762, 223);
             label3.Name = "label3";
             label3.Size = new Size(44, 21);
             label3.TabIndex = 17;
@@ -188,7 +188,7 @@
             // emailBox
             // 
             emailBox.Font = new Font("Segoe UI", 12F);
-            emailBox.Location = new Point(901, 325);
+            emailBox.Location = new Point(901, 289);
             emailBox.Name = "emailBox";
             emailBox.Size = new Size(417, 29);
             emailBox.TabIndex = 20;
@@ -198,7 +198,7 @@
             // 
             label4.AutoSize = true;
             label4.Font = new Font("Segoe UI", 12F);
-            label4.Location = new Point(762, 324);
+            label4.Location = new Point(762, 289);
             label4.Name = "label4";
             label4.Size = new Size(51, 21);
             label4.TabIndex = 19;
@@ -207,7 +207,7 @@
             // telefonoBox
             // 
             telefonoBox.Font = new Font("Segoe UI", 12F);
-            telefonoBox.Location = new Point(901, 483);
+            telefonoBox.Location = new Point(901, 435);
             telefonoBox.Name = "telefonoBox";
             telefonoBox.Size = new Size(417, 29);
             telefonoBox.TabIndex = 22;
@@ -217,7 +217,7 @@
             // 
             label5.AutoSize = true;
             label5.Font = new Font("Segoe UI", 12F);
-            label5.Location = new Point(762, 482);
+            label5.Location = new Point(762, 435);
             label5.Name = "label5";
             label5.Size = new Size(71, 21);
             label5.TabIndex = 21;
@@ -227,7 +227,7 @@
             // 
             label6.AutoSize = true;
             label6.Font = new Font("Segoe UI", 12F);
-            label6.Location = new Point(762, 401);
+            label6.Location = new Point(762, 362);
             label6.Name = "label6";
             label6.Size = new Size(41, 21);
             label6.TabIndex = 21;
@@ -236,7 +236,7 @@
             // cuitBox
             // 
             cuitBox.Font = new Font("Segoe UI", 12F);
-            cuitBox.Location = new Point(901, 402);
+            cuitBox.Location = new Point(901, 362);
             cuitBox.Name = "cuitBox";
             cuitBox.Size = new Size(417, 29);
             cuitBox.TabIndex = 22;
@@ -245,7 +245,7 @@
             // direccionBox
             // 
             direccionBox.Font = new Font("Segoe UI", 12F);
-            direccionBox.Location = new Point(901, 567);
+            direccionBox.Location = new Point(901, 513);
             direccionBox.Name = "direccionBox";
             direccionBox.Size = new Size(417, 29);
             direccionBox.TabIndex = 24;
@@ -255,7 +255,7 @@
             // 
             label7.AutoSize = true;
             label7.Font = new Font("Segoe UI", 12F);
-            label7.Location = new Point(762, 566);
+            label7.Location = new Point(762, 513);
             label7.Name = "label7";
             label7.Size = new Size(78, 21);
             label7.TabIndex = 23;
@@ -263,13 +263,18 @@
             // 
             // modificarButton
             // 
+            modificarButton.BackColor = Color.Khaki;
             modificarButton.Enabled = false;
-            modificarButton.Location = new Point(1452, 561);
+            modificarButton.FlatStyle = FlatStyle.Flat;
+            modificarButton.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            modificarButton.ForeColor = Color.Black;
+            modificarButton.Location = new Point(1071, 570);
             modificarButton.Name = "modificarButton";
-            modificarButton.Size = new Size(135, 34);
+            modificarButton.Size = new Size(83, 34);
             modificarButton.TabIndex = 25;
-            modificarButton.Text = "Modificar";
-            modificarButton.UseVisualStyleBackColor = true;
+            modificarButton.Text = "EDITAR";
+            modificarButton.UseVisualStyleBackColor = false;
+            modificarButton.Click += modificarButton_Click;
             // 
             // UC_Entidades
             // 
