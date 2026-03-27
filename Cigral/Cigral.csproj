@@ -7,7 +7,12 @@
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>27b6cff7-0367-463f-943e-1e187a2356c8</UserSecretsId>
+    <ApplicationIcon>Pngtree_magnifying_glass_checking_barcode_on_12621019-removebg-preview.ico</ApplicationIcon>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="Pngtree_magnifying_glass_checking_barcode_on_12621019-removebg-preview.ico" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="FontAwesome.Sharp" Version="6.6.0" />

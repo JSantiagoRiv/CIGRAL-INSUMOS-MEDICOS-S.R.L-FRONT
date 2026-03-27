@@ -441,23 +441,37 @@ namespace Cigral
                     // 3. BUSCA SI YA ESTÁ EN LA GRILLA (Para sumar cantidad)
                     bool productoYaEnGrilla = false;
 
+                    // Preparamos los datos del producto recién escaneado
+                    string loteBuscado = productoParseado.Lote ?? "";
+                    string vencimientoBuscado = productoParseado.FechaVencimiento.HasValue ? productoParseado.FechaVencimiento.Value.ToString("dd/MM/yyyy") : "";
+                    string serieBuscada = productoParseado.NumeroSerie ?? "";
+
                     foreach (DataGridViewRow filaExistente in dgvIngreso.Rows)
                     {
                         if (filaExistente.IsNewRow) continue;
 
+                        // Extraemos los datos de la grilla
                         string gtinFila = filaExistente.Tag?.ToString() ?? "";
+                        string loteFila = filaExistente.Cells["Lote"].Value?.ToString() ?? "";
+                        string vencimientoFila = filaExistente.Cells["Vencimiento"].Value?.ToString() ?? "";
+                        string serieFila = filaExistente.Cells["Serie"].Value?.ToString() ?? "";
 
-                        if (gtinFila == productoParseado.Gtin)
+                        if (gtinFila == productoParseado.Gtin &&
+                            loteFila == loteBuscado &&
+                            vencimientoFila == vencimientoBuscado &&
+                            serieFila == serieBuscada)
                         {
                             int cantidadActual = Convert.ToInt32(filaExistente.Cells["Cantidad"].Value);
                             int cantidadNueva = productoParseado.Cantidad > 0 ? productoParseado.Cantidad : 1;
 
                             filaExistente.Cells["Cantidad"].Value = cantidadActual + cantidadNueva;
                             productoYaEnGrilla = true;
-                            break;
+                            break; // Sale del foreach
                         }
                     }
 
+                    // ¡ESTA ES LA PARTE CRÍTICA!
+                    // Si ya lo encontró y lo sumó, cortamos la ejecución acá para que no cree una fila nueva.
                     if (productoYaEnGrilla)
                     {
                         textScanner.Focus();
@@ -1094,6 +1108,11 @@ namespace Cigral
         }
 
         private void lstClientes_SelectedIndexChanged_1(object sender, EventArgs e)
+        {
+
+        }
+
+        private void textScanner_TextChanged(object sender, EventArgs e)
         {
 
         }
