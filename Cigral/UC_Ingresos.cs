@@ -23,6 +23,15 @@ namespace Cigral
             InitializeComponent();
             // Le pedimos que apenas termine de dibujarse la pantalla, ejecute el evento Load
             this.Load += UC_Ingresos_Load;
+
+            // Evento salvavidas: Se dispara un milisegundo antes de que FormMain borre esta pantalla
+            this.ParentChanged += (s, e) =>
+            {
+                if (this.Parent == null)
+                {
+                    GuardarEnCache();
+                }
+            };
         }
 
         /// <summary>
@@ -30,6 +39,98 @@ namespace Cigral
         /// </summary>
         private async void UC_Ingresos_Load(object sender, EventArgs e)
         {
+            // 1. BLOQUEAMOS LA COLUMNA DE NOMBRE PARA QUE NADIE ESCRIBA
+            if (dgvIngreso.Columns.Contains("Producto"))
+            {
+                dgvIngreso.Columns["Producto"].ReadOnly = true;
+            }
+
+            // Cargamos listas desde la API
+            await CargarProveedores();
+
+            var depositos = await ApiServices.ObtenerDepositos();
+            cmbDeposito.DataSource = depositos;
+            cmbDeposito.DisplayMember = "Nombre";
+            cmbDeposito.ValueMember = "Id";
+
+            // 2. LÓGICA DE REVIVIR CACHÉ
+            if (CacheOperaciones.CacheIngresos.Count > 0)
+            {
+                PantallaCarga pc = new PantallaCarga();
+                pc.Show(this);
+                this.Enabled = false;
+
+                try
+                {
+                    // A) Obtenemos IDs únicos para no hacer 50 peticiones repetidas al backend
+                    var idsUnicos = CacheOperaciones.CacheIngresos.Select(x => x.ProductoId).Distinct().ToList();
+                    var dicNombres = new Dictionary<int, string>();
+
+                    // B) Buscamos los nombres frescos y actualizados
+                    foreach (int id in idsUnicos)
+                    {
+                        var prodFresco = await ApiServices.ObtenerProductoPorId(id);
+                        dicNombres[id] = prodFresco?.nombre ?? "Producto Inaccesible";
+                    }
+
+                    // C) Volcamos todo a la grilla
+                    foreach (var item in CacheOperaciones.CacheIngresos)
+                    {
+                        int index = dgvIngreso.Rows.Add();
+                        DataGridViewRow fila = dgvIngreso.Rows[index];
+
+                        fila.Cells["id"].Value = item.ProductoId;
+                        fila.Cells["Producto"].Value = dicNombres.ContainsKey(item.ProductoId) ? dicNombres[item.ProductoId] : "Error";
+                        fila.Cells["Lote"].Value = item.Lote;
+                        fila.Cells["Vencimiento"].Value = item.Vencimiento;
+                        fila.Cells["Serie"].Value = item.Serie;
+                        fila.Cells["Cantidad"].Value = item.Cantidad;
+                        fila.Cells["InfoAdicional"].Value = item.InfoAdicional;
+                        fila.Tag = item.GtinOculto; // Volvemos a ocultar el GTIN en el Tag
+                    }
+
+                    // D) Vaciamos la caché una vez cargada para evitar duplicados a futuro
+                    CacheOperaciones.CacheIngresos.Clear();
+                }
+                finally
+                {
+                    pc.Close();
+                    this.Enabled = true;
+                }
+            }
+
+            this.ActiveControl = textScanner;
+        }
+
+
+        private void GuardarEnCache()
+        {
+            CacheOperaciones.CacheIngresos.Clear();
+            foreach (DataGridViewRow fila in dgvIngreso.Rows)
+            {
+                if (fila.IsNewRow) continue;
+
+                int id = 0;
+                if (fila.Cells["id"].Value != null) int.TryParse(fila.Cells["id"].Value.ToString(), out id);
+                if (id == 0) continue;
+
+                CacheOperaciones.CacheIngresos.Add(new FilaIngresoCache
+                {
+                    ProductoId = id,
+                    Lote = fila.Cells["Lote"].Value?.ToString() ?? "",
+                    Vencimiento = fila.Cells["Vencimiento"].Value?.ToString() ?? "",
+                    Serie = fila.Cells["Serie"].Value?.ToString() ?? "",
+                    Cantidad = Convert.ToInt32(fila.Cells["Cantidad"].Value ?? 1),
+                    InfoAdicional = fila.Cells["InfoAdicional"].Value?.ToString() ?? "",
+                    GtinOculto = fila.Tag?.ToString() ?? ""
+                });
+            }
+        }
+
+
+
+
+        private async Task CargarProveedores()
             this.ActiveControl = textScanner;
 
             try
@@ -1046,6 +1147,7 @@ namespace Cigral
             }
         }
 
+        
         private void txtBuscarCliente_TextChanged(object sender, EventArgs e)
         {
             if (eligiendoDeLista) return;

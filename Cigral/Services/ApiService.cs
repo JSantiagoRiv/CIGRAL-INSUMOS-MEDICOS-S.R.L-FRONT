@@ -960,6 +960,28 @@ namespace Cigral.Services
                 }
         }
 
+        /// <summary>
+        /// Obtiene los datos frescos de un producto por su ID para refrescar la grilla.
+        /// </summary>
+        public static async Task<ProductoResponseDto> ObtenerProductoPorId(int id)
+        {
+            using (HttpClient client = GetClient())
+            {
+                try
+                {
+                    // Asegurate de que la ruta sea correcta según tu backend (ej. /Productos/{id})
+                    var response = await client.GetAsync($"{BaseUrl}/Productos/{id}");
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var json = await response.Content.ReadAsStringAsync();
+                        return Newtonsoft.Json.JsonConvert.DeserializeObject<ProductoResponseDto>(json);
+                    }
+                    return null;
+                }
+                catch { return null; }
+            }
+        }
+
 
     }
 }

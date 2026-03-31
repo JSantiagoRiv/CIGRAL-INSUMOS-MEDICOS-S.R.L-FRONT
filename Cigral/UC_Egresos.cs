@@ -1,6 +1,7 @@
 ﻿using Cigral.Models;
 using Cigral.Services;
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Threading.Tasks;
@@ -18,10 +19,40 @@ namespace Cigral
         {
             InitializeComponent();
 
-            // Conectamos los cables del buscador de clientes
+            //  conexion del buscador de clientes
             txtBuscarCliente.TextChanged += txtBuscarCliente_TextChanged;
             timerBusquedaCliente.Tick += timerBusquedaCliente_Tick;
             lstClientes.Click += lstClientes_Click;
+
+            this.ParentChanged += (s, e) =>
+            {
+                if (this.Parent == null)
+                {
+                    GuardarEnCache();
+                }
+            };
+        }
+
+        private void GuardarEnCache()
+        {
+            CacheOperaciones.CacheEgresos.Clear();
+            foreach (DataGridViewRow fila in dgvEgreso.Rows)
+            {
+                if (fila.IsNewRow) continue;
+
+                int id = 0;
+                if (fila.Cells["id"].Value != null) int.TryParse(fila.Cells["id"].Value.ToString(), out id);
+                if (id == 0) continue;
+
+                CacheOperaciones.CacheEgresos.Add(new FilaEgresoCache
+                {
+                    ProductoId = id,
+                    Lote = fila.Cells["Lote"].Value?.ToString() ?? "",
+                    Vencimiento = fila.Cells["Vencimiento"].Value?.ToString() ?? "",
+                    Serie = fila.Cells["Serie"].Value?.ToString() ?? "",
+                    Cantidad = Convert.ToInt32(fila.Cells["Cantidad"].Value ?? 1)
+                });
+            }
         }
 
         private void iconBtnBack_Click(object sender, EventArgs e)
@@ -74,6 +105,12 @@ namespace Cigral
         {
             this.ActiveControl = txtEscaner;
 
+            // 1. BLOQUEAMOS LA COLUMNA DE NOMBRE 
+            if (dgvEgreso.Columns.Contains("Producto"))
+            {
+                dgvEgreso.Columns["Producto"].ReadOnly = true;
+            }
+
             try
             {
                 var depositos = await ApiServices.ObtenerDepositos();
@@ -81,34 +118,54 @@ namespace Cigral
                 cmbDeposito.DisplayMember = "Nombre";
                 cmbDeposito.ValueMember = "Id";
                 cmbDeposito.SelectedIndex = -1;
-
-                // --- NUEVA LÓGICA DE DEPÓSITO POR DEFECTO ---
-
-                // 1. Recuperamos el último ID guardado en las configuraciones
-                int idGuardado = Properties.Settings.Default.UltimoDepositoId;
-
-                if (idGuardado > 0)
-                {
-                    // Si hay un depósito guardado, lo seleccionamos
-                    cmbDeposito.SelectedValue = idGuardado;
-                }
-                else
-                {
-                    // Si es la primera vez (vale 0), lo dejamos vacío o seleccionamos el primero
-                    cmbDeposito.SelectedIndex = -1;
-                }
-
-                // 2. Nos suscribimos al evento para detectar cuando el usuario lo cambie manualmente.
-                // Usamos SelectionChangeCommitted en vez de SelectedIndexChanged para que 
-                // no se dispare accidentalmente mientras la lista se está rellenando por código.
-                cmbDeposito.SelectionChangeCommitted += CmbDeposito_SelectionChangeCommitted;
-
-                // --------------------------------------------
-
             }
             catch (Exception ex)
             {
                 MessageBox.Show("Error al cargar depósitos: " + ex.Message);
+            }
+
+            // 2. LÓGICA DE REVIVIR CACHÉ (Buscando los nombres siempre desde el backend)
+            if (CacheOperaciones.CacheEgresos.Count > 0)
+            {
+                PantallaCarga pc = new PantallaCarga();
+                pc.Show(this);
+                this.Enabled = false;
+
+                try
+                {
+                    // A) Obtenemos IDs únicos para no saturar al servidor
+                    var idsUnicos = CacheOperaciones.CacheEgresos.Select(x => x.ProductoId).Distinct().ToList();
+                    var dicNombres = new Dictionary<int, string>();
+
+                    // B) Traemos los nombres actualizados de la Base de Datos
+                    foreach (int id in idsUnicos)
+                    {
+                        var prodFresco = await ApiServices.ObtenerProductoPorId(id);
+                        dicNombres[id] = prodFresco?.nombre ?? "Producto Inaccesible";
+                    }
+
+                    // C) Volcamos todo a la grilla de Egresos
+                    foreach (var item in CacheOperaciones.CacheEgresos)
+                    {
+                        int index = dgvEgreso.Rows.Add();
+                        DataGridViewRow fila = dgvEgreso.Rows[index];
+
+                        fila.Cells["id"].Value = item.ProductoId;
+                        fila.Cells["Producto"].Value = dicNombres.ContainsKey(item.ProductoId) ? dicNombres[item.ProductoId] : "Error";
+                        fila.Cells["Lote"].Value = item.Lote;
+                        fila.Cells["Vencimiento"].Value = item.Vencimiento;
+                        fila.Cells["Serie"].Value = item.Serie;
+                        fila.Cells["Cantidad"].Value = item.Cantidad;
+                    }
+
+                    // D) Vaciamos la caché local
+                    CacheOperaciones.CacheEgresos.Clear();
+                }
+                finally
+                {
+                    pc.Close();
+                    this.Enabled = true;
+                }
             }
         }
 
@@ -867,6 +924,28 @@ namespace Cigral
             }
         }
 
+        private void button1_Click(object sender, EventArgs e)
+        {
+            // Validar si hay algo para borrar. 
+         
+            // así que sumamos validación para que no moleste si la pantalla está recién abierta.
+            bool grillaVacia = dgvEgreso.Rows.Count == 0 || (dgvEgreso.Rows.Count == 1 && dgvEgreso.Rows[0].IsNewRow);
+
+            if (grillaVacia && string.IsNullOrWhiteSpace(txtRemito.Text)) return;
+
+            
+            var confirmacion = MessageBox.Show(
+                "¿Desea cancelar todo el egreso actual?\n\nSe perderán todos los productos escaneados y la configuración del remito.",
+                "Cancelar Egreso",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Warning,
+                MessageBoxDefaultButton.Button2); // Foco en "NO" por seguridad para evitar clics accidentales
+
+            if (confirmacion == DialogResult.Yes)
+            {
+                // Llamamos a la función que ya tenés creada más abajo para dejar todo en blanco
+                LimpiarPantalla();
+            }
         private void panel2_Paint(object sender, PaintEventArgs e)
         {
 
