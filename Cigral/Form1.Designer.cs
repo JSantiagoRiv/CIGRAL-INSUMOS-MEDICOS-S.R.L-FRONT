@@ -34,6 +34,7 @@
             pictureBox1 = new PictureBox();
             panelContainer = new Panel();
             panel1 = new Panel();
+            iconButton1 = new FontAwesome.Sharp.IconButton();
             btnGestionProductos = new FontAwesome.Sharp.IconButton();
             btnEntidades = new FontAwesome.Sharp.IconButton();
             pictureBox2 = new PictureBox();
@@ -98,6 +99,7 @@
             // panel1
             // 
             panel1.BackColor = Color.LightSlateGray;
+            panel1.Controls.Add(iconButton1);
             panel1.Controls.Add(btnGestionProductos);
             panel1.Controls.Add(btnEntidades);
             panel1.Controls.Add(pictureBox2);
@@ -114,6 +116,24 @@
             panel1.Name = "panel1";
             panel1.Size = new Size(208, 944);
             panel1.TabIndex = 2;
+            // 
+            // iconButton1
+            // 
+            iconButton1.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            iconButton1.IconChar = FontAwesome.Sharp.IconChar.House;
+            iconButton1.IconColor = Color.Black;
+            iconButton1.IconFont = FontAwesome.Sharp.IconFont.Auto;
+            iconButton1.ImageAlign = ContentAlignment.MiddleLeft;
+            iconButton1.Location = new Point(0, 671);
+            iconButton1.Margin = new Padding(3, 2, 3, 2);
+            iconButton1.Name = "iconButton1";
+            iconButton1.Size = new Size(207, 92);
+            iconButton1.TabIndex = 12;
+            iconButton1.Text = "INICIO (F11)";
+            iconButton1.TextAlign = ContentAlignment.MiddleLeft;
+            iconButton1.TextImageRelation = TextImageRelation.ImageBeforeText;
+            iconButton1.UseVisualStyleBackColor = true;
+            iconButton1.Click += iconButton1_Click;
             // 
             // btnGestionProductos
             // 
@@ -288,6 +308,7 @@
             Controls.Add(panelContainer);
             Controls.Add(panel1);
             Controls.Add(panelHeader);
+            Icon = (Icon)resources.GetObject("$this.Icon");
             KeyPreview = true;
             Margin = new Padding(3, 2, 3, 2);
             Name = "FormMain";
@@ -320,5 +341,6 @@
         private PictureBox pictureBox2;
         private FontAwesome.Sharp.IconButton btnEntidades;
         private FontAwesome.Sharp.IconButton btnGestionProductos;
+        private FontAwesome.Sharp.IconButton iconButton1;
     }
 }

@@ -35,7 +35,7 @@ namespace Cigral
 
         private async Task CargarProductos()
         {
-            var listaEntidades = await ApiServices.ObtenerProductosCatalogo(filtroNombre:Busqueda, pageSize: 27);
+            var listaEntidades = await ApiServices.ObtenerProductosCatalogo(filtroNombre: "", filtroGlobal:Busqueda, pageSize: 27);
 
             if (this.IsDisposed) return;
 

@@ -15,6 +15,9 @@ namespace Cigral
     /// </summary>
     public partial class UC_Ingresos : UserControl
     {
+
+        private int idClienteSeleccionado = 0;
+        private bool eligiendoDeLista = false;
         public UC_Ingresos()
         {
             InitializeComponent();
@@ -128,12 +131,59 @@ namespace Cigral
 
 
         private async Task CargarProveedores()
+            this.ActiveControl = textScanner;
+
+            try
+            {
+                var depositos = await ApiServices.ObtenerDepositos();
+                cmbDeposito.DataSource = depositos;
+                cmbDeposito.DisplayMember = "Nombre";
+                cmbDeposito.ValueMember = "Id";
+                cmbDeposito.SelectedIndex = -1;
+
+                // --- NUEVA LÓGICA DE DEPÓSITO POR DEFECTO ---
+
+                // 1. Recuperamos el último ID guardado en las configuraciones
+                int idGuardado = Properties.Settings.Default.UltimoDepositoId;
+
+                if (idGuardado > 0)
+                {
+                    // Si hay un depósito guardado, lo seleccionamos
+                    cmbDeposito.SelectedValue = idGuardado;
+                }
+                else
+                {
+                    // Si es la primera vez (vale 0), lo dejamos vacío o seleccionamos el primero
+                    cmbDeposito.SelectedIndex = -1;
+                }
+
+                // 2. Nos suscribimos al evento para detectar cuando el usuario lo cambie manualmente.
+                // Usamos SelectionChangeCommitted en vez de SelectedIndexChanged para que 
+                // no se dispare accidentalmente mientras la lista se está rellenando por código.
+                cmbDeposito.SelectionChangeCommitted += CmbDeposito_SelectionChangeCommitted;
+
+                // --------------------------------------------
+
+                this.ActiveControl = textScanner;
+
+                // Ya no cargamos todos los clientes de golpe acá, porque tenemos el buscador en vivo
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error al cargar depósitos: " + ex.Message);
+            }
+        }
+
+        private void CmbDeposito_SelectionChangeCommitted(object sender, EventArgs e)
         {
-            var lista = await ApiServices.ObtenerProveedores();
-            comboProv.DataSource = lista;
-            comboProv.DisplayMember = "RazonSocial";
-            comboProv.ValueMember = "Id";
-            comboProv.SelectedIndex = -1; // Arranca vacío
+            if (cmbDeposito.SelectedValue != null && int.TryParse(cmbDeposito.SelectedValue.ToString(), out int idSeleccionado))
+            {
+                // Actualizamos la variable global
+                Properties.Settings.Default.UltimoDepositoId = idSeleccionado;
+
+                // Guardamos físicamente el cambio para que sobreviva al cerrar la aplicación
+                Properties.Settings.Default.Save();
+            }
         }
 
         // --- LÓGICA DE GUARDADO ---
@@ -155,7 +205,7 @@ namespace Cigral
 
             if (chkConRemito.Checked)
             {
-                if (comboProv.SelectedValue == null)
+                if (idClienteSeleccionado == 0)
                 {
                     MessageBox.Show("Debe seleccionar un Proveedor para continuar.", "Falta Proveedor", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
@@ -219,13 +269,13 @@ namespace Cigral
                 }
 
                 // (Opcional) Validar LOTE 
-                 string loteStr = fila.Cells["Lote"].Value?.ToString() ?? "";
+                string loteStr = fila.Cells["Lote"].Value?.ToString() ?? "";
                 if (string.IsNullOrWhiteSpace(loteStr))
                 {
                     MessageBox.Show($"Falta ingresar el Lote para '{nombreProducto}'.", "Dato Incompleto", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    return; 
-                } 
-                
+                    return;
+                }
+
             }
 
             // 2. PREGUNTAMOS SI ESTÁ SEGURO
@@ -293,7 +343,7 @@ namespace Cigral
                     var requestRemito = new RemitoIngresoRequest
                     {
                         DepositoId = depositoSeleccionado,
-                        EntidadId = (int)comboProv.SelectedValue,
+                        EntidadId = (int)idClienteSeleccionado,
                         NumeroRemito = textRemito.Text,
                         ComprobanteAsociado = txtComprobante.Text.Trim(),
                         Observaciones = "Ingreso desde el sistema",
@@ -442,7 +492,7 @@ namespace Cigral
             dgvIngreso.Rows.Clear();
             textRemito.Clear();
             chkConRemito.Checked = false;
-            comboProv.SelectedIndex = -1;
+            idClienteSeleccionado = 0;
             textScanner.Focus();
         }
 
@@ -455,14 +505,32 @@ namespace Cigral
         {
             if (e.KeyCode == Keys.Enter)
             {
-                e.SuppressKeyPress = true; // Evita el sonido de de Windows
+                e.SuppressKeyPress = true;
 
                 string codigoCrudo = textScanner.Text.Trim();
-                textScanner.Clear(); // Limpia rápido para el próximo escaneo
+                textScanner.Clear();
 
                 if (string.IsNullOrEmpty(codigoCrudo)) return;
 
-                // 1. LLAMA AL PARSER
+                // --- NUEVA LÓGICA: CÓDIGOS DIVIDIDOS ---
+                // Si mide exactamente 16 y arranca con 01 (Indicador GS1 para GTIN)
+                if (codigoCrudo.Length == 16 && codigoCrudo.StartsWith("01"))
+                {
+                    string codigoConcatenado = PedirCodigoComplementario(codigoCrudo);
+
+                    if (string.IsNullOrEmpty(codigoConcatenado))
+                    {
+                        // El usuario canceló la operación en el modal
+                        textScanner.Focus();
+                        return;
+                    }
+
+                    // Reemplazamos el código original corto, por la versión gigante concatenada
+                    codigoCrudo = codigoConcatenado;
+                }
+                // ---------------------------------------
+
+                // 1. LLAMA AL PARSER (Ahora recibirá el código completo)
                 var productoParseado = await ApiServices.ParsearCodigoBarras(codigoCrudo);
 
                 if (productoParseado == null)
@@ -470,8 +538,8 @@ namespace Cigral
                     MessageBox.Show("Hubo un error al intentar decodificar el código de barras.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
-                    
-                   
+
+
                 // 2. VALIDAR SERIE DUPLICADA EN LA GRILLA
                 foreach (DataGridViewRow fila in dgvIngreso.Rows)
                 {
@@ -492,23 +560,37 @@ namespace Cigral
                     // 3. BUSCA SI YA ESTÁ EN LA GRILLA (Para sumar cantidad)
                     bool productoYaEnGrilla = false;
 
+                    // Preparamos los datos del producto recién escaneado
+                    string loteBuscado = productoParseado.Lote ?? "";
+                    string vencimientoBuscado = productoParseado.FechaVencimiento.HasValue ? productoParseado.FechaVencimiento.Value.ToString("dd/MM/yyyy") : "";
+                    string serieBuscada = productoParseado.NumeroSerie ?? "";
+
                     foreach (DataGridViewRow filaExistente in dgvIngreso.Rows)
                     {
                         if (filaExistente.IsNewRow) continue;
 
+                        // Extraemos los datos de la grilla
                         string gtinFila = filaExistente.Tag?.ToString() ?? "";
+                        string loteFila = filaExistente.Cells["Lote"].Value?.ToString() ?? "";
+                        string vencimientoFila = filaExistente.Cells["Vencimiento"].Value?.ToString() ?? "";
+                        string serieFila = filaExistente.Cells["Serie"].Value?.ToString() ?? "";
 
-                        if (gtinFila == productoParseado.Gtin)
+                        if (gtinFila == productoParseado.Gtin &&
+                            loteFila == loteBuscado &&
+                            vencimientoFila == vencimientoBuscado &&
+                            serieFila == serieBuscada)
                         {
                             int cantidadActual = Convert.ToInt32(filaExistente.Cells["Cantidad"].Value);
                             int cantidadNueva = productoParseado.Cantidad > 0 ? productoParseado.Cantidad : 1;
 
                             filaExistente.Cells["Cantidad"].Value = cantidadActual + cantidadNueva;
                             productoYaEnGrilla = true;
-                            break;
+                            break; // Sale del foreach
                         }
                     }
 
+                    // ¡ESTA ES LA PARTE CRÍTICA!
+                    // Si ya lo encontró y lo sumó, cortamos la ejecución acá para que no cree una fila nueva.
                     if (productoYaEnGrilla)
                     {
                         textScanner.Focus();
@@ -639,7 +721,7 @@ namespace Cigral
         /// </summary>
         private async void chkConRemito_CheckedChanged(object sender, EventArgs e)
         {
-            comboProv.Enabled = chkConRemito.Checked;
+            txtBuscarCliente.Enabled = chkConRemito.Checked;
             btnAgregarProveedor.Enabled = chkConRemito.Checked;
             txtComprobante.Enabled = chkConRemito.Checked;
 
@@ -652,7 +734,7 @@ namespace Cigral
             {
                 textRemito.ReadOnly = false;
                 textRemito.Clear();
-                comboProv.SelectedIndex = -1;
+                idClienteSeleccionado = 0;
                 txtComprobante.Clear();
             }
         }
@@ -820,8 +902,11 @@ namespace Cigral
 
                     if (idNuevo > 0)
                     {
-                        await CargarProveedores(); // Recarga la lista desde la BD
-                        comboProv.SelectedValue = idNuevo; // Autoselecciona el recién creado
+                        eligiendoDeLista = true;
+                        txtBuscarCliente.Text = txtRazon.Text;
+                        idClienteSeleccionado = idNuevo;
+                        eligiendoDeLista = false;
+
                         MessageBox.Show("¡Proveedor creado con éxito!", "Excelente", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
                 }
@@ -1063,5 +1148,172 @@ namespace Cigral
         }
 
         
+        private void txtBuscarCliente_TextChanged(object sender, EventArgs e)
+        {
+            if (eligiendoDeLista) return;
+
+            idClienteSeleccionado = 0;
+
+            timerBusquedaCliente.Stop();
+            timerBusquedaCliente.Start();
+        }
+
+        private async void timerBusquedaCliente_Tick(object sender, EventArgs e)
+        {
+            timerBusquedaCliente.Stop();
+
+            string busqueda = txtBuscarCliente.Text.Trim();
+
+            if (busqueda.Length < 2)
+            {
+                lstClientes.Visible = false;
+                return;
+            }
+
+            Cursor = Cursors.WaitCursor;
+            try
+            {
+                // Buscamos en la API
+                var listaClientes = await ApiServices.ObtenerProveedores(busqueda);
+
+                if (listaClientes != null && listaClientes.Count > 0)
+                {
+                    lstClientes.DataSource = listaClientes;
+                    lstClientes.DisplayMember = "razonSocial";
+                    lstClientes.ValueMember = "id";
+
+
+                    lstClientes.Parent = this; // Hace que la lista sea hija de la pantalla principal, no de los paneles
+                    Point posicionTextBox = txtBuscarCliente.Parent.PointToScreen(txtBuscarCliente.Location);
+                    lstClientes.Location = this.PointToClient(new Point(posicionTextBox.X, posicionTextBox.Y + txtBuscarCliente.Height));
+
+                    lstClientes.Height = 120;
+                    lstClientes.Width = txtBuscarCliente.Width;
+
+                    lstClientes.BringToFront(); // Lo trae al frente de TODO
+                    lstClientes.Visible = true;
+                }
+                else
+                {
+                    lstClientes.Visible = false;
+                }
+            }
+            catch (Exception ex)
+            {
+                // Ignoramos micro-errores de red mientras escribe
+            }
+            finally
+            {
+                Cursor = Cursors.Default;
+            }
+        }
+
+        private void lstClientes_SelectedIndexChanged(object sender, EventArgs e) { }
+
+        private void lstClientes_Click(object sender, EventArgs e)
+        {
+            if (lstClientes.SelectedItem != null)
+            {
+                eligiendoDeLista = true;
+
+                // ATRAPAMOS EL ID OCULTO
+                idClienteSeleccionado = Convert.ToInt32(lstClientes.SelectedValue);
+
+                var cliente = (ClienteDto)lstClientes.SelectedItem;
+                txtBuscarCliente.Text = cliente.razonSocial;
+
+                lstClientes.Visible = false;
+                eligiendoDeLista = false;
+            }
+        }
+
+        private void lstClientes_SelectedIndexChanged_1(object sender, EventArgs e)
+        {
+
+        }
+
+        private void textScanner_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        /// <summary>
+        /// Levanta un modal para concatenar códigos de barras complementarios al GTIN base.
+        /// </summary>
+        private string PedirCodigoComplementario(string codigoBase)
+        {
+            string codigoFinal = codigoBase;
+
+            Form prompt = new Form()
+            {
+                Width = 450,
+                Height = 220,
+                FormBorderStyle = FormBorderStyle.FixedDialog,
+                Text = "Código Dividido Detectado",
+                StartPosition = FormStartPosition.CenterScreen,
+                MaximizeBox = false,
+                MinimizeBox = false
+            };
+
+            Label lblInfo = new Label()
+            {
+                Left = 20,
+                Top = 15,
+                Width = 400,
+                Height = 40,
+                Text = "Se detectó un GTIN base. Escaneá los códigos complementarios (Lote, Vencimiento, Serie). Podés escanear varios antes de confirmar."
+            };
+
+            Label lblBase = new Label()
+            {
+                Left = 20,
+                Top = 60,
+                Width = 400,
+                Font = new Font("Segoe UI", 9, FontStyle.Bold),
+                Text = $"Código actual: {codigoFinal}"
+            };
+
+            TextBox txtScanExtra = new TextBox() { Left = 20, Top = 85, Width = 390 };
+
+            Button btnConfirmar = new Button() { Text = "Confirmar", Left = 210, Top = 130, Width = 100, DialogResult = DialogResult.OK, Cursor = Cursors.Hand };
+            Button btnCancelar = new Button() { Text = "Cancelar", Left = 320, Top = 130, Width = 90, DialogResult = DialogResult.Cancel, Cursor = Cursors.Hand };
+
+            // Lógica para ir concatenando cada vez que el lector dispara un "Enter"
+            txtScanExtra.KeyDown += (senderObj, eArgs) =>
+            {
+                if (eArgs.KeyCode == Keys.Enter)
+                {
+                    eArgs.SuppressKeyPress = true; // Evita el sonido de Windows
+                    string extra = txtScanExtra.Text.Trim();
+
+                    if (!string.IsNullOrEmpty(extra))
+                    {
+                        // Se concatena directamente sin espacios
+                        codigoFinal += extra;
+                        lblBase.Text = $"Código actual: {codigoFinal}";
+                        txtScanExtra.Clear();
+                    }
+                }
+            };
+
+            prompt.Controls.Add(lblInfo);
+            prompt.Controls.Add(lblBase);
+            prompt.Controls.Add(txtScanExtra);
+            prompt.Controls.Add(btnConfirmar);
+            prompt.Controls.Add(btnCancelar);
+
+            // NOTA: No seteamos AcceptButton al botón confirmar para que el ENTER del escáner no cierre la ventana prematuramente.
+            prompt.CancelButton = btnCancelar;
+
+            // Foco inicial automático en el escáner extra
+            prompt.Shown += (s, e) => txtScanExtra.Focus();
+
+            if (prompt.ShowDialog() == DialogResult.OK)
+            {
+                return codigoFinal;
+            }
+
+            return null; // Si cancela, devuelve null
+        }
     }
 }

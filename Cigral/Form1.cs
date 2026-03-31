@@ -133,10 +133,10 @@ namespace Cigral
 
             if (e.KeyCode == Keys.F11)  //Incio
             {
-                btnInicio.PerformClick();
+                iconButton1.PerformClick();
             }
 
-            
+
         }
 
         // --- EVENTOS CLICK DE LOS BOTONES DEL MENÚ ---
@@ -187,6 +187,12 @@ namespace Cigral
         {
             resaltarBoton(sender);
             MostrarPantalla(new UC_Productos());
+        }
+
+        private void iconButton1_Click(object sender, EventArgs e)
+        {
+            resaltarBoton(sender);
+            MostrarPantalla(new UC_Dashboard());
         }
     }
 }

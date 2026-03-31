@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -21,6 +22,8 @@ namespace Cigral.Services
         // Dirección principal del servidor. Todas las peticiones empiezan desde aquí.
         private static readonly string BaseUrl = "https://api.cigral.com.ar/api";
 
+        private static readonly HttpClient _client = new HttpClient();
+
         // --- DATOS EN MEMORIA DEL SISTEMA (SESIÓN) ---
         // Private Set: Cualquier pantalla puede leer quién está logueado, pero solo el Login puede modificarlos.
 
@@ -33,24 +36,19 @@ namespace Cigral.Services
         /// Prepara el HttpClient para cada petición.
         /// Automáticamente inyecta el Token JWT en las cabeceras si el usuario ya está logueado.
         /// </summary>
-        private static HttpClient GetClient()
+        public static void ConfigurarHeaders()
         {
-            HttpClient client = new HttpClient();
-            client.BaseAddress = new Uri(BaseUrl); // Indica la URL base
+            _client.DefaultRequestHeaders.Clear();
 
-            // Si el Token no está vacío (el usuario pasó por el Login)
             if (!string.IsNullOrEmpty(AuthHeaderKey))
             {
-                client.DefaultRequestHeaders.Add("x-cigral-auth", AuthHeaderKey);
+                _client.DefaultRequestHeaders.Add("x-cigral-auth", AuthHeaderKey);
             }
 
-            // 3. Si el usuario está logueado, inyectamos el JWT Bearer
             if (!string.IsNullOrEmpty(TokenActual))
             {
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", TokenActual);
+                _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", TokenActual);
             }
-
-            return client;
         }
 
         // =========================================================================================
@@ -62,57 +60,47 @@ namespace Cigral.Services
         /// </summary>
         public static async Task<bool> Login(string usuario, string clave)
         {
-            // El 'using' asegura que HttpClient se destruya y libere memoria al terminar.
-            using (HttpClient client = GetClient())
+            try
             {
-                try
+                ConfigurarHeaders();
+
+                var loginData = new LoginRequest { Username = usuario, Password = clave };
+                string json = JsonConvert.SerializeObject(loginData);
+                StringContent content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                // USAMOS _client DIRECTAMENTE, SIN EL USING
+                HttpResponseMessage response = await _client.PostAsync($"{BaseUrl}/Auth/login", content);
+
+                if (response.IsSuccessStatusCode)
                 {
-                    // 1. Armamos el paquete con los datos del usuario
-                    var loginData = new LoginRequest
-                    {
-                        Username = usuario,
-                        Password = clave
-                    };
+                    string responseBody = await response.Content.ReadAsStringAsync();
+                    var datos = JsonConvert.DeserializeObject<LoginResponse>(responseBody);
 
-                    // 2. Lo convierte a formato JSON para mandarlo por red
-                    string json = JsonConvert.SerializeObject(loginData);
-                    StringContent content = new StringContent(json, Encoding.UTF8, "application/json");
+                    TokenActual = datos.Token;
+                    UsuarioActual = datos.Username;
+                    EsAdmin = datos.EsAdmin;
 
-                    // 3. Dispara la petición al endpoint
-                    HttpResponseMessage response = await client.PostAsync($"{BaseUrl}/Auth/Login", content);
+                    // ¡MUY IMPORTANTE! Inyectamos el token en el cliente global para el resto de la sesión
+                    ConfigurarHeaders();
 
-                    if (response.IsSuccessStatusCode)
-                    {
-                        // Leemos y deserializamos la respuesta exitosa
-                        string responseBody = await response.Content.ReadAsStringAsync();
-                        var datos = JsonConvert.DeserializeObject<LoginResponse>(responseBody);
-
-                        // Guardamos los datos de sesión globales
-                        TokenActual = datos.Token;
-                        UsuarioActual = datos.Username;
-                        EsAdmin = datos.EsAdmin;
-
-                        return true;
-                    }
-                    else if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized ||
-                             response.StatusCode == System.Net.HttpStatusCode.BadRequest)
-                    {
-                        // Credenciales incorrectas
-                        MessageBox.Show("Usuario o contraseña incorrectos. Por favor, verificá tus datos.", "Credenciales Inválidas", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        return false;
-                    }
-                    else
-                    {
-                        // Error no controlado del servidor, usamos la herramienta global
-                        await MostrarErrorBackend(response, "Fallo del Servidor en Login");
-                        return false;
-                    }
+                    return true;
                 }
-                catch (Exception ex)
+                else if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized ||
+                         response.StatusCode == System.Net.HttpStatusCode.BadRequest)
                 {
-                    MessageBox.Show($"Error crítico de conexión: {ex.Message}", "Error de Red", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("Usuario o contraseña incorrectos.", "Credenciales Inválidas", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return false;
                 }
+                else
+                {
+                    await MostrarErrorBackend(response, "Fallo del Servidor en Login");
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error crítico de conexión: {ex.Message}", "Error de Red", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
             }
         }
 
@@ -126,13 +114,12 @@ namespace Cigral.Services
         /// <returns>El ID del remito generado, o 0 si falló.</returns>
         public static async Task<int> GuardarIngreso(RemitoIngresoRequest remito)
         {
-            using (HttpClient client = GetClient())
-            {
+            
                 try
                 {
                     var json = JsonConvert.SerializeObject(remito);
                     var content = new StringContent(json, Encoding.UTF8, "application/json");
-                    var response = await client.PostAsync($"{BaseUrl}/Remitos/ingreso", content);
+                    var response = await _client.PostAsync($"{BaseUrl}/Remitos/ingreso", content);
 
                     if (response.IsSuccessStatusCode)
                     {
@@ -164,7 +151,6 @@ namespace Cigral.Services
                     MessageBox.Show($"Error de conexión:\n{ex.Message}", "Fallo", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return 0;
                 }
-            }
         }
 
         /// <summary>
@@ -172,13 +158,11 @@ namespace Cigral.Services
         /// </summary>
         public static async Task<int> CrearRemitoEgreso(RemitoEgresoDto remito)
         {
-            using (HttpClient client = GetClient())
-            {
                 try
                 {
                     string json = JsonConvert.SerializeObject(remito);
                     var content = new StringContent(json, Encoding.UTF8, "application/json");
-                    var response = await client.PostAsync($"{BaseUrl}/Remitos/egreso", content);
+                    var response = await _client.PostAsync($"{BaseUrl}/Remitos/egreso", content);
 
                     if (response.IsSuccessStatusCode)
                     {
@@ -201,7 +185,6 @@ namespace Cigral.Services
                     }
                 }
                 catch { return 0; }
-            }
         }
 
         /// <summary>
@@ -209,8 +192,6 @@ namespace Cigral.Services
         /// </summary>
         public static async Task<string> ObtenerSiguienteNumeroRemito(int depositoId, bool esIngreso)
         {
-            using (HttpClient client = GetClient())
-            {
                 try
                 {
                     string url = $"{BaseUrl}/Remitos/siguiente-nro";
@@ -222,7 +203,7 @@ namespace Cigral.Services
                         Content = new StringContent(JsonConvert.SerializeObject(requestData), Encoding.UTF8, "application/json")
                     };
 
-                    var response = await client.SendAsync(request);
+                    var response = await _client.SendAsync(request);
 
                     if (response.IsSuccessStatusCode)
                     {
@@ -233,7 +214,6 @@ namespace Cigral.Services
                     return "";
                 }
                 catch { return ""; }
-            }
         }
 
         /// <summary>
@@ -241,12 +221,10 @@ namespace Cigral.Services
         /// </summary>
         public static async Task DescargarAbrirPdfRemito(int idRemito, bool esIngreso = false)
         {
-            using (HttpClient client = GetClient())
-            {
                 try
                 {
                     string tipoEndpoint = esIngreso ? "ingreso" : "egreso";
-                    var response = await client.GetAsync($"{BaseUrl}/Remitos/{tipoEndpoint}/{idRemito}/pdf");
+                    var response = await _client.GetAsync($"{BaseUrl}/Remitos/{tipoEndpoint}/{idRemito}/pdf");
 
                     if (response.IsSuccessStatusCode)
                     {
@@ -266,7 +244,6 @@ namespace Cigral.Services
                 {
                     MessageBox.Show("Error al intentar abrir el PDF: " + ex.Message, "Error PDF", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
-            }
         }
 
         /// <summary>
@@ -274,11 +251,9 @@ namespace Cigral.Services
         /// </summary>
         public static async Task<byte[]> ObtenerRemitoPdf(int idRemito)
         {
-            using (HttpClient client = GetClient())
-            {
                 try
                 {
-                    var response = await client.GetAsync($"{BaseUrl}/Remitos/ingreso/{idRemito}/pdf");
+                    var response = await _client.GetAsync($"{BaseUrl}/Remitos/ingreso/{idRemito}/pdf");
                     if (response.IsSuccessStatusCode)
                     {
                         return await response.Content.ReadAsByteArrayAsync();
@@ -286,7 +261,6 @@ namespace Cigral.Services
                     return null;
                 }
                 catch { return null; }
-            }
         }
 
         /// <summary>
@@ -297,8 +271,6 @@ namespace Cigral.Services
         /// </summary>
         public static async Task<PaginadoResponse<RemitoHistorialDto>> ObtenerHistorialRemitos(bool esIngreso, DateTime? fechaDesde = null, DateTime? fechaHasta = null, string nroRemito = "", int pageNumber = 1, int pageSize = 25)
         {
-            using (HttpClient client = GetClient())
-            {
                 try
                 {
                     string tipoEndpoint = esIngreso ? "ingreso" : "egreso";
@@ -310,7 +282,7 @@ namespace Cigral.Services
                     if (fechaHasta.HasValue) url += $"&FechaHasta={fechaHasta.Value.ToString("yyyy-MM-dd")}";
                     if (!string.IsNullOrWhiteSpace(nroRemito)) url += $"&NumeroRemito={nroRemito.Trim()}";
 
-                    var response = await client.GetAsync(url);
+                    var response = await _client.GetAsync(url);
                     string json = await response.Content.ReadAsStringAsync();
 
                     if (response.IsSuccessStatusCode)
@@ -335,7 +307,6 @@ namespace Cigral.Services
                     return new PaginadoResponse<RemitoHistorialDto> { items = new List<RemitoHistorialDto>() };
                 }
             }
-        }
 
         // =========================================================================================
         // MÓDULO 3: STOCK Y EXISTENCIAS (MOVIMIENTOS MANUALES)
@@ -346,13 +317,11 @@ namespace Cigral.Services
         /// </summary>
         public static async Task<bool> AumentarStock(AumentarExistenciaRequest request)
         {
-            using (HttpClient client = GetClient())
-            {
                 try
                 {
                     var json = JsonConvert.SerializeObject(request);
                     var content = new StringContent(json, Encoding.UTF8, "application/json");
-                    var response = await client.PostAsync($"{BaseUrl}/Existencias/aumentar", content);
+                    var response = await _client.PostAsync($"{BaseUrl}/Existencias/aumentar", content);
 
                     if (response.IsSuccessStatusCode) return true;
                     else
@@ -366,7 +335,6 @@ namespace Cigral.Services
                     MessageBox.Show($"Fallo de conexión:\n{ex.Message}", "Fallo Crítico", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return false;
                 }
-            }
         }
 
         /// <summary>
@@ -375,13 +343,11 @@ namespace Cigral.Services
         // Le agregamos el parámetro 'nombreProducto'
         public static async Task<bool> DisminuirStock(DisminuirStockDto item, string nombreProducto = "Producto")
         {
-            using (HttpClient client = GetClient())
-            {
                 try
                 {
                     string json = JsonConvert.SerializeObject(item);
                     var content = new StringContent(json, Encoding.UTF8, "application/json");
-                    var response = await client.PostAsync($"{BaseUrl}/Existencias/disminuir", content);
+                    var response = await _client.PostAsync($"{BaseUrl}/Existencias/disminuir", content);
 
                     if (response.IsSuccessStatusCode) return true;
                     else
@@ -396,7 +362,6 @@ namespace Cigral.Services
                     MessageBox.Show($"Error interno de conexión:\n{ex.Message}", "Fallo de Red", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return false;
                 }
-            }
         }
 
         /// <summary>
@@ -404,8 +369,6 @@ namespace Cigral.Services
         /// </summary>
         public static async Task<List<ExistenciaDto>> ObtenerExistencias(string buscar, bool ocultarCero, bool soloVencidos, int ordenarPor = 0, bool esDescendente = false)
         {
-            using (HttpClient client = GetClient())
-            {
                 try
                 {
                     string url = $"{BaseUrl}/Existencias?PageNumber=1&PageSize=100";
@@ -415,7 +378,7 @@ namespace Cigral.Services
                     if (ocultarCero) url += "&OculrarCero=true";
                     if (soloVencidos) url += "$SoloConVencimiento=true";
 
-                    var response = await client.GetAsync(url);
+                    var response = await _client.GetAsync(url);
 
                     if (response.IsSuccessStatusCode)
                     {
@@ -426,7 +389,6 @@ namespace Cigral.Services
                     return new List<ExistenciaDto>();
                 }
                 catch { return new List<ExistenciaDto>(); }
-            }
         }
 
         /// <summary>
@@ -434,12 +396,10 @@ namespace Cigral.Services
         /// </summary>
         public static async Task<ExistenciaDto> BuscarProductoParaEgreso(int productoId)
         {
-            using (HttpClient client = GetClient())
-            {
                 try
                 {
                     string url = $"{BaseUrl}/Existencias?ProductoId={productoId}&OrdenarPor=2&EsDescendente=false&PageNumber=1&PageSize=10";
-                    var response = await client.GetAsync(url);
+                    var response = await _client.GetAsync(url);
 
                     if (response.IsSuccessStatusCode)
                     {
@@ -456,7 +416,6 @@ namespace Cigral.Services
                     return null;
                 }
                 catch { return null; }
-            }
         }
 
         /// <summary>
@@ -464,8 +423,6 @@ namespace Cigral.Services
         /// </summary>
         public static async Task<List<VencimientoDto>> ObtenerVencimientos(int? diasDesde = null, int? diasHasta = null, bool incluirVencidos = false)
         {
-            using (HttpClient client = GetClient())
-            {
                 try
                 {
                     string url = $"{BaseUrl}/Existencias/proximos-vencer?";
@@ -477,7 +434,7 @@ namespace Cigral.Services
 
                     url += string.Join("&", parametros);
 
-                    var response = await client.GetAsync(url);
+                    var response = await _client.GetAsync(url);
 
                     if (response.IsSuccessStatusCode)
                     {
@@ -491,7 +448,6 @@ namespace Cigral.Services
                     MessageBox.Show($"Error al traer datos del dashboard:\n{ex.Message}", "Error Interno", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return new List<VencimientoDto>();
                 }
-            }
         }
 
         // =========================================================================================
@@ -503,12 +459,10 @@ namespace Cigral.Services
         /// </summary>
         public static async Task<ParserResponse> ParsearCodigoBarras(string codigoCrudo)
         {
-            using (HttpClient client = GetClient())
-            {
                 try
                 {
                     string urlEncode = System.Net.WebUtility.UrlEncode(codigoCrudo);
-                    var response = await client.GetAsync($"{BaseUrl}/Parser/analyze?rawCode={urlEncode}");
+                    var response = await _client.GetAsync($"{BaseUrl}/Parser/analyze?rawCode={urlEncode}");
 
                     if (response.IsSuccessStatusCode)
                     {
@@ -526,7 +480,6 @@ namespace Cigral.Services
                     MessageBox.Show($"Error interno de conexión:\n{ex.Message}", "X-Ray Parser", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return null;
                 }
-            }
         }
 
         /// <summary>
@@ -534,13 +487,11 @@ namespace Cigral.Services
         /// </summary>
         public static async Task<int> CrearProductoNuevo(ProductoCreateRequest producto)
         {
-            using (HttpClient client = GetClient())
-            {
                 try
                 {
                     var json = JsonConvert.SerializeObject(producto);
                     var content = new StringContent(json, Encoding.UTF8, "application/json");
-                    var response = await client.PostAsync($"{BaseUrl}/Productos", content);
+                    var response = await _client.PostAsync($"{BaseUrl}/Productos", content);
 
                     if (response.IsSuccessStatusCode)
                     {
@@ -559,23 +510,21 @@ namespace Cigral.Services
                     MessageBox.Show($"Fallo de conexión al crear producto:\n{ex.Message}", "Fallo Crítico", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return 0;
                 }
-            }
         }
 
         /// <summary>
         /// Busca productos en el catálogo maestro usando el texto ingresado.
         /// </summary>
-        public static async Task<PaginadoResponse<ProductoResponseDto>> ObtenerProductosCatalogo(string filtroNombre, int pageNumber = 1, int pageSize = 25)
+        public static async Task<PaginadoResponse<ProductoResponseDto>> ObtenerProductosCatalogo(string filtroNombre, string filtroGlobal = "", int pageNumber = 1, int pageSize = 25)
         {
-            using (HttpClient client = GetClient())
-            {
                 try
                 {
                     string url = $"{BaseUrl}/Productos?PageNumber={pageNumber}&PageSize={pageSize}";
 
                     if(!string.IsNullOrWhiteSpace(filtroNombre)) url += $"&Nombre={Uri.EscapeDataString(filtroNombre.Trim())}";
+                    if(!string.IsNullOrWhiteSpace(filtroGlobal)) url += $"&BusquedaGlobal={Uri.EscapeDataString(filtroGlobal.Trim())}";
 
-                    var response = await client.GetAsync(url);
+                    var response = await _client.GetAsync(url);
                     string json = await response.Content.ReadAsStringAsync();
 
                     if (response.IsSuccessStatusCode)
@@ -595,19 +544,16 @@ namespace Cigral.Services
                     MessageBox.Show($"Error interno al buscar en el catálogo:\n{ex.Message}", "Error de Conexión", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return new PaginadoResponse<ProductoResponseDto>();
                 }
-            }
         }
 
         public static async Task<int> UpdateProducto(ProductoUpdateDto producto, int id)
         {
-            using (HttpClient client = GetClient())
-            {
                 try
                 {
                     string json = JsonConvert.SerializeObject(producto);
                     var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-                    var response = await client.PutAsync($"{BaseUrl}/Productos/{id}", content);
+                    var response = await _client.PutAsync($"{BaseUrl}/Productos/{id}", content);
 
                     if (response.IsSuccessStatusCode)
                     {
@@ -626,7 +572,6 @@ namespace Cigral.Services
                     MessageBox.Show($"Fallo de conexión al modificar el producto:\n{ex.Message}", "Fallo Crítico", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return 0;
                 }
-            }
         }
 
         /// <summary>
@@ -634,13 +579,11 @@ namespace Cigral.Services
         /// </summary>
         public static async Task<bool> GarantizarMarcaExiste(string nombreMarca)
         {
-            using (var client = GetClient())
-            {
                 var marcaNueva = new { nombre = nombreMarca };
                 var json = JsonConvert.SerializeObject(marcaNueva);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-                var response = await client.PostAsync($"{BaseUrl}/Marcas", content);
+                var response = await _client.PostAsync($"{BaseUrl}/Marcas", content);
 
                 // OK (200), Creado (201), Conflicto/Ya Existe (409/400)
                 if (response.IsSuccessStatusCode || response.StatusCode == System.Net.HttpStatusCode.Conflict || response.StatusCode == System.Net.HttpStatusCode.BadRequest)
@@ -648,7 +591,6 @@ namespace Cigral.Services
                     return true;
                 }
                 return false;
-            }
         }
 
         /// <summary>
@@ -656,11 +598,9 @@ namespace Cigral.Services
         /// </summary>
         public static async Task<List<DepositoDto>> ObtenerDepositos()
         {
-            using (HttpClient client = GetClient())
-            {
                 try
                 {
-                    var response = await client.GetAsync($"{BaseUrl}/Depositos");
+                    var response = await _client.GetAsync($"{BaseUrl}/Depositos");
                     if (response.IsSuccessStatusCode)
                     {
                         var json = await response.Content.ReadAsStringAsync();
@@ -670,19 +610,22 @@ namespace Cigral.Services
                     return new List<DepositoDto>();
                 }
                 catch { return new List<DepositoDto>(); }
-            }
         }
 
         /// <summary>
         /// Trae la lista de proveedores.
         /// </summary>
-        public static async Task<List<ProveedorDto>> ObtenerProveedores()
+        public static async Task<List<ProveedorDto>> ObtenerProveedores(string busqueda)
         {
-            using (HttpClient client = GetClient())
-            {
                 try
                 {
-                    var response = await client.GetAsync($"{BaseUrl}/Proveedores?pageSize=100");
+                    string url = $"{BaseUrl}/Proveedores?pageSize=25&PageNumber=1";
+                    if (string.IsNullOrWhiteSpace(busqueda) == false)
+                    {
+                        url += $"&RazonSocial={Uri.EscapeDataString(busqueda.Trim())}";
+                    }
+                    var response = await _client.GetAsync(url);
+                    
                     if (response.IsSuccessStatusCode)
                     {
                         var json = await response.Content.ReadAsStringAsync();
@@ -692,7 +635,6 @@ namespace Cigral.Services
                     return new List<ProveedorDto>();
                 }
                 catch { return new List<ProveedorDto>(); }
-            }
         }
 
         /// <summary>
@@ -700,13 +642,11 @@ namespace Cigral.Services
         /// </summary>
         public static async Task<int> CrearProveedorExpress(ProveedorDto nuevoProveedor)
         {
-            using (HttpClient client = GetClient())
-            {
                 try
                 {
                     string json = JsonConvert.SerializeObject(nuevoProveedor);
                     var content = new StringContent(json, Encoding.UTF8, "application/json");
-                    var response = await client.PostAsync($"{BaseUrl}/Proveedores", content);
+                    var response = await _client.PostAsync($"{BaseUrl}/Proveedores", content);
 
                     string res = await response.Content.ReadAsStringAsync();
                     if (response.IsSuccessStatusCode)
@@ -733,7 +673,6 @@ namespace Cigral.Services
                     MessageBox.Show($"Error interno de conexión:\n{ex.Message}", "Error Interno", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return 0;
                 }
-            }
         }
 
         /// <summary>
@@ -741,8 +680,6 @@ namespace Cigral.Services
         /// </summary>
         public static async Task<List<ClienteDto>> ObtenerClientes(string busqueda = "")
         {
-            using (HttpClient client = GetClient())
-            {
                 try
                 {
                     // 1. Armamos la URL base. Le pedimos 50 resultados para la lista.
@@ -755,7 +692,7 @@ namespace Cigral.Services
                         url += $"&RazonSocial={Uri.EscapeDataString(busqueda.Trim())}";
                     }
 
-                    var response = await client.GetAsync(url);
+                    var response = await _client.GetAsync(url);
                     string json = await response.Content.ReadAsStringAsync();
 
                     if (response.IsSuccessStatusCode)
@@ -780,7 +717,6 @@ namespace Cigral.Services
                     // Si falla la red, devolvemos vacío para no romper la pantalla
                     return new List<ClienteDto>();
                 }
-            }
         }
 
         /// <summary>
@@ -788,13 +724,11 @@ namespace Cigral.Services
         /// </summary>
         public static async Task<int> CrearClienteExpress(ClienteDto nuevoCliente)
         {
-            using (HttpClient client = GetClient())
-            {
                 try
                 {
                     string json = JsonConvert.SerializeObject(nuevoCliente);
                     var content = new StringContent(json, Encoding.UTF8, "application/json");
-                    var response = await client.PostAsync($"{BaseUrl}/Clientes", content);
+                    var response = await _client.PostAsync($"{BaseUrl}/Clientes", content);
 
                     string res = await response.Content.ReadAsStringAsync();
                     if (response.IsSuccessStatusCode)
@@ -821,7 +755,6 @@ namespace Cigral.Services
                     MessageBox.Show($"Error interno de conexión:\n{ex.Message}", "Error Interno", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return 0;
                 }
-            }
         }
 
         // =========================================================================================
@@ -836,8 +769,6 @@ namespace Cigral.Services
         /// </summary>
         public static async Task<PaginadoResponse<AuditoriaItemDto>> ObtenerAuditoria(int? tipoMovimiento = null, string nombreProducto = "", int pageNumber = 1, int pageSize = 25)
         {
-            using (HttpClient client = GetClient())
-            {
                 try
                 {
                     // 1. Armamos la URL con las variables de paginación dinámicas en vez de fijas
@@ -848,7 +779,7 @@ namespace Cigral.Services
                     if (!string.IsNullOrWhiteSpace(nombreProducto))
                         url += $"&NombreProducto={Uri.EscapeDataString(nombreProducto.Trim())}";
 
-                    var response = await client.GetAsync(url);
+                    var response = await _client.GetAsync(url);
                     string json = await response.Content.ReadAsStringAsync();
 
                     if (response.IsSuccessStatusCode)
@@ -876,7 +807,6 @@ namespace Cigral.Services
                     MessageBox.Show($"Error interno al leer los datos de auditoría:\n{ex.Message}", "Error de Conversión", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return new PaginadoResponse<AuditoriaItemDto> { items = new List<AuditoriaItemDto>() };
                 }
-            }
         }
 
         /// <summary>
@@ -968,8 +898,6 @@ namespace Cigral.Services
         // Le agregamos "= null" para que los parámetros sean opcionales al llamarla
         public static async Task<List<EntidadDto>> ObtenerEntidades(string razonSocial = null, string cuit = null)
         {
-            using (HttpClient client = GetClient())
-            {
                 try
                 {
                     // 1. Iniciamos con la URL base y el paginado
@@ -988,7 +916,7 @@ namespace Cigral.Services
                     }
 
                     // 4. Hacemos la petición con la URL ya ensamblada y segura
-                    var response = await client.GetAsync(url);
+                    var response = await _client.GetAsync(url);
 
                     if (response.IsSuccessStatusCode)
                     {
@@ -1002,19 +930,16 @@ namespace Cigral.Services
                 {
                     return new List<EntidadDto>();
                 }
-            } 
         }
 
         public static async Task<int> UpdateEntidad(EntidadDto entidad)
         {
-            using (HttpClient client = GetClient())
-            {
                 try
                 {
                     string json = JsonConvert.SerializeObject(entidad);
                     var content = new StringContent(json, Encoding.UTF8, "application/json");
                     
-                    var response = entidad.TipoEntidad=="Cliente" ? await client.PutAsync($"{BaseUrl}/Clientes/{entidad.IdOriginal}", content) : await client.PutAsync($"{BaseUrl}/Proveedores/{entidad.IdOriginal}", content);
+                    var response = entidad.TipoEntidad=="Cliente" ? await _client.PutAsync($"{BaseUrl}/Clientes/{entidad.IdOriginal}", content) : await _client.PutAsync($"{BaseUrl}/Proveedores/{entidad.IdOriginal}", content);
 
                     if (response.IsSuccessStatusCode)
                     {
@@ -1033,7 +958,6 @@ namespace Cigral.Services
                     MessageBox.Show($"Fallo de conexión al modificar la entidad:\n{ex.Message}", "Fallo Crítico", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return 0;
                 }
-            }
         }
 
         /// <summary>
@@ -1060,4 +984,4 @@ namespace Cigral.Services
 
 
     }
-    }
+}
