@@ -404,14 +404,32 @@ namespace Cigral
         {
             if (e.KeyCode == Keys.Enter)
             {
-                e.SuppressKeyPress = true; // Evita el sonido de de Windows
+                e.SuppressKeyPress = true;
 
                 string codigoCrudo = textScanner.Text.Trim();
-                textScanner.Clear(); // Limpia rápido para el próximo escaneo
+                textScanner.Clear();
 
                 if (string.IsNullOrEmpty(codigoCrudo)) return;
 
-                // 1. LLAMA AL PARSER
+                // --- NUEVA LÓGICA: CÓDIGOS DIVIDIDOS ---
+                // Si mide exactamente 16 y arranca con 01 (Indicador GS1 para GTIN)
+                if (codigoCrudo.Length == 16 && codigoCrudo.StartsWith("01"))
+                {
+                    string codigoConcatenado = PedirCodigoComplementario(codigoCrudo);
+
+                    if (string.IsNullOrEmpty(codigoConcatenado))
+                    {
+                        // El usuario canceló la operación en el modal
+                        textScanner.Focus();
+                        return;
+                    }
+
+                    // Reemplazamos el código original corto, por la versión gigante concatenada
+                    codigoCrudo = codigoConcatenado;
+                }
+                // ---------------------------------------
+
+                // 1. LLAMA AL PARSER (Ahora recibirá el código completo)
                 var productoParseado = await ApiServices.ParsearCodigoBarras(codigoCrudo);
 
                 if (productoParseado == null)
@@ -1115,6 +1133,85 @@ namespace Cigral
         private void textScanner_TextChanged(object sender, EventArgs e)
         {
 
+        }
+
+        /// <summary>
+        /// Levanta un modal para concatenar códigos de barras complementarios al GTIN base.
+        /// </summary>
+        private string PedirCodigoComplementario(string codigoBase)
+        {
+            string codigoFinal = codigoBase;
+
+            Form prompt = new Form()
+            {
+                Width = 450,
+                Height = 220,
+                FormBorderStyle = FormBorderStyle.FixedDialog,
+                Text = "Código Dividido Detectado",
+                StartPosition = FormStartPosition.CenterScreen,
+                MaximizeBox = false,
+                MinimizeBox = false
+            };
+
+            Label lblInfo = new Label()
+            {
+                Left = 20,
+                Top = 15,
+                Width = 400,
+                Height = 40,
+                Text = "Se detectó un GTIN base. Escaneá los códigos complementarios (Lote, Vencimiento, Serie). Podés escanear varios antes de confirmar."
+            };
+
+            Label lblBase = new Label()
+            {
+                Left = 20,
+                Top = 60,
+                Width = 400,
+                Font = new Font("Segoe UI", 9, FontStyle.Bold),
+                Text = $"Código actual: {codigoFinal}"
+            };
+
+            TextBox txtScanExtra = new TextBox() { Left = 20, Top = 85, Width = 390 };
+
+            Button btnConfirmar = new Button() { Text = "Confirmar", Left = 210, Top = 130, Width = 100, DialogResult = DialogResult.OK, Cursor = Cursors.Hand };
+            Button btnCancelar = new Button() { Text = "Cancelar", Left = 320, Top = 130, Width = 90, DialogResult = DialogResult.Cancel, Cursor = Cursors.Hand };
+
+            // Lógica para ir concatenando cada vez que el lector dispara un "Enter"
+            txtScanExtra.KeyDown += (senderObj, eArgs) =>
+            {
+                if (eArgs.KeyCode == Keys.Enter)
+                {
+                    eArgs.SuppressKeyPress = true; // Evita el sonido de Windows
+                    string extra = txtScanExtra.Text.Trim();
+
+                    if (!string.IsNullOrEmpty(extra))
+                    {
+                        // Se concatena directamente sin espacios
+                        codigoFinal += extra;
+                        lblBase.Text = $"Código actual: {codigoFinal}";
+                        txtScanExtra.Clear();
+                    }
+                }
+            };
+
+            prompt.Controls.Add(lblInfo);
+            prompt.Controls.Add(lblBase);
+            prompt.Controls.Add(txtScanExtra);
+            prompt.Controls.Add(btnConfirmar);
+            prompt.Controls.Add(btnCancelar);
+
+            // NOTA: No seteamos AcceptButton al botón confirmar para que el ENTER del escáner no cierre la ventana prematuramente.
+            prompt.CancelButton = btnCancelar;
+
+            // Foco inicial automático en el escáner extra
+            prompt.Shown += (s, e) => txtScanExtra.Focus();
+
+            if (prompt.ShowDialog() == DialogResult.OK)
+            {
+                return codigoFinal;
+            }
+
+            return null; // Si cancela, devuelve null
         }
     }
 }
