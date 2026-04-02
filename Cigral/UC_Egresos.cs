@@ -927,13 +927,13 @@ namespace Cigral
         private void button1_Click(object sender, EventArgs e)
         {
             // Validar si hay algo para borrar. 
-         
+
             // así que sumamos validación para que no moleste si la pantalla está recién abierta.
             bool grillaVacia = dgvEgreso.Rows.Count == 0 || (dgvEgreso.Rows.Count == 1 && dgvEgreso.Rows[0].IsNewRow);
 
             if (grillaVacia && string.IsNullOrWhiteSpace(txtRemito.Text)) return;
 
-            
+
             var confirmacion = MessageBox.Show(
                 "¿Desea cancelar todo el egreso actual?\n\nSe perderán todos los productos escaneados y la configuración del remito.",
                 "Cancelar Egreso",
@@ -946,6 +946,8 @@ namespace Cigral
                 // Llamamos a la función que ya tenés creada más abajo para dejar todo en blanco
                 LimpiarPantalla();
             }
+
+        }
         private void panel2_Paint(object sender, PaintEventArgs e)
         {
 

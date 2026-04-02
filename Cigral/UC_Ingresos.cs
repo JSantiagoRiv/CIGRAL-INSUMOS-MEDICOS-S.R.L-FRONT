@@ -130,7 +130,7 @@ namespace Cigral
 
 
 
-        private async Task CargarProveedores()
+        private async Task CargarProveedores() { 
             this.ActiveControl = textScanner;
 
             try
@@ -616,19 +616,19 @@ namespace Cigral
                     // 5. EVALUA SI ES CONOCIDO O DESCONOCIDO
                     if (productoParseado.ExisteProducto)
                     {
-                        // PRODUCTO EXISTENTE: Lo muesra directo
+                        // PRODUCTO EXISTENTE Y CON GTIN: Lo muestra directo
                         fila.Cells["id"].Value = productoParseado.ProductoId;
                         fila.Cells["Producto"].Value = productoParseado.NombreProducto;
                         textScanner.Focus();
                     }
                     else
                     {
-                        // PRODUCTO NUEVO: Frena y le pide al usuario que lo bautice
-                        string nombreProducto = PedirNombreProducto(productoParseado.Gtin);
+                        // PRODUCTO DESCONOCIDO: Preguntamos si lo asocia a uno existente o crea uno nuevo
+                        var resultado = await AsociarOCrearProductoGTIN(productoParseado.Gtin);
 
-                        if (string.IsNullOrWhiteSpace(nombreProducto))
+                        if (resultado.Id == 0 && string.IsNullOrEmpty(resultado.Nombre))
                         {
-                            // Si cancela, borramos la fila
+                            // El usuario canceló la ventana (la cerró con la X)
                             dgvIngreso.Rows.Remove(fila);
                             textScanner.Focus();
                             return;
@@ -636,32 +636,54 @@ namespace Cigral
 
                         Cursor = Cursors.WaitCursor;
 
-                        // Crea el producto rápido en BD asociado a marca S/M
-                        await ApiServices.GarantizarMarcaExiste("S/M");
-                        var requestNuevoProd = new ProductoCreateRequest
+                        if (resultado.EsAsociacion)
                         {
-                            Nombre = nombreProducto,
-                            Descripcion = nombreProducto,
-                            Gtin = productoParseado.Gtin,
-                            EsUnitario = false,
-                            Precio = 0,
-                            Marca = "S/M"
-                        };
+                            // CAMINO A: El usuario eligió un producto de la grilla para ASOCIARLO
+                            bool exito = await ApiServices.UpdateProductoGTIN(resultado.Id, productoParseado.Gtin);
 
-                        int nuevoId = await ApiServices.CrearProductoNuevo(requestNuevoProd);
-                        Cursor = Cursors.Default;
+                            if (!exito)
+                            {
+                                dgvIngreso.Rows.Remove(fila);
+                                Cursor = Cursors.Default;
+                                textScanner.Focus();
+                                return;
+                            }
 
-                        if (nuevoId > 0)
-                        {
-                            fila.Cells["id"].Value = nuevoId;
-                            fila.Cells["Producto"].Value = nombreProducto;
+                            // Si la API lo actualizó bien, lo cargamos a la tabla visual
+                            fila.Cells["id"].Value = resultado.Id;
+                            fila.Cells["Producto"].Value = resultado.Nombre;
                         }
                         else
                         {
-                            MessageBox.Show("No se pudo crear el producto.");
-                            dgvIngreso.Rows.Remove(fila);
+                            // CAMINO B: El usuario apretó "+" y escribió el nombre para CREARLO
+                            await ApiServices.GarantizarMarcaExiste("S/M");
+                            var requestNuevoProd = new ProductoCreateRequest
+                            {
+                                Nombre = resultado.Nombre,
+                                Descripcion = resultado.Nombre,
+                                Gtin = productoParseado.Gtin, // Le pasamos el GTIN escaneado directamente
+                                EsUnitario = false,
+                                Precio = 0,
+                                Marca = resultado.Marca,
+                                CodigoGenerico = "GEN-" + DateTime.Now.ToString("yyMMddHHmmss"),
+                                ProductoSinCodigo = false
+                            };
+
+                            int nuevoId = await ApiServices.CrearProductoNuevo(requestNuevoProd);
+
+                            if (nuevoId > 0)
+                            {
+                                fila.Cells["id"].Value = nuevoId;
+                                fila.Cells["Producto"].Value = resultado.Nombre;
+                            }
+                            else
+                            {
+                                MessageBox.Show("No se pudo crear el producto en la base de datos.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                dgvIngreso.Rows.Remove(fila);
+                            }
                         }
 
+                        Cursor = Cursors.Default;
                         textScanner.Focus();
                     }
                 }
@@ -789,32 +811,167 @@ namespace Cigral
         // --- HELPER DE INTERFAZ: PROMPTS Y MODALES CREADOS POR CÓDIGO ---
 
         /// <summary>
-        /// Levanta una ventanita rápida para pedirle al operario el nombre de un producto escaneado que no existe en BD.
+        /// Abre un modal para buscar un producto existente y asociarle el GTIN, 
+        /// o permite crear uno completamente nuevo si no existe en la lista.
         /// </summary>
-        private string PedirNombreProducto(string gtin)
+        private async Task<(int Id, string Nombre, string Marca, bool EsAsociacion)> AsociarOCrearProductoGTIN(string gtin)
+        {
+            int idResult = 0;
+            string nombreResult = "";
+            string marcaResult = "";
+            bool esAsociacionResult = false;
+
+            Form buscador = new Form()
+            {
+                Width = 600,
+                Height = 450,
+                FormBorderStyle = FormBorderStyle.FixedDialog,
+                Text = $"GTIN {gtin} desconocido - Asociar o Crear",
+                StartPosition = FormStartPosition.CenterScreen,
+                MaximizeBox = false
+            };
+
+            TextBox txtBuscar = new TextBox() { Left = 20, Top = 20, Width = 470 };
+            Button btnNuevo = new Button() { Text = "+ Nuevo", Left = 500, Top = 18, Width = 60, BackColor = Color.LightGreen, Cursor = Cursors.Hand };
+
+            DataGridView dgv = new DataGridView()
+            {
+                Left = 20,
+                Top = 60,
+                Width = 540,
+                Height = 320,
+                AllowUserToAddRows = false,
+                ReadOnly = true,
+                SelectionMode = DataGridViewSelectionMode.FullRowSelect,
+                AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill,
+                BackgroundColor = Color.White,
+                RowHeadersVisible = false,
+                BorderStyle = BorderStyle.FixedSingle,
+                GridColor = Color.LightGray
+            };
+
+            dgv.DataBindingComplete += (senderGrid, ev) =>
+            {
+                if (dgv.Columns.Contains("ID")) dgv.Columns["ID"].Visible = false;
+            };
+
+            buscador.Controls.Add(txtBuscar); buscador.Controls.Add(btnNuevo); buscador.Controls.Add(dgv);
+
+            Func<Task> realizarBusqueda = async () =>
+            {
+                if (buscador.IsDisposed) return;
+                buscador.Cursor = Cursors.WaitCursor;
+                dgv.DataSource = null;
+
+                var lista = await ApiServices.ObtenerProductosCatalogo(txtBuscar.Text.Trim());
+                if (buscador.IsDisposed) return;
+
+                var vistaResultados = lista.items.Select(x => new
+                {
+                    ID = x.id,
+                    Producto = x.nombre,
+                    Codigo = string.IsNullOrEmpty(x.gtin) ? x.codigoGenerico : x.gtin
+                }).ToList();
+
+                dgv.DataSource = vistaResultados;
+                buscador.Cursor = Cursors.Default;
+            };
+
+            System.Windows.Forms.Timer timerBusqueda = new System.Windows.Forms.Timer();
+            timerBusqueda.Interval = 200;
+            timerBusqueda.Tick += async (s, ev) => { timerBusqueda.Stop(); await realizarBusqueda(); };
+            txtBuscar.TextChanged += (s, ev) => { timerBusqueda.Stop(); timerBusqueda.Start(); };
+            txtBuscar.KeyDown += async (s, ev) =>
+            {
+                if (ev.KeyCode == Keys.Enter) { ev.SuppressKeyPress = true; timerBusqueda.Stop(); await realizarBusqueda(); }
+            };
+
+            // OPCIÓN A: El usuario hizo doble clic en un producto existente (ASOCIAR)
+            dgv.CellMouseDoubleClick += (s, ev) =>
+            {
+                if (ev.RowIndex >= 0)
+                {
+                    idResult = Convert.ToInt32(dgv.Rows[ev.RowIndex].Cells["ID"].Value);
+                    nombreResult = dgv.Rows[ev.RowIndex].Cells["Producto"].Value.ToString();
+                    esAsociacionResult = true; // Marcamos que ES una asociación
+                    buscador.DialogResult = DialogResult.OK;
+                    buscador.Close();
+                }
+            };
+
+            // OPCIÓN B: El usuario hizo clic en el botón "+" (CREAR NUEVO)
+            btnNuevo.Click += (s, ev) =>
+            {
+                var (nombreNuevo, marcaNueva, confirmado) = PedirNombreProducto(gtin);
+                if (confirmado)
+                {
+                    idResult = 0; // 0 porque todavía no existe en la base de datos
+                    nombreResult = nombreNuevo;
+                    marcaResult = marcaNueva;
+                    esAsociacionResult = false; // Marcamos que NO es asociación, es creación
+                    buscador.DialogResult = DialogResult.OK;
+                    buscador.Close();
+                }
+            };
+
+            buscador.Shown += async (s, ev) => await realizarBusqueda();
+
+            if (buscador.ShowDialog() == DialogResult.OK)
+            {
+                return (idResult, nombreResult, marcaResult, esAsociacionResult);
+            }
+
+            return (0, "", "", false); // Canceló la ventana
+        }
+
+        private (string?, string?, bool) PedirNombreProducto(string gtin)
         {
             Form prompt = new Form()
             {
                 Width = 350,
-                Height = 170,
+                Height = 200, // Aumentamos el alto de 170 a 200 para dar espacio
                 FormBorderStyle = FormBorderStyle.FixedDialog,
-                Text = "Producto no registrado",
+                Text = "Crear Producto Nuevo",
                 StartPosition = FormStartPosition.CenterScreen,
                 MaximizeBox = false,
                 MinimizeBox = false
             };
 
-            Label lblInfo = new Label() { Left = 20, Top = 20, AutoSize = true, Text = $"GTIN: {gtin}" };
-            Label lblNombre = new Label() { Left = 20, Top = 55, AutoSize = true, Text = "Nombre:" };
-            TextBox txtNombre = new TextBox() { Left = 90, Top = 52, Width = 220 };
-            Button btnGuardar = new Button() { Text = "Guardar", Left = 210, Width = 100, Top = 85, DialogResult = DialogResult.OK };
+            Label lblInfo = new Label() { Left = 20, Top = 15, AutoSize = true, Text = $"Se asignará el GTIN: {gtin}" };
 
-            prompt.Controls.Add(lblInfo); prompt.Controls.Add(lblNombre);
-            prompt.Controls.Add(txtNombre); prompt.Controls.Add(btnGuardar);
+            Label lblNombre = new Label() { Left = 20, Top = 45, AutoSize = true, Text = "Nombre:" };
+            TextBox txtNombre = new TextBox() { Left = 90, Top = 42, Width = 220 };
+
+            Label lblMarca = new Label() { Left = 20, Top = 75, AutoSize = true, Text = "Marca:" };
+            TextBox txtMarca = new TextBox() { Left = 90, Top = 72, Width = 220 };
+
+            Button btnGuardar = new Button() { Text = "Continuar", Left = 210, Width = 100, Top = 115, DialogResult = DialogResult.OK };
+
+            // Mayúscula automática en la primera letra
+            txtNombre.TextChanged += (s, e) => {
+                if (txtNombre.Text.Length == 1) { txtNombre.Text = txtNombre.Text.ToUpper(); txtNombre.SelectionStart = 1; }
+            };
+
+            txtMarca.TextChanged += (s, e) => {
+                if (txtMarca.Text.Length == 1) { txtMarca.Text = txtMarca.Text.ToUpper(); txtMarca.SelectionStart = 1; }
+            };
+
+                
+            prompt.Controls.Add(lblInfo);
+            prompt.Controls.Add(lblNombre);
+            prompt.Controls.Add(txtNombre);
+            prompt.Controls.Add(lblMarca);
+            prompt.Controls.Add(txtMarca);
+            prompt.Controls.Add(btnGuardar);
+
             prompt.AcceptButton = btnGuardar;
 
-            if (prompt.ShowDialog() == DialogResult.OK) return txtNombre.Text.Trim();
-            return null;
+            if (prompt.ShowDialog() == DialogResult.OK && !string.IsNullOrWhiteSpace(txtNombre.Text) && !string.IsNullOrWhiteSpace(txtMarca.Text))
+            {
+                return (txtNombre.Text.Trim(), txtMarca.Text.Trim(), true);
+            }
+
+            return (null, null, false);
         }
 
         /// <summary>

@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -546,6 +547,27 @@ namespace Cigral.Services
                 }
         }
 
+        public static async Task<bool> UpdateProductoGTIN(int productoId, string nuevoGTIN)
+        {
+                try
+                {
+                    string json = JsonConvert.SerializeObject(nuevoGTIN);
+                    var content = new StringContent(json, Encoding.UTF8, "application/json");
+                    var response = await _client.PutAsync($"{BaseUrl}/Productos/actualizar-gtin/{productoId}", content);
+                    if (response.IsSuccessStatusCode) return true;
+                    else
+                    {
+                        await MostrarErrorBackend(response, $"Error al actualizar GTIN del producto ID {productoId}");
+                        return false;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Fallo de conexión al actualizar GTIN:\n{ex.Message}", "Fallo Crítico", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return false;
+                }
+        }
+
         public static async Task<int> UpdateProducto(ProductoUpdateDto producto, int id)
         {
                 try
@@ -965,12 +987,11 @@ namespace Cigral.Services
         /// </summary>
         public static async Task<ProductoResponseDto> ObtenerProductoPorId(int id)
         {
-            using (HttpClient client = GetClient())
-            {
+           
                 try
                 {
                     // Asegurate de que la ruta sea correcta según tu backend (ej. /Productos/{id})
-                    var response = await client.GetAsync($"{BaseUrl}/Productos/{id}");
+                    var response = await _client.GetAsync($"{BaseUrl}/Productos/{id}");
                     if (response.IsSuccessStatusCode)
                     {
                         var json = await response.Content.ReadAsStringAsync();
@@ -979,7 +1000,6 @@ namespace Cigral.Services
                     return null;
                 }
                 catch { return null; }
-            }
         }
 
 
