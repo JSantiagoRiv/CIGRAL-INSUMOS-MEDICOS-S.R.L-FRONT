@@ -84,9 +84,10 @@
             panel3.Controls.Add(btnConfirmar);
             panel3.Controls.Add(button1);
             panel3.Dock = DockStyle.Bottom;
-            panel3.Location = new Point(0, 1168);
+            panel3.Location = new Point(0, 876);
+            panel3.Margin = new Padding(3, 2, 3, 2);
             panel3.Name = "panel3";
-            panel3.Size = new Size(1938, 91);
+            panel3.Size = new Size(1696, 68);
             panel3.TabIndex = 9;
             // 
             // iconBtnBack
@@ -99,9 +100,10 @@
             iconBtnBack.IconColor = Color.Black;
             iconBtnBack.IconFont = FontAwesome.Sharp.IconFont.Auto;
             iconBtnBack.IconSize = 50;
-            iconBtnBack.Location = new Point(18, 17);
+            iconBtnBack.Location = new Point(16, 13);
+            iconBtnBack.Margin = new Padding(3, 2, 3, 2);
             iconBtnBack.Name = "iconBtnBack";
-            iconBtnBack.Size = new Size(66, 61);
+            iconBtnBack.Size = new Size(58, 46);
             iconBtnBack.TabIndex = 12;
             iconBtnBack.UseVisualStyleBackColor = false;
             iconBtnBack.Click += iconBtnBack_Click;
@@ -117,9 +119,10 @@
             btnConfirmar.FlatStyle = FlatStyle.Flat;
             btnConfirmar.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
             btnConfirmar.ForeColor = Color.White;
-            btnConfirmar.Location = new Point(1709, 13);
+            btnConfirmar.Location = new Point(1495, 10);
+            btnConfirmar.Margin = new Padding(3, 2, 3, 2);
             btnConfirmar.Name = "btnConfirmar";
-            btnConfirmar.Size = new Size(203, 67);
+            btnConfirmar.Size = new Size(178, 50);
             btnConfirmar.TabIndex = 10;
             btnConfirmar.Text = "CONFIRMAR EGRESO (F5)";
             btnConfirmar.UseVisualStyleBackColor = false;
@@ -136,9 +139,10 @@
             button1.FlatStyle = FlatStyle.Flat;
             button1.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
             button1.ForeColor = Color.White;
-            button1.Location = new Point(1469, 13);
+            button1.Location = new Point(1285, 10);
+            button1.Margin = new Padding(3, 2, 3, 2);
             button1.Name = "button1";
-            button1.Size = new Size(203, 67);
+            button1.Size = new Size(178, 50);
             button1.TabIndex = 11;
             button1.Text = "CANCELAR EGRESO (F12)";
             button1.UseVisualStyleBackColor = false;
@@ -148,9 +152,10 @@
             // 
             txtEscaner.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             txtEscaner.Font = new Font("Segoe UI", 16F);
-            txtEscaner.Location = new Point(288, 52);
+            txtEscaner.Location = new Point(252, 39);
+            txtEscaner.Margin = new Padding(3, 2, 3, 2);
             txtEscaner.Name = "txtEscaner";
-            txtEscaner.Size = new Size(1297, 43);
+            txtEscaner.Size = new Size(1135, 36);
             txtEscaner.TabIndex = 1;
             txtEscaner.TextAlign = HorizontalAlignment.Center;
             txtEscaner.KeyDown += txtEscaner_KeyDown;
@@ -159,9 +164,9 @@
             // 
             label2.AutoSize = true;
             label2.Font = new Font("Segoe UI", 12F);
-            label2.Location = new Point(19, 51);
+            label2.Location = new Point(17, 38);
             label2.Name = "label2";
-            label2.Size = new Size(76, 28);
+            label2.Size = new Size(61, 21);
             label2.TabIndex = 0;
             label2.Text = "Cliente:";
             // 
@@ -171,9 +176,9 @@
             label4.AutoSize = true;
             label4.Font = new Font("Segoe UI", 12F);
             label4.ForeColor = Color.Black;
-            label4.Location = new Point(794, 21);
+            label4.Location = new Point(695, 16);
             label4.Name = "label4";
-            label4.Size = new Size(253, 28);
+            label4.Size = new Size(201, 21);
             label4.TabIndex = 0;
             label4.Text = "Escanee el código de barras";
             // 
@@ -181,18 +186,19 @@
             // 
             dateTimePicker1.Font = new Font("Segoe UI", 12F);
             dateTimePicker1.Format = DateTimePickerFormat.Short;
-            dateTimePicker1.Location = new Point(778, 47);
+            dateTimePicker1.Location = new Point(681, 35);
+            dateTimePicker1.Margin = new Padding(3, 2, 3, 2);
             dateTimePicker1.Name = "dateTimePicker1";
-            dateTimePicker1.Size = new Size(161, 34);
+            dateTimePicker1.Size = new Size(141, 29);
             dateTimePicker1.TabIndex = 5;
             // 
             // label3
             // 
             label3.AutoSize = true;
             label3.Font = new Font("Segoe UI", 12F);
-            label3.Location = new Point(711, 51);
+            label3.Location = new Point(622, 38);
             label3.Name = "label3";
-            label3.Size = new Size(66, 28);
+            label3.Size = new Size(53, 21);
             label3.TabIndex = 4;
             label3.Text = "Fecha:";
             // 
@@ -213,9 +219,11 @@
             groupBox1.Controls.Add(label2);
             groupBox1.Dock = DockStyle.Top;
             groupBox1.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
-            groupBox1.Location = new Point(0, 75);
+            groupBox1.Location = new Point(0, 56);
+            groupBox1.Margin = new Padding(3, 2, 3, 2);
             groupBox1.Name = "groupBox1";
-            groupBox1.Size = new Size(1938, 131);
+            groupBox1.Padding = new Padding(3, 2, 3, 2);
+            groupBox1.Size = new Size(1696, 98);
             groupBox1.TabIndex = 6;
             groupBox1.TabStop = false;
             groupBox1.Text = "Datos del Cliente";
@@ -225,10 +233,9 @@
             // 
             lstClientes.Font = new Font("Segoe UI", 12F);
             lstClientes.FormattingEnabled = true;
-            lstClientes.Location = new Point(96, 95);
-            lstClientes.Margin = new Padding(3, 4, 3, 4);
+            lstClientes.Location = new Point(84, 71);
             lstClientes.Name = "lstClientes";
-            lstClientes.Size = new Size(204, 368);
+            lstClientes.Size = new Size(179, 277);
             lstClientes.TabIndex = 16;
             lstClientes.Visible = false;
             lstClientes.Click += lstClientes_Click;
@@ -238,10 +245,9 @@
             // 
             txtBuscarCliente.Enabled = false;
             txtBuscarCliente.Font = new Font("Segoe UI", 12F);
-            txtBuscarCliente.Location = new Point(96, 48);
-            txtBuscarCliente.Margin = new Padding(3, 4, 3, 4);
+            txtBuscarCliente.Location = new Point(84, 36);
             txtBuscarCliente.Name = "txtBuscarCliente";
-            txtBuscarCliente.Size = new Size(204, 34);
+            txtBuscarCliente.Size = new Size(179, 29);
             txtBuscarCliente.TabIndex = 15;
             txtBuscarCliente.TextChanged += txtBuscarCliente_TextChanged;
             // 
@@ -249,19 +255,18 @@
             // 
             txtComprobante.Enabled = false;
             txtComprobante.Font = new Font("Segoe UI", 12F);
-            txtComprobante.Location = new Point(1167, 47);
-            txtComprobante.Margin = new Padding(3, 4, 3, 4);
+            txtComprobante.Location = new Point(1021, 35);
             txtComprobante.Name = "txtComprobante";
-            txtComprobante.Size = new Size(181, 34);
+            txtComprobante.Size = new Size(159, 29);
             txtComprobante.TabIndex = 14;
             // 
             // label7
             // 
             label7.AutoSize = true;
             label7.Font = new Font("Segoe UI", 12F);
-            label7.Location = new Point(959, 52);
+            label7.Location = new Point(839, 39);
             label7.Name = "label7";
-            label7.Size = new Size(224, 28);
+            label7.Size = new Size(176, 21);
             label7.TabIndex = 13;
             label7.Text = "Comprobante Asociado:";
             // 
@@ -273,10 +278,10 @@
             btnAgregarCliente.IconColor = Color.Black;
             btnAgregarCliente.IconFont = FontAwesome.Sharp.IconFont.Solid;
             btnAgregarCliente.IconSize = 25;
-            btnAgregarCliente.Location = new Point(304, 48);
-            btnAgregarCliente.Margin = new Padding(0, 4, 3, 4);
+            btnAgregarCliente.Location = new Point(266, 36);
+            btnAgregarCliente.Margin = new Padding(0, 3, 3, 3);
             btnAgregarCliente.Name = "btnAgregarCliente";
-            btnAgregarCliente.Size = new Size(38, 39);
+            btnAgregarCliente.Size = new Size(33, 29);
             btnAgregarCliente.TabIndex = 12;
             btnAgregarCliente.UseVisualStyleBackColor = true;
             btnAgregarCliente.Click += btnAgregarCliente_Click;
@@ -285,9 +290,9 @@
             // 
             label6.AutoSize = true;
             label6.Font = new Font("Segoe UI", 12F);
-            label6.Location = new Point(1601, 51);
+            label6.Location = new Point(1401, 38);
             label6.Name = "label6";
-            label6.Size = new Size(96, 28);
+            label6.Size = new Size(75, 21);
             label6.TabIndex = 10;
             label6.Text = "Depósito:";
             // 
@@ -296,20 +301,18 @@
             cmbDeposito.DropDownStyle = ComboBoxStyle.DropDownList;
             cmbDeposito.Font = new Font("Segoe UI", 12F);
             cmbDeposito.FormattingEnabled = true;
-            cmbDeposito.Location = new Point(1694, 48);
-            cmbDeposito.Margin = new Padding(3, 4, 3, 4);
+            cmbDeposito.Location = new Point(1482, 36);
             cmbDeposito.Name = "cmbDeposito";
-            cmbDeposito.Size = new Size(218, 36);
+            cmbDeposito.Size = new Size(191, 29);
             cmbDeposito.TabIndex = 9;
             // 
             // chkConRemito
             // 
             chkConRemito.AutoSize = true;
             chkConRemito.Font = new Font("Segoe UI", 12F);
-            chkConRemito.Location = new Point(1368, 49);
-            chkConRemito.Margin = new Padding(3, 4, 3, 4);
+            chkConRemito.Location = new Point(1197, 37);
             chkConRemito.Name = "chkConRemito";
-            chkConRemito.Size = new Size(197, 32);
+            chkConRemito.Size = new Size(159, 25);
             chkConRemito.TabIndex = 8;
             chkConRemito.Text = "Egreso con Remito";
             chkConRemito.UseVisualStyleBackColor = true;
@@ -319,19 +322,20 @@
             // 
             txtRemito.Enabled = false;
             txtRemito.Font = new Font("Segoe UI", 12F);
-            txtRemito.Location = new Point(497, 47);
+            txtRemito.Location = new Point(435, 35);
+            txtRemito.Margin = new Padding(3, 2, 3, 2);
             txtRemito.Name = "txtRemito";
             txtRemito.ReadOnly = true;
-            txtRemito.Size = new Size(181, 34);
+            txtRemito.Size = new Size(159, 29);
             txtRemito.TabIndex = 7;
             // 
             // label5
             // 
             label5.AutoSize = true;
             label5.Font = new Font("Segoe UI", 12F);
-            label5.Location = new Point(355, 51);
+            label5.Location = new Point(311, 38);
             label5.Name = "label5";
-            label5.Size = new Size(148, 28);
+            label5.Size = new Size(118, 21);
             label5.TabIndex = 6;
             label5.Text = "Nro. de Remito:";
             label5.Click += label5_Click;
@@ -342,9 +346,9 @@
             labelTitulo.BackColor = Color.Transparent;
             labelTitulo.Font = new Font("Segoe UI", 18F, FontStyle.Bold | FontStyle.Underline);
             labelTitulo.ForeColor = Color.White;
-            labelTitulo.Location = new Point(739, 13);
+            labelTitulo.Location = new Point(647, 10);
             labelTitulo.Name = "labelTitulo";
-            labelTitulo.Size = new Size(366, 41);
+            labelTitulo.Size = new Size(320, 31);
             labelTitulo.TabIndex = 0;
             labelTitulo.Text = "EGRESO DE PRODUCTOS";
             labelTitulo.TextAlign = ContentAlignment.MiddleCenter;
@@ -357,10 +361,10 @@
             panel2.Controls.Add(txtEscaner);
             panel2.Controls.Add(label4);
             panel2.Dock = DockStyle.Top;
-            panel2.Location = new Point(0, 206);
+            panel2.Location = new Point(0, 154);
             panel2.Margin = new Padding(0);
             panel2.Name = "panel2";
-            panel2.Size = new Size(1938, 185);
+            panel2.Size = new Size(1696, 139);
             panel2.TabIndex = 7;
             panel2.Paint += panel2_Paint;
             // 
@@ -368,9 +372,9 @@
             // 
             linkLabel1.Anchor = AnchorStyles.None;
             linkLabel1.AutoSize = true;
-            linkLabel1.Location = new Point(1079, 135);
+            linkLabel1.Location = new Point(944, 101);
             linkLabel1.Name = "linkLabel1";
-            linkLabel1.Size = new Size(76, 20);
+            linkLabel1.Size = new Size(62, 15);
             linkLabel1.TabIndex = 3;
             linkLabel1.TabStop = true;
             linkLabel1.Text = "Click aqui.";
@@ -380,9 +384,9 @@
             // 
             label1.Anchor = AnchorStyles.None;
             label1.AutoSize = true;
-            label1.Location = new Point(685, 135);
+            label1.Location = new Point(599, 101);
             label1.Name = "label1";
-            label1.Size = new Size(449, 20);
+            label1.Size = new Size(349, 15);
             label1.TabIndex = 2;
             label1.Text = "¿El producto al que desea dar egreso no posee código de barras? ";
             // 
@@ -392,8 +396,9 @@
             panel1.Controls.Add(labelTitulo);
             panel1.Dock = DockStyle.Top;
             panel1.Location = new Point(0, 0);
+            panel1.Margin = new Padding(3, 2, 3, 2);
             panel1.Name = "panel1";
-            panel1.Size = new Size(1938, 75);
+            panel1.Size = new Size(1696, 56);
             panel1.TabIndex = 5;
             // 
             // dgvEgreso
@@ -412,11 +417,13 @@
             dgvEgreso.Columns.AddRange(new DataGridViewColumn[] { Id, Producto, Lote, Vencimiento, Serie, Cantidad, ColInfo, ColAcciones });
             dgvEgreso.Dock = DockStyle.Fill;
             dgvEgreso.EnableHeadersVisualStyles = false;
-            dgvEgreso.Location = new Point(0, 391);
+            dgvEgreso.Location = new Point(0, 293);
+            dgvEgreso.Margin = new Padding(3, 2, 3, 2);
+            dgvEgreso.MaximumSize = new Size(1696, 550);
             dgvEgreso.Name = "dgvEgreso";
             dgvEgreso.RowHeadersVisible = false;
             dgvEgreso.RowHeadersWidth = 51;
-            dgvEgreso.Size = new Size(1938, 868);
+            dgvEgreso.Size = new Size(1696, 550);
             dgvEgreso.TabIndex = 12;
             dgvEgreso.CellContentClick += dgvEgreso_CellContentClick;
             // 
@@ -514,15 +521,16 @@
             // 
             // UC_Egresos
             // 
-            AutoScaleDimensions = new SizeF(8F, 20F);
+            AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             Controls.Add(panel3);
             Controls.Add(dgvEgreso);
             Controls.Add(panel2);
             Controls.Add(groupBox1);
             Controls.Add(panel1);
+            Margin = new Padding(3, 2, 3, 2);
             Name = "UC_Egresos";
-            Size = new Size(1938, 1259);
+            Size = new Size(1696, 944);
             Load += UC_Egresos_Load;
             panel3.ResumeLayout(false);
             groupBox1.ResumeLayout(false);

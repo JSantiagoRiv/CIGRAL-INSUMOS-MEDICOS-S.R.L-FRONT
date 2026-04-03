@@ -279,6 +279,7 @@
             lstClientes.Size = new Size(179, 277);
             lstClientes.TabIndex = 17;
             lstClientes.Visible = false;
+            lstClientes.Click += lstClientes_Click;
             lstClientes.SelectedIndexChanged += lstClientes_SelectedIndexChanged_1;
             // 
             // lblIngresoManual
@@ -346,9 +347,10 @@
             dgvIngreso.EnableHeadersVisualStyles = false;
             dgvIngreso.Location = new Point(0, 293);
             dgvIngreso.Margin = new Padding(3, 2, 3, 2);
+            dgvIngreso.MaximumSize = new Size(1696, 550);
             dgvIngreso.Name = "dgvIngreso";
             dgvIngreso.RowHeadersWidth = 51;
-            dgvIngreso.Size = new Size(1696, 651);
+            dgvIngreso.Size = new Size(1696, 550);
             dgvIngreso.TabIndex = 3;
             dgvIngreso.CellContentClick += dgvIngreso_CellContentClick;
             // 

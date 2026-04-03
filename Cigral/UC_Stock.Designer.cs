@@ -42,17 +42,12 @@
             chkProximosAVencer = new CheckBox();
             txtBuscar = new TextBox();
             chkVencidos = new CheckBox();
-            chkOcultarCero = new CheckBox();
             iconBtnSearch = new FontAwesome.Sharp.IconButton();
             label2 = new Label();
             lblPagina = new Label();
             btnSiguiente = new Button();
             btnAnterior = new Button();
             dgvStock = new DataGridView();
-            panel3 = new Panel();
-            iconBtnBack = new FontAwesome.Sharp.IconButton();
-            timerBusqueda = new System.Windows.Forms.Timer(components);
-            toolTip1 = new ToolTip(components);
             Id = new DataGridViewTextBoxColumn();
             CodProd = new DataGridViewTextBoxColumn();
             Producto = new DataGridViewTextBoxColumn();
@@ -61,6 +56,10 @@
             Cantidad = new DataGridViewTextBoxColumn();
             Vencimiento = new DataGridViewTextBoxColumn();
             Estado = new DataGridViewTextBoxColumn();
+            panel3 = new Panel();
+            iconBtnBack = new FontAwesome.Sharp.IconButton();
+            timerBusqueda = new System.Windows.Forms.Timer(components);
+            toolTip1 = new ToolTip(components);
             panel1.SuspendLayout();
             groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dgvStock).BeginInit();
@@ -101,7 +100,6 @@
             groupBox1.Controls.Add(chkProximosAVencer);
             groupBox1.Controls.Add(txtBuscar);
             groupBox1.Controls.Add(chkVencidos);
-            groupBox1.Controls.Add(chkOcultarCero);
             groupBox1.Controls.Add(iconBtnSearch);
             groupBox1.Controls.Add(label2);
             groupBox1.Dock = DockStyle.Top;
@@ -222,20 +220,6 @@
             chkVencidos.CheckedChanged += chkVencidos_CheckedChanged;
             chkVencidos.TextChanged += chkVencidos_CheckedChanged;
             // 
-            // chkOcultarCero
-            // 
-            chkOcultarCero.AutoSize = true;
-            chkOcultarCero.Font = new Font("Segoe UI", 12F);
-            chkOcultarCero.Location = new Point(662, 39);
-            chkOcultarCero.Margin = new Padding(3, 2, 3, 2);
-            chkOcultarCero.Name = "chkOcultarCero";
-            chkOcultarCero.Size = new Size(134, 25);
-            chkOcultarCero.TabIndex = 7;
-            chkOcultarCero.Text = "Ocultar Stock 0";
-            chkOcultarCero.UseVisualStyleBackColor = true;
-            chkOcultarCero.CheckedChanged += chkOcultarCero_CheckedChanged;
-            chkOcultarCero.TextChanged += chkOcultarCero_CheckedChanged;
-            // 
             // iconBtnSearch
             // 
             iconBtnSearch.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
@@ -318,42 +302,6 @@
             dgvStock.Size = new Size(1696, 756);
             dgvStock.TabIndex = 4;
             // 
-            // panel3
-            // 
-            panel3.Controls.Add(lblPagina);
-            panel3.Controls.Add(iconBtnBack);
-            panel3.Controls.Add(btnSiguiente);
-            panel3.Controls.Add(btnAnterior);
-            panel3.Dock = DockStyle.Bottom;
-            panel3.Location = new Point(0, 876);
-            panel3.Margin = new Padding(3, 2, 3, 2);
-            panel3.Name = "panel3";
-            panel3.Size = new Size(1696, 68);
-            panel3.TabIndex = 5;
-            // 
-            // iconBtnBack
-            // 
-            iconBtnBack.BackColor = Color.Transparent;
-            iconBtnBack.FlatAppearance.BorderSize = 0;
-            iconBtnBack.FlatStyle = FlatStyle.Flat;
-            iconBtnBack.ForeColor = Color.White;
-            iconBtnBack.IconChar = FontAwesome.Sharp.IconChar.ArrowCircleLeft;
-            iconBtnBack.IconColor = Color.Black;
-            iconBtnBack.IconFont = FontAwesome.Sharp.IconFont.Auto;
-            iconBtnBack.IconSize = 50;
-            iconBtnBack.Location = new Point(16, 13);
-            iconBtnBack.Margin = new Padding(3, 2, 3, 2);
-            iconBtnBack.Name = "iconBtnBack";
-            iconBtnBack.Size = new Size(58, 46);
-            iconBtnBack.TabIndex = 2;
-            iconBtnBack.UseVisualStyleBackColor = false;
-            iconBtnBack.Click += iconBtnBack_Click;
-            // 
-            // timerBusqueda
-            // 
-            timerBusqueda.Interval = 200;
-            timerBusqueda.Tick += timerBusqueda_Tick;
-            // 
             // Id
             // 
             Id.HeaderText = "Id";
@@ -413,6 +361,42 @@
             Estado.Name = "Estado";
             Estado.Width = 125;
             // 
+            // panel3
+            // 
+            panel3.Controls.Add(lblPagina);
+            panel3.Controls.Add(iconBtnBack);
+            panel3.Controls.Add(btnSiguiente);
+            panel3.Controls.Add(btnAnterior);
+            panel3.Dock = DockStyle.Bottom;
+            panel3.Location = new Point(0, 876);
+            panel3.Margin = new Padding(3, 2, 3, 2);
+            panel3.Name = "panel3";
+            panel3.Size = new Size(1696, 68);
+            panel3.TabIndex = 5;
+            // 
+            // iconBtnBack
+            // 
+            iconBtnBack.BackColor = Color.Transparent;
+            iconBtnBack.FlatAppearance.BorderSize = 0;
+            iconBtnBack.FlatStyle = FlatStyle.Flat;
+            iconBtnBack.ForeColor = Color.White;
+            iconBtnBack.IconChar = FontAwesome.Sharp.IconChar.ArrowCircleLeft;
+            iconBtnBack.IconColor = Color.Black;
+            iconBtnBack.IconFont = FontAwesome.Sharp.IconFont.Auto;
+            iconBtnBack.IconSize = 50;
+            iconBtnBack.Location = new Point(16, 13);
+            iconBtnBack.Margin = new Padding(3, 2, 3, 2);
+            iconBtnBack.Name = "iconBtnBack";
+            iconBtnBack.Size = new Size(58, 46);
+            iconBtnBack.TabIndex = 2;
+            iconBtnBack.UseVisualStyleBackColor = false;
+            iconBtnBack.Click += iconBtnBack_Click;
+            // 
+            // timerBusqueda
+            // 
+            timerBusqueda.Interval = 200;
+            timerBusqueda.Tick += timerBusqueda_Tick;
+            // 
             // UC_Stock
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -442,7 +426,6 @@
         private TextBox textSearch;
         private Label label2;
         private CheckBox checkBox2;
-        private CheckBox chkOcultarCero;
         private DataGridView dgvStock;
         private DataGridViewTextBoxColumn Column1;
         private Panel panel3;

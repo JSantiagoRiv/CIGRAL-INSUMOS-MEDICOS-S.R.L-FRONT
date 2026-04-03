@@ -503,6 +503,8 @@ namespace Cigral
         /// </summary>
         private async void textScanner_KeyDown(object sender, KeyEventArgs e)
         {
+            LimpiarResaltadoGrilla();
+
             if (e.KeyCode == Keys.Enter)
             {
                 e.SuppressKeyPress = true;
@@ -584,6 +586,9 @@ namespace Cigral
                             int cantidadNueva = productoParseado.Cantidad > 0 ? productoParseado.Cantidad : 1;
 
                             filaExistente.Cells["Cantidad"].Value = cantidadActual + cantidadNueva;
+
+                            ResaltarFila(filaExistente);
+
                             productoYaEnGrilla = true;
                             break; // Sale del foreach
                         }
@@ -600,6 +605,8 @@ namespace Cigral
                     // 4. SI NO ESTABA, CREA LA FILA NUEVA
                     int indexNuevaFila = dgvIngreso.Rows.Add();
                     DataGridViewRow fila = dgvIngreso.Rows[indexNuevaFila];
+
+                    ResaltarFila(fila);
 
                     fila.Tag = productoParseado.Gtin; // Guarda el GTIN oculto en el Tag de la fila
 
@@ -694,6 +701,23 @@ namespace Cigral
             }
         }
 
+
+        //Funciones auxiliares para pintar y resaltar filas
+        private void LimpiarResaltadoGrilla()
+        {
+            // Recorre todas las filas y les devuelve el color por defecto
+            foreach (DataGridViewRow row in dgvIngreso.Rows)
+            {
+                row.DefaultCellStyle.BackColor = Color.Empty;
+            }
+        }
+
+        private void ResaltarFila(DataGridViewRow fila)
+        {
+            // Un verde muy suave y agradable a la vista (R: 230, G: 255, B: 230)
+            fila.DefaultCellStyle.BackColor = Color.FromArgb(200, 255, 200);
+        }
+
         /// <summary>
         /// Borra una fila específica de la grilla pidiendo confirmación.
         /// </summary>
@@ -744,6 +768,7 @@ namespace Cigral
         private async void chkConRemito_CheckedChanged(object sender, EventArgs e)
         {
             txtBuscarCliente.Enabled = chkConRemito.Checked;
+            lstClientes.Enabled = chkConRemito.Checked;
             btnAgregarProveedor.Enabled = chkConRemito.Checked;
             txtComprobante.Enabled = chkConRemito.Checked;
 
@@ -863,9 +888,23 @@ namespace Cigral
                 buscador.Cursor = Cursors.WaitCursor;
                 dgv.DataSource = null;
 
+                // 1. Hacemos la llamada a la API
                 var lista = await ApiServices.ObtenerProductosCatalogo(txtBuscar.Text.Trim());
+
                 if (buscador.IsDisposed) return;
 
+                // --- EL ESCUDO CONTRA MAL INTERNET ---
+                // 2. Verificamos si la respuesta o la lista de ítems vino vacía/nula
+                if (lista == null || lista.items == null)
+                {
+                    // Devolvemos el cursor a la normalidad y cortamos la ejecución de la función.
+                    // Así evitamos que llegue al .Select() y rompa el programa.
+                    buscador.Cursor = Cursors.Default;
+                    return;
+                }
+                // -------------------------------------
+
+                // 3. Ahora es 100% seguro hacer el Select, porque sabemos que items existe
                 var vistaResultados = lista.items.Select(x => new
                 {
                     ID = x.id,
@@ -877,10 +916,37 @@ namespace Cigral
                 buscador.Cursor = Cursors.Default;
             };
 
+            bool ignorarBusquedaAutomatica = false;
+
             System.Windows.Forms.Timer timerBusqueda = new System.Windows.Forms.Timer();
             timerBusqueda.Interval = 200;
             timerBusqueda.Tick += async (s, ev) => { timerBusqueda.Stop(); await realizarBusqueda(); };
-            txtBuscar.TextChanged += (s, ev) => { timerBusqueda.Stop(); timerBusqueda.Start(); };
+
+            // Modificamos el TextChanged para que respete la bandera
+            txtBuscar.TextChanged += (s, ev) =>
+            {
+                if (ignorarBusquedaAutomatica) return; // <-- El escudo
+
+                timerBusqueda.Stop();
+                timerBusqueda.Start();
+            };
+
+            dgv.CellClick += (s, ev) =>
+            {
+                if (ev.RowIndex >= 0)
+                {
+                    // Activamos la bandera, cambiamos el texto, y la desactivamos
+                    ignorarBusquedaAutomatica = true;
+
+                    txtBuscar.Text = dgv.Rows[ev.RowIndex].Cells["Producto"].Value.ToString();
+
+                    // Opcional: Ponemos el cursor al final del texto para que el usuario siga escribiendo
+                    txtBuscar.SelectionStart = txtBuscar.Text.Length;
+
+                    ignorarBusquedaAutomatica = false;
+                }
+            };
+
             txtBuscar.KeyDown += async (s, ev) =>
             {
                 if (ev.KeyCode == Keys.Enter) { ev.SuppressKeyPress = true; timerBusqueda.Stop(); await realizarBusqueda(); }
@@ -902,13 +968,18 @@ namespace Cigral
             // OPCIÓN B: El usuario hizo clic en el botón "+" (CREAR NUEVO)
             btnNuevo.Click += (s, ev) =>
             {
-                var (nombreNuevo, marcaNueva, confirmado) = PedirNombreProducto(gtin);
+                // Capturamos lo que sea que haya quedado en el buscador (editado o no)
+                string nombreSugerido = txtBuscar.Text.Trim();
+
+                // Le pasamos ese nombre sugerido a tu función
+                var (nombreNuevo, marcaNueva, confirmado) = PedirNombreProducto(gtin, nombreSugerido);
+
                 if (confirmado)
                 {
-                    idResult = 0; // 0 porque todavía no existe en la base de datos
+                    idResult = 0;
                     nombreResult = nombreNuevo;
                     marcaResult = marcaNueva;
-                    esAsociacionResult = false; // Marcamos que NO es asociación, es creación
+                    esAsociacionResult = false;
                     buscador.DialogResult = DialogResult.OK;
                     buscador.Close();
                 }
@@ -924,7 +995,7 @@ namespace Cigral
             return (0, "", "", false); // Canceló la ventana
         }
 
-        private (string?, string?, bool) PedirNombreProducto(string gtin)
+        private (string?, string?, bool) PedirNombreProducto(string gtin, string nombreSugerido = "")
         {
             Form prompt = new Form()
             {
@@ -941,6 +1012,7 @@ namespace Cigral
 
             Label lblNombre = new Label() { Left = 20, Top = 45, AutoSize = true, Text = "Nombre:" };
             TextBox txtNombre = new TextBox() { Left = 90, Top = 42, Width = 220 };
+            txtNombre.Text = nombreSugerido;
 
             Label lblMarca = new Label() { Left = 20, Top = 75, AutoSize = true, Text = "Marca:" };
             TextBox txtMarca = new TextBox() { Left = 90, Top = 72, Width = 220 };
@@ -1090,6 +1162,8 @@ namespace Cigral
                 StartPosition = FormStartPosition.CenterScreen,
                 MaximizeBox = false
             };
+
+            LimpiarResaltadoGrilla();
 
             TextBox txtBuscar = new TextBox() { Left = 20, Top = 20, Width = 380 };
             Button btnBuscar = new Button() { Text = "Buscar", Left = 410, Top = 18, Width = 80, Cursor = Cursors.Hand };
@@ -1294,6 +1368,8 @@ namespace Cigral
                 int indexNuevaFila = dgvIngreso.Rows.Add();
                 DataGridViewRow fila = dgvIngreso.Rows[indexNuevaFila];
 
+                ResaltarFila(fila);
+
                 fila.Cells["Producto"].Value = nombreSeleccionado;
                 // Guarda el ID del producto escondido para que el sistema sepa a qué pegarle
                 fila.Cells["id"].Value = idSeleccionado;
@@ -1376,8 +1452,8 @@ namespace Cigral
                 // ATRAPAMOS EL ID OCULTO
                 idClienteSeleccionado = Convert.ToInt32(lstClientes.SelectedValue);
 
-                var cliente = (ClienteDto)lstClientes.SelectedItem;
-                txtBuscarCliente.Text = cliente.razonSocial;
+                var cliente = (ProveedorDto)lstClientes.SelectedItem;
+                txtBuscarCliente.Text = cliente.RazonSocial;
 
                 lstClientes.Visible = false;
                 eligiendoDeLista = false;

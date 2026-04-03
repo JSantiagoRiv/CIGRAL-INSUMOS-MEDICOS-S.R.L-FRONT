@@ -20,8 +20,13 @@ namespace Cigral.Services
     /// </summary>
     public static class ApiServices
     {
+        //Dirección de prueba del servidor local
+        #if DEBUG
+        private static readonly string BaseUrl = "https://localhost:7221/api";
+        #else
         // Dirección principal del servidor. Todas las peticiones empiezan desde aquí.
         private static readonly string BaseUrl = "https://api.cigral.com.ar/api";
+        #endif
 
         private static readonly HttpClient _client = new HttpClient();
 
@@ -368,16 +373,17 @@ namespace Cigral.Services
         /// <summary>
         /// Trae todo el inventario físico almacenado en los estantes.
         /// </summary>
-        public static async Task<List<ExistenciaDto>> ObtenerExistencias(string buscar, bool ocultarCero, bool soloVencidos, int ordenarPor = 0, bool esDescendente = false)
+        public static async Task<PaginadoResponse<ExistenciaDto>> ObtenerExistencias(string buscar, bool ocultarCero, bool soloVencidos, int ordenarPor = 0, bool esDescendente = false, int pageNumber = 1, int diasParaVencer = 0)
         {
                 try
                 {
-                    string url = $"{BaseUrl}/Existencias?PageNumber=1&PageSize=100";
+                    string url = $"{BaseUrl}/Existencias?PageNumber={pageNumber}&PageSize=25";
 
                     if (!string.IsNullOrEmpty(buscar)) url += $"&NombreProducto={buscar}";
                     url += $"&ordenarPor={ordenarPor}&esDescendente={esDescendente.ToString().ToLower()}";
                     if (ocultarCero) url += "&OculrarCero=true";
                     if (soloVencidos) url += "$SoloConVencimiento=true";
+                    if (diasParaVencer != 0) url += $"&DiasParaVencer={diasParaVencer}";
 
                     var response = await _client.GetAsync(url);
 
@@ -385,11 +391,11 @@ namespace Cigral.Services
                     {
                         var json = await response.Content.ReadAsStringAsync();
                         var paquete = JsonConvert.DeserializeObject<PaginadoResponse<ExistenciaDto>>(json);
-                        if (paquete != null && paquete.items != null) return paquete.items;
+                        if (paquete != null && paquete.items != null) return paquete;
                     }
-                    return new List<ExistenciaDto>();
+                    return new PaginadoResponse<ExistenciaDto>();
                 }
-                catch { return new List<ExistenciaDto>(); }
+                catch { return new PaginadoResponse<ExistenciaDto>(); }
         }
 
         /// <summary>
