@@ -28,7 +28,6 @@ namespace Cigral
 
         private async void UC_Dashboard_Load(object sender, EventArgs e)
         {
-            lblFecha.Text = DateTime.Now.ToString("dd/MM/yyyy");
             await CargarDashboard();
         }
 

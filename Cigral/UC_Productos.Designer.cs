@@ -29,18 +29,10 @@
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            modificarButton = new Button();
-            codigoInternoBox = new TextBox();
-            label7 = new Label();
-            gtinBox = new TextBox();
-            label6 = new Label();
-            codigoGenericoBox = new TextBox();
-            label5 = new Label();
-            descripcionBox = new TextBox();
-            label4 = new Label();
-            marcaBox = new TextBox();
-            label3 = new Label();
-            label1 = new Label();
+            timerBusqueda = new System.Windows.Forms.Timer(components);
+            tableLayoutPanel1 = new TableLayoutPanel();
+            labelTitulo = new Label();
+            tableLayoutPanel2 = new TableLayoutPanel();
             txtBuscar = new TextBox();
             label2 = new Label();
             dgvProductos = new DataGridView();
@@ -48,154 +40,109 @@
             Marca = new DataGridViewTextBoxColumn();
             GTIN = new DataGridViewTextBoxColumn();
             CodigoInterno = new DataGridViewTextBoxColumn();
-            panel1 = new Panel();
-            labelTitulo = new Label();
+            tableLayoutPanel3 = new TableLayoutPanel();
+            label6 = new Label();
+            label4 = new Label();
+            label3 = new Label();
+            label1 = new Label();
+            label5 = new Label();
+            label7 = new Label();
             nombreBox = new TextBox();
-            timerBusqueda = new System.Windows.Forms.Timer(components);
+            marcaBox = new TextBox();
+            descripcionBox = new TextBox();
+            gtinBox = new TextBox();
+            codigoGenericoBox = new TextBox();
+            codigoInternoBox = new TextBox();
+            modificarButton = new Button();
+            tableLayoutPanel1.SuspendLayout();
+            tableLayoutPanel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dgvProductos).BeginInit();
-            panel1.SuspendLayout();
+            tableLayoutPanel3.SuspendLayout();
             SuspendLayout();
             // 
-            // modificarButton
+            // timerBusqueda
             // 
-            modificarButton.BackColor = Color.Khaki;
-            modificarButton.Enabled = false;
-            modificarButton.FlatStyle = FlatStyle.Flat;
-            modificarButton.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-            modificarButton.ForeColor = Color.Black;
-            modificarButton.Location = new Point(1259, 612);
-            modificarButton.Name = "modificarButton";
-            modificarButton.Size = new Size(83, 34);
-            modificarButton.TabIndex = 42;
-            modificarButton.Text = "EDITAR";
-            modificarButton.UseVisualStyleBackColor = false;
-            modificarButton.Click += modificarButton_Click;
+            timerBusqueda.Interval = 200;
+            timerBusqueda.Tick += timerBusqueda_Tick;
             // 
-            // codigoInternoBox
+            // tableLayoutPanel1
             // 
-            codigoInternoBox.Font = new Font("Segoe UI", 12F);
-            codigoInternoBox.Location = new Point(1089, 555);
-            codigoInternoBox.Name = "codigoInternoBox";
-            codigoInternoBox.Size = new Size(417, 29);
-            codigoInternoBox.TabIndex = 41;
-            codigoInternoBox.TextChanged += nombreBox_TextChanged;
+            tableLayoutPanel1.ColumnCount = 2;
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 53.0070763F));
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 46.9929237F));
+            tableLayoutPanel1.Controls.Add(labelTitulo, 0, 0);
+            tableLayoutPanel1.Controls.Add(tableLayoutPanel2, 0, 1);
+            tableLayoutPanel1.Controls.Add(dgvProductos, 0, 2);
+            tableLayoutPanel1.Controls.Add(tableLayoutPanel3, 1, 2);
+            tableLayoutPanel1.Dock = DockStyle.Fill;
+            tableLayoutPanel1.Location = new Point(0, 0);
+            tableLayoutPanel1.Name = "tableLayoutPanel1";
+            tableLayoutPanel1.RowCount = 3;
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 60F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 40F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
+            tableLayoutPanel1.Size = new Size(1696, 944);
+            tableLayoutPanel1.TabIndex = 0;
             // 
-            // label7
+            // labelTitulo
             // 
-            label7.AutoSize = true;
-            label7.Font = new Font("Segoe UI", 12F);
-            label7.Location = new Point(950, 555);
-            label7.Name = "label7";
-            label7.Size = new Size(117, 21);
-            label7.TabIndex = 40;
-            label7.Text = "Codigo interno:";
+            labelTitulo.BackColor = SystemColors.GradientActiveCaption;
+            tableLayoutPanel1.SetColumnSpan(labelTitulo, 2);
+            labelTitulo.Dock = DockStyle.Fill;
+            labelTitulo.Font = new Font("Segoe UI", 18F, FontStyle.Bold | FontStyle.Underline);
+            labelTitulo.ForeColor = Color.White;
+            labelTitulo.Location = new Point(3, 0);
+            labelTitulo.Name = "labelTitulo";
+            labelTitulo.Size = new Size(1690, 60);
+            labelTitulo.TabIndex = 1;
+            labelTitulo.Text = "GESTION DE PRODUCTOS";
+            labelTitulo.TextAlign = ContentAlignment.MiddleCenter;
             // 
-            // gtinBox
+            // tableLayoutPanel2
             // 
-            gtinBox.Font = new Font("Segoe UI", 12F);
-            gtinBox.Location = new Point(1089, 404);
-            gtinBox.Name = "gtinBox";
-            gtinBox.Size = new Size(417, 29);
-            gtinBox.TabIndex = 39;
-            gtinBox.TextChanged += nombreBox_TextChanged;
-            // 
-            // label6
-            // 
-            label6.AutoSize = true;
-            label6.Font = new Font("Segoe UI", 12F);
-            label6.Location = new Point(950, 404);
-            label6.Name = "label6";
-            label6.Size = new Size(48, 21);
-            label6.TabIndex = 37;
-            label6.Text = "GTIN:";
-            // 
-            // codigoGenericoBox
-            // 
-            codigoGenericoBox.Font = new Font("Segoe UI", 12F);
-            codigoGenericoBox.Location = new Point(1089, 477);
-            codigoGenericoBox.Name = "codigoGenericoBox";
-            codigoGenericoBox.Size = new Size(417, 29);
-            codigoGenericoBox.TabIndex = 38;
-            codigoGenericoBox.TextChanged += nombreBox_TextChanged;
-            // 
-            // label5
-            // 
-            label5.AutoSize = true;
-            label5.Font = new Font("Segoe UI", 12F);
-            label5.Location = new Point(950, 477);
-            label5.Name = "label5";
-            label5.Size = new Size(127, 21);
-            label5.TabIndex = 36;
-            label5.Text = "Codigo genérico:";
-            // 
-            // descripcionBox
-            // 
-            descripcionBox.Font = new Font("Segoe UI", 12F);
-            descripcionBox.Location = new Point(1089, 310);
-            descripcionBox.Multiline = true;
-            descripcionBox.Name = "descripcionBox";
-            descripcionBox.Size = new Size(417, 67);
-            descripcionBox.TabIndex = 35;
-            descripcionBox.TextChanged += nombreBox_TextChanged;
-            // 
-            // label4
-            // 
-            label4.AutoSize = true;
-            label4.Font = new Font("Segoe UI", 12F);
-            label4.Location = new Point(950, 310);
-            label4.Name = "label4";
-            label4.Size = new Size(94, 21);
-            label4.TabIndex = 34;
-            label4.Text = "Descripción:";
-            // 
-            // marcaBox
-            // 
-            marcaBox.Font = new Font("Segoe UI", 12F);
-            marcaBox.Location = new Point(1089, 244);
-            marcaBox.Name = "marcaBox";
-            marcaBox.Size = new Size(417, 29);
-            marcaBox.TabIndex = 33;
-            marcaBox.TextChanged += nombreBox_TextChanged;
-            // 
-            // label3
-            // 
-            label3.AutoSize = true;
-            label3.Font = new Font("Segoe UI", 12F);
-            label3.Location = new Point(950, 244);
-            label3.Name = "label3";
-            label3.Size = new Size(56, 21);
-            label3.TabIndex = 32;
-            label3.Text = "Marca:";
-            // 
-            // label1
-            // 
-            label1.AutoSize = true;
-            label1.Font = new Font("Segoe UI", 12F);
-            label1.Location = new Point(950, 182);
-            label1.Name = "label1";
-            label1.Size = new Size(71, 21);
-            label1.TabIndex = 30;
-            label1.Text = "Nombre:";
+            tableLayoutPanel2.ColumnCount = 2;
+            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 19.47743F));
+            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 80.52257F));
+            tableLayoutPanel2.Controls.Add(txtBuscar, 1, 0);
+            tableLayoutPanel2.Controls.Add(label2, 0, 0);
+            tableLayoutPanel2.Dock = DockStyle.Fill;
+            tableLayoutPanel2.Location = new Point(3, 63);
+            tableLayoutPanel2.Name = "tableLayoutPanel2";
+            tableLayoutPanel2.RowCount = 1;
+            tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
+            tableLayoutPanel2.Size = new Size(893, 34);
+            tableLayoutPanel2.TabIndex = 32;
             // 
             // txtBuscar
             // 
+            txtBuscar.Dock = DockStyle.Fill;
             txtBuscar.Font = new Font("Segoe UI", 12F);
-            txtBuscar.Location = new Point(168, 125);
+            txtBuscar.Location = new Point(176, 3);
+            txtBuscar.Margin = new Padding(3, 3, 45, 3);
             txtBuscar.Name = "txtBuscar";
             txtBuscar.PlaceholderText = "Ingrese nombre del producto...";
-            txtBuscar.Size = new Size(534, 29);
-            txtBuscar.TabIndex = 29;
+            txtBuscar.Size = new Size(672, 29);
+            txtBuscar.TabIndex = 31;
+            txtBuscar.TextAlign = HorizontalAlignment.Center;
             txtBuscar.TextChanged += txtBuscar_TextChanged;
             // 
             // label2
             // 
             label2.AutoSize = true;
+            label2.Dock = DockStyle.Fill;
             label2.Font = new Font("Segoe UI", 12F);
-            label2.Location = new Point(47, 128);
+            label2.Location = new Point(3, 0);
             label2.Name = "label2";
-            label2.Size = new Size(126, 21);
-            label2.TabIndex = 28;
+            label2.Size = new Size(167, 34);
+            label2.TabIndex = 30;
             label2.Text = "Buscar producto:";
+            label2.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // dgvProductos
             // 
@@ -206,13 +153,14 @@
             dgvProductos.BackgroundColor = Color.White;
             dgvProductos.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dgvProductos.Columns.AddRange(new DataGridViewColumn[] { Nombre, Marca, GTIN, CodigoInterno });
-            dgvProductos.Location = new Point(47, 180);
+            dgvProductos.Location = new Point(45, 120);
+            dgvProductos.Margin = new Padding(20);
             dgvProductos.Name = "dgvProductos";
             dgvProductos.ReadOnly = true;
             dgvProductos.RowHeadersVisible = false;
             dgvProductos.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvProductos.Size = new Size(837, 745);
-            dgvProductos.TabIndex = 27;
+            dgvProductos.Size = new Size(808, 804);
+            dgvProductos.TabIndex = 33;
             dgvProductos.CellClick += dgvProductos_CellContentClick;
             dgvProductos.CellContentClick += dgvProductos_CellContentClick;
             // 
@@ -244,98 +192,239 @@
             CodigoInterno.Name = "CodigoInterno";
             CodigoInterno.ReadOnly = true;
             // 
-            // panel1
+            // tableLayoutPanel3
             // 
-            panel1.BackColor = SystemColors.GradientActiveCaption;
-            panel1.Controls.Add(labelTitulo);
-            panel1.Dock = DockStyle.Top;
-            panel1.Location = new Point(0, 0);
-            panel1.Margin = new Padding(3, 2, 3, 2);
-            panel1.Name = "panel1";
-            panel1.Size = new Size(1696, 56);
-            panel1.TabIndex = 26;
+            tableLayoutPanel3.ColumnCount = 2;
+            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 140F));
+            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            tableLayoutPanel3.Controls.Add(label6, 0, 4);
+            tableLayoutPanel3.Controls.Add(label4, 0, 3);
+            tableLayoutPanel3.Controls.Add(label3, 0, 2);
+            tableLayoutPanel3.Controls.Add(label1, 0, 1);
+            tableLayoutPanel3.Controls.Add(label5, 0, 5);
+            tableLayoutPanel3.Controls.Add(label7, 0, 6);
+            tableLayoutPanel3.Controls.Add(nombreBox, 1, 1);
+            tableLayoutPanel3.Controls.Add(marcaBox, 1, 2);
+            tableLayoutPanel3.Controls.Add(descripcionBox, 1, 3);
+            tableLayoutPanel3.Controls.Add(gtinBox, 1, 4);
+            tableLayoutPanel3.Controls.Add(codigoGenericoBox, 1, 5);
+            tableLayoutPanel3.Controls.Add(codigoInternoBox, 1, 6);
+            tableLayoutPanel3.Controls.Add(modificarButton, 0, 7);
+            tableLayoutPanel3.Dock = DockStyle.Fill;
+            tableLayoutPanel3.Location = new Point(902, 103);
+            tableLayoutPanel3.Name = "tableLayoutPanel3";
+            tableLayoutPanel3.RowCount = 9;
+            tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 20F));
+            tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Absolute, 60F));
+            tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Absolute, 60F));
+            tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Absolute, 180F));
+            tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Absolute, 60F));
+            tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Absolute, 60F));
+            tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Absolute, 60F));
+            tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Absolute, 40F));
+            tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 80F));
+            tableLayoutPanel3.Size = new Size(791, 838);
+            tableLayoutPanel3.TabIndex = 34;
             // 
-            // labelTitulo
+            // label6
             // 
-            labelTitulo.Anchor = AnchorStyles.None;
-            labelTitulo.BackColor = Color.Transparent;
-            labelTitulo.Font = new Font("Segoe UI", 18F, FontStyle.Bold | FontStyle.Underline);
-            labelTitulo.ForeColor = Color.White;
-            labelTitulo.Location = new Point(660, 14);
-            labelTitulo.Name = "labelTitulo";
-            labelTitulo.Size = new Size(320, 31);
-            labelTitulo.TabIndex = 0;
-            labelTitulo.Text = "GESTION DE PRODUCTOS";
-            labelTitulo.TextAlign = ContentAlignment.MiddleCenter;
+            label6.AutoSize = true;
+            label6.Dock = DockStyle.Fill;
+            label6.Font = new Font("Segoe UI", 12F);
+            label6.Location = new Point(3, 363);
+            label6.Name = "label6";
+            label6.Size = new Size(134, 60);
+            label6.TabIndex = 38;
+            label6.Text = "GTIN:";
+            label6.TextAlign = ContentAlignment.TopCenter;
+            // 
+            // label4
+            // 
+            label4.AutoSize = true;
+            label4.Dock = DockStyle.Fill;
+            label4.Font = new Font("Segoe UI", 12F);
+            label4.Location = new Point(3, 183);
+            label4.Name = "label4";
+            label4.Size = new Size(134, 180);
+            label4.TabIndex = 35;
+            label4.Text = "Descripción:";
+            label4.TextAlign = ContentAlignment.TopCenter;
+            // 
+            // label3
+            // 
+            label3.AutoSize = true;
+            label3.Dock = DockStyle.Fill;
+            label3.Font = new Font("Segoe UI", 12F);
+            label3.Location = new Point(3, 123);
+            label3.Name = "label3";
+            label3.Size = new Size(134, 60);
+            label3.TabIndex = 33;
+            label3.Text = "Marca:";
+            label3.TextAlign = ContentAlignment.TopCenter;
+            // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Dock = DockStyle.Fill;
+            label1.Font = new Font("Segoe UI", 12F);
+            label1.Location = new Point(3, 63);
+            label1.Name = "label1";
+            label1.Size = new Size(134, 60);
+            label1.TabIndex = 31;
+            label1.Text = "Nombre:";
+            label1.TextAlign = ContentAlignment.TopCenter;
+            // 
+            // label5
+            // 
+            label5.AutoSize = true;
+            label5.Dock = DockStyle.Fill;
+            label5.Font = new Font("Segoe UI", 12F);
+            label5.Location = new Point(3, 423);
+            label5.Name = "label5";
+            label5.Size = new Size(134, 60);
+            label5.TabIndex = 39;
+            label5.Text = "Codigo genérico:";
+            label5.TextAlign = ContentAlignment.TopCenter;
+            // 
+            // label7
+            // 
+            label7.AutoSize = true;
+            label7.Dock = DockStyle.Fill;
+            label7.Font = new Font("Segoe UI", 12F);
+            label7.Location = new Point(3, 483);
+            label7.Name = "label7";
+            label7.Size = new Size(134, 60);
+            label7.TabIndex = 41;
+            label7.Text = "Codigo interno:";
+            label7.TextAlign = ContentAlignment.TopCenter;
             // 
             // nombreBox
             // 
+            nombreBox.Dock = DockStyle.Fill;
             nombreBox.Font = new Font("Segoe UI", 12F);
-            nombreBox.Location = new Point(1089, 182);
+            nombreBox.Location = new Point(143, 66);
+            nombreBox.Margin = new Padding(3, 3, 15, 3);
             nombreBox.Name = "nombreBox";
-            nombreBox.Size = new Size(417, 29);
-            nombreBox.TabIndex = 31;
+            nombreBox.Size = new Size(633, 29);
+            nombreBox.TabIndex = 42;
             nombreBox.TextChanged += nombreBox_TextChanged;
             // 
-            // timerBusqueda
+            // marcaBox
             // 
-            timerBusqueda.Interval = 200;
-            timerBusqueda.Tick += timerBusqueda_Tick;
+            marcaBox.Dock = DockStyle.Fill;
+            marcaBox.Font = new Font("Segoe UI", 12F);
+            marcaBox.Location = new Point(143, 126);
+            marcaBox.Margin = new Padding(3, 3, 15, 3);
+            marcaBox.Name = "marcaBox";
+            marcaBox.Size = new Size(633, 29);
+            marcaBox.TabIndex = 43;
+            marcaBox.TextChanged += nombreBox_TextChanged;
+            // 
+            // descripcionBox
+            // 
+            descripcionBox.Dock = DockStyle.Fill;
+            descripcionBox.Font = new Font("Segoe UI", 12F);
+            descripcionBox.Location = new Point(143, 186);
+            descripcionBox.Margin = new Padding(3, 3, 15, 25);
+            descripcionBox.Multiline = true;
+            descripcionBox.Name = "descripcionBox";
+            descripcionBox.Size = new Size(633, 152);
+            descripcionBox.TabIndex = 44;
+            descripcionBox.TextChanged += nombreBox_TextChanged;
+            // 
+            // gtinBox
+            // 
+            gtinBox.Dock = DockStyle.Fill;
+            gtinBox.Font = new Font("Segoe UI", 12F);
+            gtinBox.Location = new Point(143, 366);
+            gtinBox.Margin = new Padding(3, 3, 15, 3);
+            gtinBox.Name = "gtinBox";
+            gtinBox.Size = new Size(633, 29);
+            gtinBox.TabIndex = 45;
+            gtinBox.TextChanged += nombreBox_TextChanged;
+            // 
+            // codigoGenericoBox
+            // 
+            codigoGenericoBox.Dock = DockStyle.Fill;
+            codigoGenericoBox.Font = new Font("Segoe UI", 12F);
+            codigoGenericoBox.Location = new Point(143, 426);
+            codigoGenericoBox.Margin = new Padding(3, 3, 15, 3);
+            codigoGenericoBox.Name = "codigoGenericoBox";
+            codigoGenericoBox.Size = new Size(633, 29);
+            codigoGenericoBox.TabIndex = 46;
+            codigoGenericoBox.TextChanged += nombreBox_TextChanged;
+            // 
+            // codigoInternoBox
+            // 
+            codigoInternoBox.Dock = DockStyle.Fill;
+            codigoInternoBox.Font = new Font("Segoe UI", 12F);
+            codigoInternoBox.Location = new Point(143, 486);
+            codigoInternoBox.Margin = new Padding(3, 3, 15, 3);
+            codigoInternoBox.Name = "codigoInternoBox";
+            codigoInternoBox.Size = new Size(633, 29);
+            codigoInternoBox.TabIndex = 47;
+            codigoInternoBox.TextChanged += nombreBox_TextChanged;
+            // 
+            // modificarButton
+            // 
+            modificarButton.BackColor = Color.Khaki;
+            tableLayoutPanel3.SetColumnSpan(modificarButton, 2);
+            modificarButton.Dock = DockStyle.Fill;
+            modificarButton.Enabled = false;
+            modificarButton.FlatStyle = FlatStyle.Flat;
+            modificarButton.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            modificarButton.ForeColor = Color.Black;
+            modificarButton.Location = new Point(3, 546);
+            modificarButton.Margin = new Padding(3, 3, 15, 3);
+            modificarButton.Name = "modificarButton";
+            modificarButton.Size = new Size(773, 34);
+            modificarButton.TabIndex = 48;
+            modificarButton.Text = "EDITAR";
+            modificarButton.UseVisualStyleBackColor = false;
+            modificarButton.Click += modificarButton_Click;
             // 
             // UC_Productos
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            Controls.Add(modificarButton);
-            Controls.Add(codigoInternoBox);
-            Controls.Add(label7);
-            Controls.Add(gtinBox);
-            Controls.Add(label6);
-            Controls.Add(codigoGenericoBox);
-            Controls.Add(label5);
-            Controls.Add(descripcionBox);
-            Controls.Add(label4);
-            Controls.Add(marcaBox);
-            Controls.Add(label3);
-            Controls.Add(nombreBox);
-            Controls.Add(label1);
-            Controls.Add(txtBuscar);
-            Controls.Add(label2);
-            Controls.Add(dgvProductos);
-            Controls.Add(panel1);
+            Controls.Add(tableLayoutPanel1);
             Name = "UC_Productos";
             Size = new Size(1696, 944);
             Load += UC_Productos_Load;
+            tableLayoutPanel1.ResumeLayout(false);
+            tableLayoutPanel2.ResumeLayout(false);
+            tableLayoutPanel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)dgvProductos).EndInit();
-            panel1.ResumeLayout(false);
+            tableLayoutPanel3.ResumeLayout(false);
+            tableLayoutPanel3.PerformLayout();
             ResumeLayout(false);
-            PerformLayout();
         }
 
         #endregion
-
-        private Button modificarButton;
-        private TextBox codigoInternoBox;
-        private Label label7;
-        private TextBox gtinBox;
-        private Label label6;
-        private TextBox codigoGenericoBox;
-        private Label label5;
-        private TextBox descripcionBox;
-        private Label label4;
-        private TextBox marcaBox;
-        private Label label3;
-        private Label label1;
+        private System.Windows.Forms.Timer timerBusqueda;
+        private TableLayoutPanel tableLayoutPanel1;
+        private Label labelTitulo;
+        private TableLayoutPanel tableLayoutPanel2;
         private TextBox txtBuscar;
         private Label label2;
         private DataGridView dgvProductos;
-        private Panel panel1;
-        private Label labelTitulo;
-        private TextBox nombreBox;
         private DataGridViewTextBoxColumn Nombre;
         private DataGridViewTextBoxColumn Marca;
         private DataGridViewTextBoxColumn GTIN;
         private DataGridViewTextBoxColumn CodigoInterno;
-        private System.Windows.Forms.Timer timerBusqueda;
+        private TableLayoutPanel tableLayoutPanel3;
+        private Label label1;
+        private Label label3;
+        private Label label4;
+        private Label label6;
+        private Label label5;
+        private Label label7;
+        private TextBox nombreBox;
+        private TextBox marcaBox;
+        private TextBox descripcionBox;
+        private TextBox gtinBox;
+        private TextBox codigoGenericoBox;
+        private TextBox codigoInternoBox;
+        private Button modificarButton;
     }
 }
