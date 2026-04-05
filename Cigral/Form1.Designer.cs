@@ -89,11 +89,12 @@
             // panelContainer
             // 
             panelContainer.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            panelContainer.AutoSizeMode = AutoSizeMode.GrowAndShrink;
             panelContainer.Font = new Font("Segoe UI", 9F);
-            panelContainer.Location = new Point(208, 104);
+            panelContainer.Location = new Point(208, 99);
             panelContainer.Margin = new Padding(0);
             panelContainer.Name = "panelContainer";
-            panelContainer.Size = new Size(1696, 944);
+            panelContainer.Size = new Size(1644, 942);
             panelContainer.TabIndex = 3;
             // 
             // panel1
@@ -311,6 +312,7 @@
             Icon = (Icon)resources.GetObject("$this.Icon");
             KeyPreview = true;
             Margin = new Padding(3, 2, 3, 2);
+            MinimumSize = new Size(1600, 900);
             Name = "FormMain";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Sistema de Gestion de Stock y Trazabilidad";

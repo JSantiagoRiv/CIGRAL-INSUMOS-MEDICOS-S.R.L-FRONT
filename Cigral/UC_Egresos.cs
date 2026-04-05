@@ -309,74 +309,103 @@ namespace Cigral
                             return;
                         }
 
-                        var productoIdeal = await ApiServices.BuscarProductoParaEgreso(productoParseado.ProductoId.Value);
+                        var existenciasPosibles = await ApiServices.ObtenerExistencias(productoId: productoParseado.ProductoId, numeroSerie: productoParseado.NumeroSerie, codigoLote: productoParseado.Lote);
+                        var existenciaIndicada = existenciasPosibles.items.FirstOrDefault(x => x.CodigoLote == productoParseado.Lote && x.NumSerie == productoParseado.NumeroSerie && x.ProductoId == productoParseado.ProductoId);
 
-                        if (productoIdeal != null)
+                        if (existenciaIndicada != null)
                         {
-                            cmbDeposito.SelectedValue = productoIdeal.DepositoId;
+                            cmbDeposito.SelectedValue = existenciaIndicada.DepositoId;
 
-                            int cantidadFinalEscaneada = productoParseado.Cantidad > 0 ? productoParseado.Cantidad : 1;
+                            string codigoLote = string.IsNullOrEmpty(existenciaIndicada.CodigoLote) ? "" : existenciaIndicada.CodigoLote;
+                            string numeroSerie = string.IsNullOrEmpty(existenciaIndicada.NumSerie) ? "" : existenciaIndicada.NumSerie;
 
-                            if (cantidadFinalEscaneada > 1)
+                            int cantidadFinalEscaneada = existenciaIndicada.Cantidad;
+
+                            // LÓGICA DE CANTIDADES:
+                            // Si tiene número de serie, es un ítem único, la cantidad siempre es 1.
+                            // Si NO tiene serie (es un lote a granel) y trae más de 1, preguntamos cuántas sacar.
+                            if (!string.IsNullOrEmpty(numeroSerie))
                             {
-                                int elegida = PedirCantidadSueltas(productoIdeal.ProductoNombre, cantidadFinalEscaneada);
-
-                                if (elegida == 0) return;
-
+                                cantidadFinalEscaneada = 1;
+                            }
+                            else if (cantidadFinalEscaneada > 1)
+                            {
+                                int elegida = PedirCantidadSueltas(existenciaIndicada.ProductoNombre, cantidadFinalEscaneada, codigoLote, numeroSerie);
+                                if (elegida == 0) return; // El usuario canceló
                                 cantidadFinalEscaneada = elegida;
                             }
 
                             bool productoYaEnGrilla = false;
 
+                            // VALIDACIÓN CONTRA LA GRILLA
                             foreach (DataGridViewRow filaExistente in dgvEgreso.Rows)
                             {
                                 if (filaExistente.IsNewRow) continue;
 
                                 int idFila = Convert.ToInt32(filaExistente.Cells["id"].Value);
+                                string loteFila = filaExistente.Cells["Lote"].Value?.ToString() ?? "";
+                                string serieFila = filaExistente.Cells["Serie"].Value?.ToString() ?? "";
 
-                                if (idFila == productoIdeal.ProductoId && filaExistente.Cells["Lote"].Value?.ToString() == productoIdeal.CodigoLote)
+                                if (idFila == existenciaIndicada.ProductoId)
                                 {
-                                    int cantidadActual = Convert.ToInt32(filaExistente.Cells["Cantidad"].Value);
-                                    int cantidadNueva = cantidadFinalEscaneada;
-
-                                    if ((cantidadActual + cantidadNueva) > productoIdeal.Cantidad)
+                                    // CASO A: El producto tiene un número de serie específico
+                                    if (!string.IsNullOrEmpty(numeroSerie))
                                     {
-                                        MessageBox.Show($"No podés retirar más cantidad. El stock máximo disponible para el lote {productoIdeal.CodigoLote} es {productoIdeal.Cantidad}.", "Límite de Stock", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                                        if (serieFila == numeroSerie)
+                                        {
+                                            MessageBox.Show($"El producto con número de serie '{numeroSerie}' ya fue escaneado y está en la lista.", "Serie Duplicada", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                                            return; // Bloqueamos el doble escaneo de una misma serie
+                                        }
                                     }
-                                    else
+                                    // CASO B: El producto se maneja por Lote (A granel, sin serie)
+                                    else if (loteFila == codigoLote)
                                     {
-                                        filaExistente.Cells["Cantidad"].Value = cantidadActual + cantidadNueva;
-                                    }
+                                        int cantidadActual = Convert.ToInt32(filaExistente.Cells["Cantidad"].Value);
 
-                                    productoYaEnGrilla = true;
-                                    break;
+                                        if ((cantidadActual + cantidadFinalEscaneada) > existenciaIndicada.Cantidad)
+                                        {
+                                            MessageBox.Show($"No podés retirar más cantidad. El stock máximo disponible para el lote {codigoLote} es {existenciaIndicada.Cantidad}.", "Límite de Stock", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                                        }
+                                        else
+                                        {
+                                            filaExistente.Cells["Cantidad"].Value = cantidadActual + cantidadFinalEscaneada;
+                                        }
+
+                                        productoYaEnGrilla = true;
+                                        break;
+                                    }
                                 }
                             }
 
+                            // SI NO ESTABA EN LA GRILLA, LO CREAMOS (Ahora sí, incluyendo la serie)
                             if (!productoYaEnGrilla)
                             {
                                 int indexNuevaFila = dgvEgreso.Rows.Add();
                                 DataGridViewRow fila = dgvEgreso.Rows[indexNuevaFila];
 
-                                fila.Cells["id"].Value = productoIdeal.ProductoId;
-                                fila.Cells["Producto"].Value = productoIdeal.ProductoNombre;
-                                fila.Cells["Lote"].Value = productoIdeal.CodigoLote;
+                                fila.Cells["id"].Value = existenciaIndicada.ProductoId;
+                                fila.Cells["Producto"].Value = existenciaIndicada.ProductoNombre;
+                                fila.Cells["Lote"].Value = codigoLote;
+                                fila.Cells["Serie"].Value = numeroSerie; // ¡Línea corregida!
 
-                                if (productoIdeal.FechaVencimiento.HasValue)
+                                if (existenciaIndicada.FechaVencimiento.HasValue)
                                 {
-                                    fila.Cells["Vencimiento"].Value = productoIdeal.FechaVencimiento.Value.ToString("dd/MM/yyyy");
+                                    fila.Cells["Vencimiento"].Value = existenciaIndicada.FechaVencimiento.Value.ToString("dd/MM/yyyy");
+                                }
+                                else
+                                {
+                                    fila.Cells["Vencimiento"].Value = "-";
                                 }
 
-                                int cantEscaner = cantidadFinalEscaneada;
-                                fila.Cells["Cantidad"].Value = cantEscaner > productoIdeal.Cantidad ? productoIdeal.Cantidad : cantEscaner;
+                                fila.Cells["Cantidad"].Value = cantidadFinalEscaneada;
                             }
                         }
                         else
                         {
-                            MessageBox.Show("No se encontró stock disponible de este producto en el sistema.", "Sin Stock", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            MessageBox.Show("No se encontró stock disponible de este producto (con ese Lote/Serie) en el sistema.", "Sin Stock", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         }
                     }
-                }
+                    }
                 catch (Exception ex)
                 {
                     MessageBox.Show("Error al procesar el escaneo: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -514,9 +543,10 @@ namespace Cigral
                         {
                             depositoId = depositoSeleccionado,
                             productoId = Convert.ToInt32(fila.Cells["Id"].Value),
-                            numSerie = fila.Cells["Serie"].Value?.ToString() ?? "",
+                            numSerie = fila.Cells["Serie"].Value?.ToString() == "Sin Número de Serie" ? null : fila.Cells["Serie"].Value?.ToString() ,
                             codigoLote = fila.Cells["Lote"].Value?.ToString() ?? "",
-                            cantidad = Convert.ToInt32(fila.Cells["Cantidad"].Value)
+                            cantidad = Convert.ToInt32(fila.Cells["Cantidad"].Value),
+                            informacionAdicional = ""
                         };
 
                         string fechaStr = fila.Cells["Vencimiento"].Value?.ToString();
@@ -689,13 +719,13 @@ namespace Cigral
             }
         }
 
-        private int PedirCantidadSueltas(string nombreProducto, int cantidadEnCaja)
+        private int PedirCantidadSueltas(string nombreProducto, int cantidadEnCaja, string? codigoLote = null, string? numeroSerie = null)
         {
             int cantidadElegida = 0;
             Form prompt = new Form()
             {
-                Width = 380,
-                Height = 180,
+                Width = 400,   // Lo ensanchamos un poquito (de 380 a 400) para nombres largos
+                Height = 240,  // Aumentamos el alto (de 180 a 240) para que entren los nuevos controles
                 FormBorderStyle = FormBorderStyle.FixedDialog,
                 Text = "Apertura de caja detectada",
                 StartPosition = FormStartPosition.CenterScreen,
@@ -703,11 +733,23 @@ namespace Cigral
                 MinimizeBox = false
             };
 
-            Label lblTexto = new Label() { Left = 20, Top = 20, Width = 320, Height = 40, Text = $"El código pertenece a '{nombreProducto}' y trae {cantidadEnCaja} unidades.\n¿Cuántas unidades sueltas vas a retirar?" };
-            NumericUpDown inputNum = new NumericUpDown() { Left = 20, Top = 70, Width = 120, Minimum = 1, Maximum = cantidadEnCaja, Value = 1, Font = new Font("Segoe UI", 12) };
-            Button btnAceptar = new Button() { Text = "Aceptar", Left = 240, Top = 65, Width = 100, DialogResult = DialogResult.OK };
+            // Arreglamos la concatenación agregando los saltos de línea (\n) correspondientes
+            string mensaje = $"El código pertenece a '{nombreProducto}'.";
+            if (!string.IsNullOrEmpty(codigoLote)) mensaje += $"\nLote: {codigoLote}";
+            if (!string.IsNullOrEmpty(numeroSerie)) mensaje += $"\nSerie: {numeroSerie}";
+            mensaje += $"\n\nTrae {cantidadEnCaja} unidades. ¿Cuántas unidades sueltas vas a retirar?";
 
-            prompt.Controls.Add(lblTexto); prompt.Controls.Add(inputNum); prompt.Controls.Add(btnAceptar);
+            // Aumentamos el Height del Label de 40 a 90 para que entren hasta 6 líneas de texto sin cortarse
+            Label lblTexto = new Label() { Left = 20, Top = 20, Width = 340, Height = 90, Text = mensaje };
+
+            // Bajamos el input y el botón (Top pasó de 70 a 120) para que no se encimen con el Label más grande
+            NumericUpDown inputNum = new NumericUpDown() { Left = 20, Top = 120, Width = 120, Minimum = 1, Maximum = cantidadEnCaja, Value = 1, Font = new Font("Segoe UI", 12) };
+            Button btnAceptar = new Button() { Text = "Aceptar", Left = 240, Top = 120, Width = 100, DialogResult = DialogResult.OK };
+
+            prompt.Controls.Add(lblTexto);
+            prompt.Controls.Add(inputNum);
+            prompt.Controls.Add(btnAceptar);
+
             prompt.AcceptButton = btnAceptar;
 
             if (prompt.ShowDialog() == DialogResult.OK) cantidadElegida = (int)inputNum.Value;
@@ -718,7 +760,7 @@ namespace Cigral
         {
             Form buscadorStock = new Form()
             {
-                Width = 700,
+                Width = 900,
                 Height = 400,
                 StartPosition = FormStartPosition.CenterScreen,
                 Text = "Buscar Stock en Estantes",
@@ -734,7 +776,7 @@ namespace Cigral
             {
                 Left = 20,
                 Top = 50,
-                Width = 640,
+                Width = 840,
                 Height = 280,
                 AllowUserToAddRows = false,
                 ReadOnly = true,
@@ -760,10 +802,34 @@ namespace Cigral
 
                     if (col.Name == "ProductoNombre") col.HeaderText = "Producto";
                     if (col.Name == "ProductoCodigo") col.HeaderText = "Código";
-                    if (col.Name == "DepositoNombre") col.HeaderText = "Depósito";
-                    if (col.Name == "CodigoLote") col.HeaderText = "Lote";
-                    if (col.Name == "FechaVencimiento") col.HeaderText = "Vencimiento";
-                    if (col.Name == "Cantidad") col.HeaderText = "Stock";
+                    if (col.Name == "DepositoNombre") {
+                        col.HeaderText = "Depósito";
+                        col.Width = 80;
+                        }
+                    if (col.Name == "CodigoLote") {
+                        col.HeaderText = "Lote";
+                        col.Width = 80;
+                        }
+                    if (col.Name == "NumSerie") {
+                        col.HeaderText = "Serie";
+                        col.Width = 100;
+                        } // Agregamos la cabecera para la serie
+                    if (col.Name == "FechaVencimiento") {
+                        col.HeaderText = "Vencimiento";
+                        col.Width = 80;
+                        }
+                    if (col.Name == "Cantidad") {
+                        col.HeaderText = "Stock";
+                        col.Width = 50;
+                        }
+                    if (col.Name == "ProductoGtin") {
+                        col.HeaderText = "GTIN";
+                        col.Width = 100;
+                        }
+                    if (col.Name == "productoCodigoInterno") {
+                        col.HeaderText = "Cod. Int.";
+                        col.Width = 100;
+                        }
                 }
             };
 
@@ -771,18 +837,23 @@ namespace Cigral
             buscadorStock.Controls.Add(txtBuscar);
             buscadorStock.Controls.Add(dgvResultados);
 
+            // SOLUCIÓN 1A: Extraer .items para el evento Load
             buscadorStock.Load += async (s, args) =>
             {
                 buscadorStock.Cursor = Cursors.WaitCursor;
                 try
                 {
-                    var stockFisico = await ApiServices.ObtenerExistencias("", ocultarCero: false, soloVencidos: false);
-                    dgvResultados.DataSource = stockFisico;
+                    var stockFisico = await ApiServices.ObtenerExistencias();
+                    if (stockFisico != null && stockFisico.items != null)
+                    {
+                        dgvResultados.DataSource = stockFisico.items.ToList();
+                    }
                 }
                 catch { }
                 finally { buscadorStock.Cursor = Cursors.Default; }
             };
 
+            // SOLUCIÓN 1B: Extraer .items para el evento de Búsqueda
             Func<Task> realizarBusqueda = async () =>
             {
                 if (buscadorStock.IsDisposed) return;
@@ -792,7 +863,15 @@ namespace Cigral
                 {
                     var stockFisico = await ApiServices.ObtenerExistencias(txtBuscar.Text.Trim(), ocultarCero: false, soloVencidos: false);
                     if (buscadorStock.IsDisposed) return;
-                    dgvResultados.DataSource = stockFisico;
+
+                    if (stockFisico != null && stockFisico.items != null)
+                    {
+                        dgvResultados.DataSource = stockFisico.items.ToList();
+                    }
+                    else
+                    {
+                        dgvResultados.DataSource = null;
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -857,14 +936,22 @@ namespace Cigral
 
                 int idProd = Convert.ToInt32(filaStock.Cells["ProductoId"].Value);
                 string nombre = filaStock.Cells["ProductoNombre"].Value?.ToString() ?? "Desconocido";
-                string lote = filaStock.Cells["CodigoLote"].Value?.ToString() ?? "S/L";
+                string lote = filaStock.Cells["CodigoLote"].Value?.ToString() ?? "";
+
+                // SOLUCIÓN 2A: Extraemos la Serie de la grilla de búsqueda
+                string serie = "";
+                if (dgvResultados.Columns.Contains("NumSerie"))
+                {
+                    serie = filaStock.Cells["NumSerie"].Value?.ToString() ?? "";
+                }
 
                 if (filaStock.Cells["DepositoId"].Value != null)
                 {
                     cmbDeposito.SelectedValue = Convert.ToInt32(filaStock.Cells["DepositoId"].Value);
                 }
 
-                int aRetirar = PedirCantidadSueltas($"{nombre} (Lote: {lote})", cantDisponible);
+                // Le pasamos la serie para que se vea en el modal si existe
+                int aRetirar = PedirCantidadSueltas(nombre, cantDisponible, lote, serie);
                 if (aRetirar == 0) return;
 
                 bool yaExiste = false;
@@ -873,21 +960,36 @@ namespace Cigral
                     if (filaMain.IsNewRow) continue;
 
                     int idExistente = Convert.ToInt32(filaMain.Cells["id"].Value);
-                    string loteExistente = filaMain.Cells["Lote"].Value?.ToString();
+                    string loteExistente = filaMain.Cells["Lote"].Value?.ToString() ?? "";
+                    string serieExistente = filaMain.Cells["Serie"].Value?.ToString() ?? "";
 
-                    if (idExistente == idProd && loteExistente == lote)
+                    // SOLUCIÓN 2B: Separamos la validación de Serie y Lote
+                    if (idExistente == idProd)
                     {
-                        int cantActualEnGrilla = Convert.ToInt32(filaMain.Cells["Cantidad"].Value);
-                        if ((cantActualEnGrilla + aRetirar) > cantDisponible)
+                        if (!string.IsNullOrEmpty(serie))
                         {
-                            MessageBox.Show($"Límite alcanzado. Solo hay {cantDisponible} unidades disponibles de este lote.", "Stock Insuficiente", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                            // Si el producto tiene Serie, y ya está en la grilla, bloqueamos.
+                            if (serieExistente == serie)
+                            {
+                                MessageBox.Show($"Este producto con serie '{serie}' ya está en la lista.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                                return;
+                            }
                         }
-                        else
+                        else if (loteExistente == lote)
                         {
-                            filaMain.Cells["Cantidad"].Value = cantActualEnGrilla + aRetirar;
+                            // Si no tiene serie, se maneja por lote acumulable
+                            int cantActualEnGrilla = Convert.ToInt32(filaMain.Cells["Cantidad"].Value);
+                            if ((cantActualEnGrilla + aRetirar) > cantDisponible)
+                            {
+                                MessageBox.Show($"Límite alcanzado. Solo hay {cantDisponible} unidades disponibles de este lote.", "Stock Insuficiente", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                            }
+                            else
+                            {
+                                filaMain.Cells["Cantidad"].Value = cantActualEnGrilla + aRetirar;
+                            }
+                            yaExiste = true;
+                            break;
                         }
-                        yaExiste = true;
-                        break;
                     }
                 }
 
@@ -898,6 +1000,7 @@ namespace Cigral
                     filaMain.Cells["id"].Value = idProd;
                     filaMain.Cells["Producto"].Value = nombre;
                     filaMain.Cells["Lote"].Value = lote;
+                    filaMain.Cells["Serie"].Value = serie; // SOLUCIÓN 2C: Guardamos la Serie en la grilla
                     filaMain.Cells["Vencimiento"].Value = fechaVencStr;
                     filaMain.Cells["Cantidad"].Value = aRetirar;
                 }

@@ -46,10 +46,7 @@ namespace Cigral.Services
         {
             _client.DefaultRequestHeaders.Clear();
 
-            if (!string.IsNullOrEmpty(AuthHeaderKey))
-            {
-                _client.DefaultRequestHeaders.Add("x-cigral-auth", AuthHeaderKey);
-            }
+                _client.DefaultRequestHeaders.Add("x-cigral-auth", "f7fa19b4-80ae-47ea-8c8b-0ecbb5995942");
 
             if (!string.IsNullOrEmpty(TokenActual))
             {
@@ -373,7 +370,16 @@ namespace Cigral.Services
         /// <summary>
         /// Trae todo el inventario físico almacenado en los estantes.
         /// </summary>
-        public static async Task<PaginadoResponse<ExistenciaDto>> ObtenerExistencias(string buscar, bool ocultarCero, bool soloVencidos, int ordenarPor = 0, bool esDescendente = false, int pageNumber = 1, int diasParaVencer = 0)
+        public static async Task<PaginadoResponse<ExistenciaDto>> ObtenerExistencias(string? buscar = null,
+            bool ocultarCero = false,
+            bool soloVencidos = false,
+            int ordenarPor = 0,
+            bool esDescendente = false,
+            int pageNumber = 1,
+            int diasParaVencer = 0,
+            int? productoId = null,
+            string? codigoLote = null,
+            string? numeroSerie = null )
         {
                 try
                 {
@@ -384,6 +390,9 @@ namespace Cigral.Services
                     if (ocultarCero) url += "&OculrarCero=true";
                     if (soloVencidos) url += "$SoloConVencimiento=true";
                     if (diasParaVencer != 0) url += $"&DiasParaVencer={diasParaVencer}";
+                    if (!string.IsNullOrEmpty(numeroSerie)) url += $"NumSerie={numeroSerie}";
+                    if (!string.IsNullOrEmpty(codigoLote)) url += $"CodigoLote={codigoLote}";
+                    if (productoId != null) url += $"ProductoId={productoId}";
 
                     var response = await _client.GetAsync(url);
 
@@ -466,27 +475,37 @@ namespace Cigral.Services
         /// </summary>
         public static async Task<ParserResponse> ParsearCodigoBarras(string codigoCrudo)
         {
-                try
-                {
-                    string urlEncode = System.Net.WebUtility.UrlEncode(codigoCrudo);
-                    var response = await _client.GetAsync($"{BaseUrl}/Parser/analyze?rawCode={urlEncode}");
+            try
+            {
+                string urlEncode = System.Net.WebUtility.UrlEncode(codigoCrudo);
+                var response = await _client.GetAsync($"{BaseUrl}/Parser/analyze?rawCode={urlEncode}");
 
-                    if (response.IsSuccessStatusCode)
-                    {
-                        var json = await response.Content.ReadAsStringAsync();
-                        return JsonConvert.DeserializeObject<ParserResponse>(json);
-                    }
-                    else
-                    {
-                        await MostrarErrorBackend(response, "X-Ray Parser: Código Rechazado");
-                        return null;
-                    }
-                }
-                catch (Exception ex)
+                if (response.IsSuccessStatusCode)
                 {
-                    MessageBox.Show($"Error interno de conexión:\n{ex.Message}", "X-Ray Parser", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    var json = await response.Content.ReadAsStringAsync();
+                    return JsonConvert.DeserializeObject<ParserResponse>(json);
+                }
+                else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+                {
+                    // Atrapamos el 400 de forma controlada.
+                    // Leemos el texto plano que mandaste desde el backend ("El código escaneado no contiene...")
+                    string errorMessage = await response.Content.ReadAsStringAsync();
+
+                    MessageBox.Show(errorMessage, "Código no reconocido", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return null; // Retornamos null sin lanzar excepciones para no activar el 2do mensaje
+                }
+                else
+                {
+                    // Solo entra aquí si es un error 500 (Servidor caído) o 401 (Token vencido)
+                    await MostrarErrorBackend(response, "X-Ray Parser: Código Rechazado");
                     return null;
                 }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error de red al intentar comunicarse con el servidor:\n{ex.Message}", "Fallo de conexión", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return null;
+            }
         }
 
         /// <summary>

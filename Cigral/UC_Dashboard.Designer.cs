@@ -30,8 +30,6 @@
         {
             DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
             DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
-            panel1 = new Panel();
-            labelTitulo = new Label();
             dgvProximos = new DataGridView();
             colProductoV = new DataGridViewTextBoxColumn();
             colLoteV = new DataGridViewTextBoxColumn();
@@ -55,52 +53,31 @@
             colUbicacionN = new DataGridViewTextBoxColumn();
             colCantidadN = new DataGridViewTextBoxColumn();
             lblFecha = new Label();
-            panel1.SuspendLayout();
+            tableLayoutPanel1 = new TableLayoutPanel();
+            labelTitulo = new Label();
             ((System.ComponentModel.ISupportInitialize)dgvProximos).BeginInit();
             ((System.ComponentModel.ISupportInitialize)dgvVencidos).BeginInit();
+            tableLayoutPanel1.SuspendLayout();
             SuspendLayout();
-            // 
-            // panel1
-            // 
-            panel1.BackColor = SystemColors.GradientActiveCaption;
-            panel1.Controls.Add(labelTitulo);
-            panel1.Dock = DockStyle.Top;
-            panel1.Location = new Point(0, 0);
-            panel1.Margin = new Padding(3, 2, 3, 2);
-            panel1.Name = "panel1";
-            panel1.Size = new Size(1696, 56);
-            panel1.TabIndex = 6;
-            // 
-            // labelTitulo
-            // 
-            labelTitulo.Anchor = AnchorStyles.None;
-            labelTitulo.BackColor = Color.Transparent;
-            labelTitulo.Font = new Font("Segoe UI", 18F, FontStyle.Bold | FontStyle.Underline);
-            labelTitulo.ForeColor = Color.White;
-            labelTitulo.Location = new Point(647, 10);
-            labelTitulo.Name = "labelTitulo";
-            labelTitulo.Size = new Size(320, 31);
-            labelTitulo.TabIndex = 0;
-            labelTitulo.Text = "INFO DE VENCIMIENTOS";
-            labelTitulo.TextAlign = ContentAlignment.MiddleCenter;
-            labelTitulo.Click += labelTitulo_Click;
             // 
             // dgvProximos
             // 
             dgvProximos.AllowUserToAddRows = false;
             dgvProximos.AllowUserToDeleteRows = false;
-            dgvProximos.Anchor = AnchorStyles.Top | AnchorStyles.Bottom;
             dgvProximos.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dgvProximos.BackgroundColor = Color.White;
             dgvProximos.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dgvProximos.Columns.AddRange(new DataGridViewColumn[] { colProductoV, colLoteV, colVencimientoV, colDiasV, colUbicacionV, colCantidadV });
-            dgvProximos.Location = new Point(854, 118);
+            dgvProximos.Dock = DockStyle.Fill;
+            dgvProximos.Location = new Point(803, 129);
+            dgvProximos.Margin = new Padding(20);
             dgvProximos.Name = "dgvProximos";
             dgvProximos.ReadOnly = true;
             dgvProximos.RowHeadersVisible = false;
             dgvProximos.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvProximos.Size = new Size(655, 802);
+            dgvProximos.Size = new Size(743, 795);
             dgvProximos.TabIndex = 8;
+            dgvProximos.CellContentClick += dgvProximos_CellContentClick;
             // 
             // colProductoV
             // 
@@ -142,25 +119,29 @@
             // 
             // label1
             // 
-            label1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom;
             label1.AutoSize = true;
+            label1.Dock = DockStyle.Fill;
             label1.Font = new Font("Segoe UI", 14F, FontStyle.Bold);
-            label1.Location = new Point(383, 90);
+            label1.Location = new Point(0, 57);
+            label1.Margin = new Padding(0);
             label1.Name = "label1";
-            label1.Size = new Size(225, 25);
+            label1.Size = new Size(783, 52);
             label1.TabIndex = 9;
             label1.Text = "PRODUCTOS VENCIDOS";
+            label1.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // label2
             // 
-            label2.Anchor = AnchorStyles.Top | AnchorStyles.Bottom;
             label2.AutoSize = true;
+            label2.Dock = DockStyle.Fill;
             label2.Font = new Font("Segoe UI", 14F, FontStyle.Bold);
-            label2.Location = new Point(1082, 90);
+            label2.Location = new Point(783, 57);
+            label2.Margin = new Padding(0);
             label2.Name = "label2";
-            label2.Size = new Size(206, 25);
+            label2.Size = new Size(783, 52);
             label2.TabIndex = 10;
             label2.Text = "PRÓXIMOS A VENCER";
+            label2.TextAlign = ContentAlignment.MiddleCenter;
             label2.Click += label2_Click;
             // 
             // colProducto
@@ -205,17 +186,18 @@
             // 
             dgvVencidos.AllowUserToAddRows = false;
             dgvVencidos.AllowUserToDeleteRows = false;
-            dgvVencidos.Anchor = AnchorStyles.Top | AnchorStyles.Bottom;
             dgvVencidos.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dgvVencidos.BackgroundColor = Color.White;
             dgvVencidos.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dgvVencidos.Columns.AddRange(new DataGridViewColumn[] { colProductoN, colLoteN, colVencimientoN, colDiasN, colUbicacionN, colCantidadN });
-            dgvVencidos.Location = new Point(177, 118);
+            dgvVencidos.Dock = DockStyle.Fill;
+            dgvVencidos.Location = new Point(20, 129);
+            dgvVencidos.Margin = new Padding(20);
             dgvVencidos.Name = "dgvVencidos";
             dgvVencidos.ReadOnly = true;
             dgvVencidos.RowHeadersVisible = false;
             dgvVencidos.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvVencidos.Size = new Size(655, 802);
+            dgvVencidos.Size = new Size(743, 795);
             dgvVencidos.TabIndex = 11;
             // 
             // colProductoN
@@ -262,39 +244,71 @@
             // 
             // lblFecha
             // 
-            lblFecha.Anchor = AnchorStyles.Top | AnchorStyles.Bottom;
+            lblFecha.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
             lblFecha.AutoSize = true;
             lblFecha.Font = new Font("Segoe UI", 14F, FontStyle.Bold);
-            lblFecha.Location = new Point(1393, 68);
+            lblFecha.Location = new Point(1577, 57);
             lblFecha.Name = "lblFecha";
-            lblFecha.Size = new Size(116, 25);
+            lblFecha.Size = new Size(116, 52);
             lblFecha.TabIndex = 12;
             lblFecha.Text = "09/03/2026";
+            // 
+            // tableLayoutPanel1
+            // 
+            tableLayoutPanel1.ColumnCount = 3;
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 130F));
+            tableLayoutPanel1.Controls.Add(dgvProximos, 1, 2);
+            tableLayoutPanel1.Controls.Add(dgvVencidos, 0, 2);
+            tableLayoutPanel1.Controls.Add(lblFecha, 2, 1);
+            tableLayoutPanel1.Controls.Add(label1, 0, 1);
+            tableLayoutPanel1.Controls.Add(label2, 1, 1);
+            tableLayoutPanel1.Controls.Add(labelTitulo, 0, 0);
+            tableLayoutPanel1.Dock = DockStyle.Fill;
+            tableLayoutPanel1.Location = new Point(0, 0);
+            tableLayoutPanel1.Margin = new Padding(0);
+            tableLayoutPanel1.Name = "tableLayoutPanel1";
+            tableLayoutPanel1.RowCount = 3;
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 52F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 835F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
+            tableLayoutPanel1.Size = new Size(1696, 944);
+            tableLayoutPanel1.TabIndex = 13;
+            // 
+            // labelTitulo
+            // 
+            labelTitulo.BackColor = SystemColors.GradientActiveCaption;
+            tableLayoutPanel1.SetColumnSpan(labelTitulo, 3);
+            labelTitulo.Dock = DockStyle.Fill;
+            labelTitulo.Font = new Font("Segoe UI", 18F, FontStyle.Bold | FontStyle.Underline);
+            labelTitulo.ForeColor = Color.White;
+            labelTitulo.Location = new Point(0, 0);
+            labelTitulo.Margin = new Padding(0);
+            labelTitulo.Name = "labelTitulo";
+            labelTitulo.Size = new Size(1696, 57);
+            labelTitulo.TabIndex = 0;
+            labelTitulo.Text = "INFO DE VENCIMIENTOS";
+            labelTitulo.TextAlign = ContentAlignment.MiddleCenter;
+            labelTitulo.Click += labelTitulo_Click;
             // 
             // UC_Dashboard
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            Controls.Add(lblFecha);
-            Controls.Add(dgvVencidos);
-            Controls.Add(label2);
-            Controls.Add(label1);
-            Controls.Add(dgvProximos);
-            Controls.Add(panel1);
+            Controls.Add(tableLayoutPanel1);
             Name = "UC_Dashboard";
             Size = new Size(1696, 944);
             Load += UC_Dashboard_Load;
-            panel1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)dgvProximos).EndInit();
             ((System.ComponentModel.ISupportInitialize)dgvVencidos).EndInit();
+            tableLayoutPanel1.ResumeLayout(false);
+            tableLayoutPanel1.PerformLayout();
             ResumeLayout(false);
-            PerformLayout();
         }
 
         #endregion
-
-        private Panel panel1;
-        private Label labelTitulo;
         private DataGridView dataGridView1;
         private DataGridView dgvProximos;
         private Label label1;
@@ -319,5 +333,7 @@
         private DataGridViewTextBoxColumn colDiasN;
         private DataGridViewTextBoxColumn colUbicacionN;
         private DataGridViewTextBoxColumn colCantidadN;
+        private TableLayoutPanel tableLayoutPanel1;
+        private Label labelTitulo;
     }
 }

@@ -95,5 +95,10 @@ namespace Cigral
                 Cursor = Cursors.Default;
             }
         }
+
+        private void dgvProximos_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
+        }
     }
 }

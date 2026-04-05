@@ -130,7 +130,7 @@ namespace Cigral.Models
         public string NumSerie { get; set; }
         public DateTime? FechaVencimiento { get; set; }   //Puede ser null si no tiene vencimiento
         public int Cantidad { get; set; }
-        public string ProductoCodigoGenerico { get; set; }
+        public string productoCodigoInterno { get; set; }
     }
 
     public class DisminuirStockDto
@@ -141,6 +141,7 @@ namespace Cigral.Models
         public string codigoLote { get; set; }
         public DateTime? fechaVencimiento { get; set; }
         public int cantidad { get; set; }
+        public string informacionAdicional { get; set; }
     }
 
     public class ClienteDto
