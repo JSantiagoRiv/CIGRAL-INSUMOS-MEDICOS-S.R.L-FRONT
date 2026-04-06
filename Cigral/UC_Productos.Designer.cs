@@ -214,15 +214,15 @@
             tableLayoutPanel3.Location = new Point(902, 103);
             tableLayoutPanel3.Name = "tableLayoutPanel3";
             tableLayoutPanel3.RowCount = 9;
-            tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 20F));
-            tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Absolute, 60F));
-            tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Absolute, 60F));
-            tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Absolute, 180F));
-            tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Absolute, 60F));
-            tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Absolute, 60F));
-            tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Absolute, 60F));
+            tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 4.247945F));
+            tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 10.6198606F));
+            tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 10.6198606F));
+            tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 28.12054F));
+            tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 10.6198606F));
+            tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 10.6198606F));
+            tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 10.6198606F));
             tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Absolute, 40F));
-            tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 80F));
+            tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 14.532217F));
             tableLayoutPanel3.Size = new Size(791, 838);
             tableLayoutPanel3.TabIndex = 34;
             // 
@@ -231,9 +231,9 @@
             label6.AutoSize = true;
             label6.Dock = DockStyle.Fill;
             label6.Font = new Font("Segoe UI", 12F);
-            label6.Location = new Point(3, 363);
+            label6.Location = new Point(3, 425);
             label6.Name = "label6";
-            label6.Size = new Size(134, 60);
+            label6.Size = new Size(134, 84);
             label6.TabIndex = 38;
             label6.Text = "GTIN:";
             label6.TextAlign = ContentAlignment.TopCenter;
@@ -243,9 +243,9 @@
             label4.AutoSize = true;
             label4.Dock = DockStyle.Fill;
             label4.Font = new Font("Segoe UI", 12F);
-            label4.Location = new Point(3, 183);
+            label4.Location = new Point(3, 201);
             label4.Name = "label4";
-            label4.Size = new Size(134, 180);
+            label4.Size = new Size(134, 224);
             label4.TabIndex = 35;
             label4.Text = "Descripción:";
             label4.TextAlign = ContentAlignment.TopCenter;
@@ -255,9 +255,9 @@
             label3.AutoSize = true;
             label3.Dock = DockStyle.Fill;
             label3.Font = new Font("Segoe UI", 12F);
-            label3.Location = new Point(3, 123);
+            label3.Location = new Point(3, 117);
             label3.Name = "label3";
-            label3.Size = new Size(134, 60);
+            label3.Size = new Size(134, 84);
             label3.TabIndex = 33;
             label3.Text = "Marca:";
             label3.TextAlign = ContentAlignment.TopCenter;
@@ -267,9 +267,9 @@
             label1.AutoSize = true;
             label1.Dock = DockStyle.Fill;
             label1.Font = new Font("Segoe UI", 12F);
-            label1.Location = new Point(3, 63);
+            label1.Location = new Point(3, 33);
             label1.Name = "label1";
-            label1.Size = new Size(134, 60);
+            label1.Size = new Size(134, 84);
             label1.TabIndex = 31;
             label1.Text = "Nombre:";
             label1.TextAlign = ContentAlignment.TopCenter;
@@ -279,9 +279,9 @@
             label5.AutoSize = true;
             label5.Dock = DockStyle.Fill;
             label5.Font = new Font("Segoe UI", 12F);
-            label5.Location = new Point(3, 423);
+            label5.Location = new Point(3, 509);
             label5.Name = "label5";
-            label5.Size = new Size(134, 60);
+            label5.Size = new Size(134, 84);
             label5.TabIndex = 39;
             label5.Text = "Codigo genérico:";
             label5.TextAlign = ContentAlignment.TopCenter;
@@ -291,9 +291,9 @@
             label7.AutoSize = true;
             label7.Dock = DockStyle.Fill;
             label7.Font = new Font("Segoe UI", 12F);
-            label7.Location = new Point(3, 483);
+            label7.Location = new Point(3, 593);
             label7.Name = "label7";
-            label7.Size = new Size(134, 60);
+            label7.Size = new Size(134, 84);
             label7.TabIndex = 41;
             label7.Text = "Codigo interno:";
             label7.TextAlign = ContentAlignment.TopCenter;
@@ -302,7 +302,7 @@
             // 
             nombreBox.Dock = DockStyle.Fill;
             nombreBox.Font = new Font("Segoe UI", 12F);
-            nombreBox.Location = new Point(143, 66);
+            nombreBox.Location = new Point(143, 36);
             nombreBox.Margin = new Padding(3, 3, 15, 3);
             nombreBox.Name = "nombreBox";
             nombreBox.Size = new Size(633, 29);
@@ -313,7 +313,7 @@
             // 
             marcaBox.Dock = DockStyle.Fill;
             marcaBox.Font = new Font("Segoe UI", 12F);
-            marcaBox.Location = new Point(143, 126);
+            marcaBox.Location = new Point(143, 120);
             marcaBox.Margin = new Padding(3, 3, 15, 3);
             marcaBox.Name = "marcaBox";
             marcaBox.Size = new Size(633, 29);
@@ -324,11 +324,11 @@
             // 
             descripcionBox.Dock = DockStyle.Fill;
             descripcionBox.Font = new Font("Segoe UI", 12F);
-            descripcionBox.Location = new Point(143, 186);
+            descripcionBox.Location = new Point(143, 204);
             descripcionBox.Margin = new Padding(3, 3, 15, 25);
             descripcionBox.Multiline = true;
             descripcionBox.Name = "descripcionBox";
-            descripcionBox.Size = new Size(633, 152);
+            descripcionBox.Size = new Size(633, 196);
             descripcionBox.TabIndex = 44;
             descripcionBox.TextChanged += nombreBox_TextChanged;
             // 
@@ -336,7 +336,7 @@
             // 
             gtinBox.Dock = DockStyle.Fill;
             gtinBox.Font = new Font("Segoe UI", 12F);
-            gtinBox.Location = new Point(143, 366);
+            gtinBox.Location = new Point(143, 428);
             gtinBox.Margin = new Padding(3, 3, 15, 3);
             gtinBox.Name = "gtinBox";
             gtinBox.Size = new Size(633, 29);
@@ -347,7 +347,7 @@
             // 
             codigoGenericoBox.Dock = DockStyle.Fill;
             codigoGenericoBox.Font = new Font("Segoe UI", 12F);
-            codigoGenericoBox.Location = new Point(143, 426);
+            codigoGenericoBox.Location = new Point(143, 512);
             codigoGenericoBox.Margin = new Padding(3, 3, 15, 3);
             codigoGenericoBox.Name = "codigoGenericoBox";
             codigoGenericoBox.Size = new Size(633, 29);
@@ -358,7 +358,7 @@
             // 
             codigoInternoBox.Dock = DockStyle.Fill;
             codigoInternoBox.Font = new Font("Segoe UI", 12F);
-            codigoInternoBox.Location = new Point(143, 486);
+            codigoInternoBox.Location = new Point(143, 596);
             codigoInternoBox.Margin = new Padding(3, 3, 15, 3);
             codigoInternoBox.Name = "codigoInternoBox";
             codigoInternoBox.Size = new Size(633, 29);
@@ -374,7 +374,7 @@
             modificarButton.FlatStyle = FlatStyle.Flat;
             modificarButton.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             modificarButton.ForeColor = Color.Black;
-            modificarButton.Location = new Point(3, 546);
+            modificarButton.Location = new Point(3, 680);
             modificarButton.Margin = new Padding(3, 3, 15, 3);
             modificarButton.Name = "modificarButton";
             modificarButton.Size = new Size(773, 34);
