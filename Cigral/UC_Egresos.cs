@@ -405,7 +405,7 @@ namespace Cigral
                             MessageBox.Show("No se encontró stock disponible de este producto (con ese Lote/Serie) en el sistema.", "Sin Stock", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         }
                     }
-                    }
+                }
                 catch (Exception ex)
                 {
                     MessageBox.Show("Error al procesar el escaneo: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -543,7 +543,7 @@ namespace Cigral
                         {
                             depositoId = depositoSeleccionado,
                             productoId = Convert.ToInt32(fila.Cells["Id"].Value),
-                            numSerie = fila.Cells["Serie"].Value?.ToString() == "Sin Número de Serie" ? null : fila.Cells["Serie"].Value?.ToString() ,
+                            numSerie = fila.Cells["Serie"].Value?.ToString() == "Sin Número de Serie" ? null : fila.Cells["Serie"].Value?.ToString(),
                             codigoLote = fila.Cells["Lote"].Value?.ToString() ?? "",
                             cantidad = Convert.ToInt32(fila.Cells["Cantidad"].Value),
                             informacionAdicional = ""
@@ -802,34 +802,41 @@ namespace Cigral
 
                     if (col.Name == "ProductoNombre") col.HeaderText = "Producto";
                     if (col.Name == "ProductoCodigo") col.HeaderText = "Código";
-                    if (col.Name == "DepositoNombre") {
+                    if (col.Name == "DepositoNombre")
+                    {
                         col.HeaderText = "Depósito";
                         col.Width = 80;
-                        }
-                    if (col.Name == "CodigoLote") {
+                    }
+                    if (col.Name == "CodigoLote")
+                    {
                         col.HeaderText = "Lote";
                         col.Width = 80;
-                        }
-                    if (col.Name == "NumSerie") {
+                    }
+                    if (col.Name == "NumSerie")
+                    {
                         col.HeaderText = "Serie";
                         col.Width = 100;
-                        } // Agregamos la cabecera para la serie
-                    if (col.Name == "FechaVencimiento") {
+                    } // Agregamos la cabecera para la serie
+                    if (col.Name == "FechaVencimiento")
+                    {
                         col.HeaderText = "Vencimiento";
                         col.Width = 80;
-                        }
-                    if (col.Name == "Cantidad") {
+                    }
+                    if (col.Name == "Cantidad")
+                    {
                         col.HeaderText = "Stock";
                         col.Width = 50;
-                        }
-                    if (col.Name == "ProductoGtin") {
+                    }
+                    if (col.Name == "ProductoGtin")
+                    {
                         col.HeaderText = "GTIN";
                         col.Width = 100;
-                        }
-                    if (col.Name == "productoCodigoInterno") {
+                    }
+                    if (col.Name == "productoCodigoInterno")
+                    {
                         col.HeaderText = "Cod. Int.";
                         col.Width = 100;
-                        }
+                    }
                 }
             };
 
@@ -1143,6 +1150,11 @@ namespace Cigral
             }
 
             return null; // Si cancela, devuelve null
+        }
+
+        private void tableLayoutPanel1_Paint(object sender, PaintEventArgs e)
+        {
+
         }
     }
 }

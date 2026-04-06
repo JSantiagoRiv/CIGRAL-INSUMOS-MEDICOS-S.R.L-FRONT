@@ -40,18 +40,19 @@
             panel1 = new Panel();
             labelTitulo = new Label();
             groupBox1 = new GroupBox();
-            txtBuscarCliente = new TextBox();
-            txtComprobante = new TextBox();
-            label6 = new Label();
+            tableLayoutPanel1 = new TableLayoutPanel();
             btnAgregarProveedor = new FontAwesome.Sharp.IconButton();
-            chkConRemito = new CheckBox();
-            labelDeposito = new Label();
-            cmbDeposito = new ComboBox();
             dateTimePicker1 = new DateTimePicker();
+            cmbDeposito = new ComboBox();
             label3 = new Label();
-            textRemito = new TextBox();
-            label1 = new Label();
+            chkConRemito = new CheckBox();
+            txtComprobante = new TextBox();
             label2 = new Label();
+            label6 = new Label();
+            labelDeposito = new Label();
+            textRemito = new TextBox();
+            txtBuscarCliente = new TextBox();
+            label1 = new Label();
             panel2 = new Panel();
             lstClientes = new ListBox();
             lblIngresoManual = new LinkLabel();
@@ -74,6 +75,7 @@
             timerBusquedaCliente = new System.Windows.Forms.Timer(components);
             panel1.SuspendLayout();
             groupBox1.SuspendLayout();
+            tableLayoutPanel1.SuspendLayout();
             panel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dgvIngreso).BeginInit();
             panel3.SuspendLayout();
@@ -104,18 +106,7 @@
             // 
             // groupBox1
             // 
-            groupBox1.Controls.Add(txtBuscarCliente);
-            groupBox1.Controls.Add(txtComprobante);
-            groupBox1.Controls.Add(label6);
-            groupBox1.Controls.Add(btnAgregarProveedor);
-            groupBox1.Controls.Add(chkConRemito);
-            groupBox1.Controls.Add(labelDeposito);
-            groupBox1.Controls.Add(cmbDeposito);
-            groupBox1.Controls.Add(dateTimePicker1);
-            groupBox1.Controls.Add(label3);
-            groupBox1.Controls.Add(textRemito);
-            groupBox1.Controls.Add(label1);
-            groupBox1.Controls.Add(label2);
+            groupBox1.Controls.Add(tableLayoutPanel1);
             groupBox1.Dock = DockStyle.Top;
             groupBox1.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
             groupBox1.Location = new Point(0, 56);
@@ -127,44 +118,46 @@
             groupBox1.TabStop = false;
             groupBox1.Text = "Datos del Proveedor";
             // 
-            // txtBuscarCliente
+            // tableLayoutPanel1
             // 
-            txtBuscarCliente.Enabled = false;
-            txtBuscarCliente.Font = new Font("Segoe UI", 12F);
-            txtBuscarCliente.Location = new Point(90, 36);
-            txtBuscarCliente.Name = "txtBuscarCliente";
-            txtBuscarCliente.Size = new Size(179, 29);
-            txtBuscarCliente.TabIndex = 16;
-            txtBuscarCliente.TextChanged += txtBuscarCliente_TextChanged;
-            // 
-            // txtComprobante
-            // 
-            txtComprobante.Enabled = false;
-            txtComprobante.Font = new Font("Segoe UI", 12F);
-            txtComprobante.Location = new Point(964, 36);
-            txtComprobante.Name = "txtComprobante";
-            txtComprobante.Size = new Size(159, 29);
-            txtComprobante.TabIndex = 15;
-            // 
-            // label6
-            // 
-            label6.AutoSize = true;
-            label6.Font = new Font("Segoe UI", 12F);
-            label6.Location = new Point(782, 39);
-            label6.Name = "label6";
-            label6.Size = new Size(176, 21);
-            label6.TabIndex = 14;
-            label6.Text = "Comprobante Asociado:";
+            tableLayoutPanel1.ColumnCount = 6;
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle());
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle());
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle());
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle());
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle());
+            tableLayoutPanel1.Controls.Add(btnAgregarProveedor, 2, 0);
+            tableLayoutPanel1.Controls.Add(dateTimePicker1, 5, 1);
+            tableLayoutPanel1.Controls.Add(cmbDeposito, 5, 0);
+            tableLayoutPanel1.Controls.Add(label3, 4, 1);
+            tableLayoutPanel1.Controls.Add(chkConRemito, 3, 0);
+            tableLayoutPanel1.Controls.Add(txtComprobante, 3, 1);
+            tableLayoutPanel1.Controls.Add(label2, 0, 0);
+            tableLayoutPanel1.Controls.Add(label6, 2, 1);
+            tableLayoutPanel1.Controls.Add(labelDeposito, 4, 0);
+            tableLayoutPanel1.Controls.Add(textRemito, 1, 1);
+            tableLayoutPanel1.Controls.Add(txtBuscarCliente, 1, 0);
+            tableLayoutPanel1.Controls.Add(label1, 0, 1);
+            tableLayoutPanel1.Dock = DockStyle.Fill;
+            tableLayoutPanel1.Location = new Point(3, 24);
+            tableLayoutPanel1.Name = "tableLayoutPanel1";
+            tableLayoutPanel1.RowCount = 2;
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
+            tableLayoutPanel1.Size = new Size(1690, 72);
+            tableLayoutPanel1.TabIndex = 0;
             // 
             // btnAgregarProveedor
             // 
+            btnAgregarProveedor.Anchor = AnchorStyles.Left;
             btnAgregarProveedor.Enabled = false;
             btnAgregarProveedor.FlatStyle = FlatStyle.Flat;
             btnAgregarProveedor.IconChar = FontAwesome.Sharp.IconChar.Add;
             btnAgregarProveedor.IconColor = Color.Black;
             btnAgregarProveedor.IconFont = FontAwesome.Sharp.IconFont.Solid;
             btnAgregarProveedor.IconSize = 25;
-            btnAgregarProveedor.Location = new Point(272, 35);
+            btnAgregarProveedor.Location = new Point(345, 3);
             btnAgregarProveedor.Margin = new Padding(0, 3, 3, 3);
             btnAgregarProveedor.Name = "btnAgregarProveedor";
             btnAgregarProveedor.Size = new Size(33, 29);
@@ -172,11 +165,46 @@
             btnAgregarProveedor.UseVisualStyleBackColor = true;
             btnAgregarProveedor.Click += btnAgregarProveedor_Click;
             // 
+            // dateTimePicker1
+            // 
+            dateTimePicker1.Anchor = AnchorStyles.Right;
+            dateTimePicker1.Font = new Font("Segoe UI", 12F);
+            dateTimePicker1.Format = DateTimePickerFormat.Short;
+            dateTimePicker1.Location = new Point(1492, 39);
+            dateTimePicker1.Margin = new Padding(3, 2, 3, 2);
+            dateTimePicker1.Name = "dateTimePicker1";
+            dateTimePicker1.Size = new Size(195, 29);
+            dateTimePicker1.TabIndex = 5;
+            // 
+            // cmbDeposito
+            // 
+            cmbDeposito.Anchor = AnchorStyles.Right;
+            cmbDeposito.DropDownStyle = ComboBoxStyle.DropDownList;
+            cmbDeposito.Font = new Font("Segoe UI", 12F);
+            cmbDeposito.FormattingEnabled = true;
+            cmbDeposito.Location = new Point(1492, 3);
+            cmbDeposito.Margin = new Padding(3, 2, 3, 2);
+            cmbDeposito.Name = "cmbDeposito";
+            cmbDeposito.Size = new Size(195, 29);
+            cmbDeposito.TabIndex = 6;
+            // 
+            // label3
+            // 
+            label3.Anchor = AnchorStyles.Right;
+            label3.AutoSize = true;
+            label3.Font = new Font("Segoe UI", 12F);
+            label3.Location = new Point(1433, 43);
+            label3.Name = "label3";
+            label3.Size = new Size(53, 21);
+            label3.TabIndex = 4;
+            label3.Text = "Fecha:";
+            // 
             // chkConRemito
             // 
+            chkConRemito.Anchor = AnchorStyles.Left;
             chkConRemito.AutoSize = true;
             chkConRemito.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            chkConRemito.Location = new Point(1143, 38);
+            chkConRemito.Location = new Point(503, 5);
             chkConRemito.Name = "chkConRemito";
             chkConRemito.Size = new Size(143, 25);
             chkConRemito.TabIndex = 8;
@@ -184,76 +212,81 @@
             chkConRemito.UseVisualStyleBackColor = true;
             chkConRemito.CheckedChanged += chkConRemito_CheckedChanged;
             // 
+            // txtComprobante
+            // 
+            txtComprobante.Anchor = AnchorStyles.Left;
+            txtComprobante.Enabled = false;
+            txtComprobante.Font = new Font("Segoe UI", 12F);
+            txtComprobante.Location = new Point(503, 39);
+            txtComprobante.Name = "txtComprobante";
+            txtComprobante.Size = new Size(215, 29);
+            txtComprobante.TabIndex = 15;
+            // 
+            // label2
+            // 
+            label2.Anchor = AnchorStyles.Right;
+            label2.AutoSize = true;
+            label2.Font = new Font("Segoe UI", 12F);
+            label2.Location = new Point(36, 7);
+            label2.Name = "label2";
+            label2.Size = new Size(85, 21);
+            label2.TabIndex = 0;
+            label2.Text = "Proveedor:";
+            // 
+            // label6
+            // 
+            label6.Anchor = AnchorStyles.Left;
+            label6.AutoSize = true;
+            label6.Font = new Font("Segoe UI", 12F);
+            label6.Location = new Point(348, 43);
+            label6.Name = "label6";
+            label6.Size = new Size(149, 21);
+            label6.TabIndex = 14;
+            label6.Text = "Comprobante Asoc.:";
+            // 
             // labelDeposito
             // 
+            labelDeposito.Anchor = AnchorStyles.Right;
             labelDeposito.AutoSize = true;
             labelDeposito.Font = new Font("Segoe UI", 12F);
-            labelDeposito.Location = new Point(1414, 41);
+            labelDeposito.Location = new Point(1411, 7);
             labelDeposito.Name = "labelDeposito";
             labelDeposito.Size = new Size(75, 21);
             labelDeposito.TabIndex = 7;
             labelDeposito.Text = "Depósito:";
             // 
-            // cmbDeposito
-            // 
-            cmbDeposito.DropDownStyle = ComboBoxStyle.DropDownList;
-            cmbDeposito.Font = new Font("Segoe UI", 12F);
-            cmbDeposito.FormattingEnabled = true;
-            cmbDeposito.Location = new Point(1495, 38);
-            cmbDeposito.Margin = new Padding(3, 2, 3, 2);
-            cmbDeposito.Name = "cmbDeposito";
-            cmbDeposito.Size = new Size(153, 29);
-            cmbDeposito.TabIndex = 6;
-            // 
-            // dateTimePicker1
-            // 
-            dateTimePicker1.Font = new Font("Segoe UI", 12F);
-            dateTimePicker1.Format = DateTimePickerFormat.Short;
-            dateTimePicker1.Location = new Point(646, 35);
-            dateTimePicker1.Margin = new Padding(3, 2, 3, 2);
-            dateTimePicker1.Name = "dateTimePicker1";
-            dateTimePicker1.Size = new Size(130, 29);
-            dateTimePicker1.TabIndex = 5;
-            // 
-            // label3
-            // 
-            label3.AutoSize = true;
-            label3.Font = new Font("Segoe UI", 12F);
-            label3.Location = new Point(587, 39);
-            label3.Name = "label3";
-            label3.Size = new Size(53, 21);
-            label3.TabIndex = 4;
-            label3.Text = "Fecha:";
-            // 
             // textRemito
             // 
+            textRemito.Anchor = AnchorStyles.Left;
             textRemito.Enabled = false;
             textRemito.Font = new Font("Segoe UI", 12F);
-            textRemito.Location = new Point(426, 35);
+            textRemito.Location = new Point(127, 39);
             textRemito.Margin = new Padding(3, 2, 3, 2);
             textRemito.Name = "textRemito";
-            textRemito.Size = new Size(159, 29);
+            textRemito.Size = new Size(215, 29);
             textRemito.TabIndex = 3;
+            // 
+            // txtBuscarCliente
+            // 
+            txtBuscarCliente.Anchor = AnchorStyles.Left;
+            txtBuscarCliente.Enabled = false;
+            txtBuscarCliente.Font = new Font("Segoe UI", 12F);
+            txtBuscarCliente.Location = new Point(127, 3);
+            txtBuscarCliente.Name = "txtBuscarCliente";
+            txtBuscarCliente.Size = new Size(215, 29);
+            txtBuscarCliente.TabIndex = 16;
+            txtBuscarCliente.TextChanged += txtBuscarCliente_TextChanged;
             // 
             // label1
             // 
+            label1.Anchor = AnchorStyles.Left;
             label1.AutoSize = true;
             label1.Font = new Font("Segoe UI", 12F);
-            label1.Location = new Point(311, 39);
+            label1.Location = new Point(3, 43);
             label1.Name = "label1";
             label1.Size = new Size(118, 21);
             label1.TabIndex = 2;
             label1.Text = "Nro. de Remito:";
-            // 
-            // label2
-            // 
-            label2.AutoSize = true;
-            label2.Font = new Font("Segoe UI", 12F);
-            label2.Location = new Point(6, 38);
-            label2.Name = "label2";
-            label2.Size = new Size(85, 21);
-            label2.TabIndex = 0;
-            label2.Text = "Proveedor:";
             // 
             // panel2
             // 
@@ -274,7 +307,7 @@
             // 
             lstClientes.Font = new Font("Segoe UI", 12F);
             lstClientes.FormattingEnabled = true;
-            lstClientes.Location = new Point(90, -27);
+            lstClientes.Location = new Point(130, -36);
             lstClientes.Name = "lstClientes";
             lstClientes.Size = new Size(179, 277);
             lstClientes.TabIndex = 17;
@@ -537,7 +570,8 @@
             panel1.ResumeLayout(false);
             panel1.PerformLayout();
             groupBox1.ResumeLayout(false);
-            groupBox1.PerformLayout();
+            tableLayoutPanel1.ResumeLayout(false);
+            tableLayoutPanel1.PerformLayout();
             panel2.ResumeLayout(false);
             panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)dgvIngreso).EndInit();
@@ -582,5 +616,6 @@
         private TextBox txtBuscarCliente;
         private ListBox lstClientes;
         private System.Windows.Forms.Timer timerBusquedaCliente;
+        private TableLayoutPanel tableLayoutPanel1;
     }
 }

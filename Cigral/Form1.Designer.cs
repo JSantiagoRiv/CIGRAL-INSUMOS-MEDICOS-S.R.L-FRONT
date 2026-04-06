@@ -67,7 +67,7 @@
             iconButtonIngreso.TextAlign = ContentAlignment.MiddleLeft;
             iconButtonIngreso.TextImageRelation = TextImageRelation.ImageBeforeText;
             iconButtonIngreso.UseVisualStyleBackColor = true;
-            iconButtonIngreso.Click += this.iconButton2_Click;
+            iconButtonIngreso.Click += iconButton2_Click;
             // 
             // btnStock
             // 
@@ -85,7 +85,7 @@
             btnStock.TextAlign = ContentAlignment.MiddleLeft;
             btnStock.TextImageRelation = TextImageRelation.ImageBeforeText;
             btnStock.UseVisualStyleBackColor = true;
-            btnStock.Click += this.btnStock_Click;
+            btnStock.Click += btnStock_Click;
             // 
             // btnAuditoria
             // 
@@ -103,7 +103,7 @@
             btnAuditoria.TextAlign = ContentAlignment.MiddleLeft;
             btnAuditoria.TextImageRelation = TextImageRelation.ImageBeforeText;
             btnAuditoria.UseVisualStyleBackColor = true;
-            btnAuditoria.Click += this.btnAuditoria_Click;
+            btnAuditoria.Click += btnAuditoria_Click;
             // 
             // btnEgresos
             // 
@@ -121,7 +121,7 @@
             btnEgresos.TextAlign = ContentAlignment.MiddleLeft;
             btnEgresos.TextImageRelation = TextImageRelation.ImageBeforeText;
             btnEgresos.UseVisualStyleBackColor = true;
-            btnEgresos.Click += this.btnEgresos_Click;
+            btnEgresos.Click += btnEgresos_Click;
             // 
             // btnInicio
             // 
@@ -139,14 +139,14 @@
             btnInicio.TextAlign = ContentAlignment.MiddleLeft;
             btnInicio.TextImageRelation = TextImageRelation.ImageBeforeText;
             btnInicio.UseVisualStyleBackColor = true;
-            btnInicio.Click += this.btnInicio_Click;
+            btnInicio.Click += btnInicio_Click;
             // 
             // label2
             // 
             label2.Anchor = AnchorStyles.Bottom;
             label2.AutoSize = true;
             label2.ForeColor = Color.White;
-            label2.Location = new Point(0, 929);
+            label2.Location = new Point(3, 920);
             label2.Name = "label2";
             label2.Size = new Size(72, 15);
             label2.TabIndex = 7;
@@ -168,7 +168,7 @@
             btnHistorialRemitos.TextAlign = ContentAlignment.MiddleLeft;
             btnHistorialRemitos.TextImageRelation = TextImageRelation.ImageBeforeText;
             btnHistorialRemitos.UseVisualStyleBackColor = true;
-            btnHistorialRemitos.Click += this.btnHistorialRemitos_Click;
+            btnHistorialRemitos.Click += btnHistorialRemitos_Click;
             // 
             // pictureBox2
             // 
@@ -196,7 +196,7 @@
             btnEntidades.TextAlign = ContentAlignment.MiddleLeft;
             btnEntidades.TextImageRelation = TextImageRelation.ImageBeforeText;
             btnEntidades.UseVisualStyleBackColor = true;
-            btnEntidades.Click += this.btnEntidades_Click;
+            btnEntidades.Click += btnEntidades_Click;
             // 
             // btnGestionProductos
             // 
@@ -214,7 +214,7 @@
             btnGestionProductos.TextAlign = ContentAlignment.MiddleLeft;
             btnGestionProductos.TextImageRelation = TextImageRelation.ImageBeforeText;
             btnGestionProductos.UseVisualStyleBackColor = true;
-            btnGestionProductos.Click += this.btnGestionProductos_Click;
+            btnGestionProductos.Click += btnGestionProductos_Click;
             // 
             // iconButton1
             // 
@@ -232,10 +232,11 @@
             iconButton1.TextAlign = ContentAlignment.MiddleLeft;
             iconButton1.TextImageRelation = TextImageRelation.ImageBeforeText;
             iconButton1.UseVisualStyleBackColor = true;
-            iconButton1.Click += this.iconButton1_Click;
+            iconButton1.Click += iconButton1_Click;
             // 
             // panel1
             // 
+            panel1.AutoScroll = true;
             panel1.BackColor = Color.LightSlateGray;
             panel1.Controls.Add(iconButton1);
             panel1.Controls.Add(btnGestionProductos);
@@ -292,13 +293,13 @@
             // 
             // panelContainer
             // 
-            panelContainer.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             panelContainer.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            panelContainer.Dock = DockStyle.Fill;
             panelContainer.Font = new Font("Segoe UI", 9F);
-            panelContainer.Location = new Point(208, 99);
+            panelContainer.Location = new Point(208, 97);
             panelContainer.Margin = new Padding(0);
             panelContainer.Name = "panelContainer";
-            panelContainer.Size = new Size(1696, 942);
+            panelContainer.Size = new Size(1696, 944);
             panelContainer.TabIndex = 3;
             // 
             // FormMain
@@ -317,7 +318,7 @@
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Sistema de Gestion de Stock y Trazabilidad";
             WindowState = FormWindowState.Maximized;
-            KeyDown += this.FormMain_KeyDown;
+            KeyDown += FormMain_KeyDown;
             ((System.ComponentModel.ISupportInitialize)pictureBox2).EndInit();
             panel1.ResumeLayout(false);
             panel1.PerformLayout();
