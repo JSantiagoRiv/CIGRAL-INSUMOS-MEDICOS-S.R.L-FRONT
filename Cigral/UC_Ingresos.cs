@@ -99,7 +99,7 @@ namespace Cigral
                 }
             }
 
-            this.ActiveControl = textScanner;
+            textScanner.Focus();
         }
 
 
@@ -130,7 +130,8 @@ namespace Cigral
 
 
 
-        private async Task CargarProveedores() { 
+        private async Task CargarProveedores()
+        {
             this.ActiveControl = textScanner;
 
             try
@@ -216,6 +217,7 @@ namespace Cigral
                     MessageBox.Show("Ha marcado la opción de remito. Debe ingresar el Número de Remito para continuar.", "Falta Remito", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
+
 
                 // Control de Series Duplicadas dentro del mismo escaneo
                 HashSet<string> series = new HashSet<string>();
@@ -347,7 +349,8 @@ namespace Cigral
                         NumeroRemito = textRemito.Text,
                         ComprobanteAsociado = txtComprobante.Text.Trim(),
                         Observaciones = "Ingreso desde el sistema",
-                        Detalles = new List<RemitoDetalleRequest>()
+                        Detalles = new List<RemitoDetalleRequest>(),
+                        EsDevolucion = chkDevolucion.Checked,
                     };
 
                     foreach (DataGridViewRow fila in dgvIngreso.Rows)
@@ -411,7 +414,8 @@ namespace Cigral
                             NumSerie = fila.Cells["Serie"].Value?.ToString() ?? "",
                             CodigoLote = loteAEnviar,
                             FechaVencimiento = fechaVencimientoSegura,
-                            Cantidad = cantidadSegura
+                            Cantidad = cantidadSegura,
+                            esDevolucion = chkDevolucion.Checked
                         };
 
                         bool exito = await ApiServices.AumentarStock(requestExistencia);
@@ -772,25 +776,17 @@ namespace Cigral
             lstClientes.Enabled = chkConRemito.Checked;
             btnAgregarProveedor.Enabled = chkConRemito.Checked;
             txtComprobante.Enabled = chkConRemito.Checked;
+            textRemito.Enabled = chkConRemito.Checked;
 
-            if (chkConRemito.Checked)
-            {
-                textRemito.ReadOnly = true; // Solo lectura para evitar que el operario escriba encima del automático
-                await ActualizarNumeroRemito();
-            }
-            else
-            {
-                textRemito.ReadOnly = false;
-                textRemito.Clear();
-                idClienteSeleccionado = 0;
-                txtComprobante.Clear();
-            }
+            textRemito.Clear();
+            idClienteSeleccionado = 0;
+            txtComprobante.Clear();
         }
 
         /// <summary>
         /// Pide a la API el número correlativo que le toca al remito de este depósito.
         /// </summary>
-        private async Task ActualizarNumeroRemito()
+        /*private async Task ActualizarNumeroRemito()
         {
             if (chkConRemito.Checked && cmbDeposito.SelectedValue != null)
             {
@@ -802,7 +798,7 @@ namespace Cigral
                     textRemito.Text = proximoRemito;
                 }
             }
-        }
+        }*/
 
         // --- MANEJO DE ARCHIVOS PDF ---
 
@@ -1021,15 +1017,17 @@ namespace Cigral
             Button btnGuardar = new Button() { Text = "Continuar", Left = 210, Width = 100, Top = 115, DialogResult = DialogResult.OK };
 
             // Mayúscula automática en la primera letra
-            txtNombre.TextChanged += (s, e) => {
+            txtNombre.TextChanged += (s, e) =>
+            {
                 if (txtNombre.Text.Length == 1) { txtNombre.Text = txtNombre.Text.ToUpper(); txtNombre.SelectionStart = 1; }
             };
 
-            txtMarca.TextChanged += (s, e) => {
+            txtMarca.TextChanged += (s, e) =>
+            {
                 if (txtMarca.Text.Length == 1) { txtMarca.Text = txtMarca.Text.ToUpper(); txtMarca.SelectionStart = 1; }
             };
 
-                
+
             prompt.Controls.Add(lblInfo);
             prompt.Controls.Add(lblNombre);
             prompt.Controls.Add(txtNombre);
@@ -1381,7 +1379,7 @@ namespace Cigral
             }
         }
 
-        
+
         private void txtBuscarCliente_TextChanged(object sender, EventArgs e)
         {
             if (eligiendoDeLista) return;
@@ -1561,6 +1559,11 @@ namespace Cigral
             }
 
             return null;
+        }
+
+        private void textRemito_TextChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

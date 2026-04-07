@@ -223,6 +223,7 @@
             textRemito.Name = "textRemito";
             textRemito.Size = new Size(215, 29);
             textRemito.TabIndex = 3;
+            textRemito.TextChanged += textRemito_TextChanged;
             // 
             // txtBuscarCliente
             // 

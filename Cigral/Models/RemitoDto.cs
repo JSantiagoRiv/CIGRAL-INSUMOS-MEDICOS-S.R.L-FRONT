@@ -13,6 +13,7 @@ namespace Cigral.Models
         public string Observaciones { get; set; }                        //Texto extra de detalles.
         public List<RemitoDetalleRequest> Detalles { get; set; }         //Lista de los productos escaneados.
         public string ComprobanteAsociado { get; set; }
+        public bool EsDevolucion { get; set; } = false;                           
     }
 
     // Molde para cada renglón individual DENTRO de la caja grande del remito.
