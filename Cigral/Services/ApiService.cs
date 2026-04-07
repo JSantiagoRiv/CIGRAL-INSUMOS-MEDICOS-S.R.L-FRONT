@@ -827,7 +827,7 @@ namespace Cigral.Services
                         url += $"&NombreProducto={Uri.EscapeDataString(nombreProducto.Trim())}";
 
                     if (!string.IsNullOrWhiteSpace(lote))
-                        url += $"&CodigoLote={Uri.EscapeDataString(lote.Trim())}";
+                        url += $"&CodigoLote={lote.Trim()}";
 
                     if (!string.IsNullOrWhiteSpace(serie))
                         url += $"&NumeroSerie={Uri.EscapeDataString(serie.Trim())}";

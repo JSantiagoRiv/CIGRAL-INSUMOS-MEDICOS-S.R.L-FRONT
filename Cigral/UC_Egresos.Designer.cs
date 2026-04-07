@@ -262,6 +262,7 @@
             txtComprobante.Name = "txtComprobante";
             txtComprobante.Size = new Size(215, 29);
             txtComprobante.TabIndex = 14;
+            txtComprobante.TextChanged += txtComprobante_TextChanged;
             // 
             // label7
             // 
@@ -334,9 +335,9 @@
             txtRemito.Location = new Point(127, 39);
             txtRemito.Margin = new Padding(3, 2, 3, 2);
             txtRemito.Name = "txtRemito";
-            txtRemito.ReadOnly = true;
             txtRemito.Size = new Size(215, 29);
             txtRemito.TabIndex = 7;
+            txtRemito.TextChanged += txtRemito_TextChanged;
             // 
             // label5
             // 
