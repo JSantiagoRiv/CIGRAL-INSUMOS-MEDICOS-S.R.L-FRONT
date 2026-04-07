@@ -200,10 +200,11 @@
             tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 11.8319139F));
             tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 11.8319139F));
             tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 17.74787F));
-            tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Absolute, 38F));
+            tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Absolute, 37F));
             tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 17.1766129F));
             tableLayoutPanel3.Size = new Size(791, 838);
             tableLayoutPanel3.TabIndex = 34;
+            tableLayoutPanel3.Paint += tableLayoutPanel3_Paint;
             // 
             // glnBox
             // 
@@ -316,7 +317,7 @@
             label7.Font = new Font("Segoe UI", 12F);
             label7.Location = new Point(3, 517);
             label7.Name = "label7";
-            label7.Size = new Size(134, 141);
+            label7.Size = new Size(134, 142);
             label7.TabIndex = 41;
             label7.Text = "GLN:";
             label7.TextAlign = ContentAlignment.TopCenter;
@@ -330,10 +331,10 @@
             modificarButton.FlatStyle = FlatStyle.Flat;
             modificarButton.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             modificarButton.ForeColor = Color.Black;
-            modificarButton.Location = new Point(250, 661);
+            modificarButton.Location = new Point(250, 662);
             modificarButton.Margin = new Padding(250, 3, 110, 3);
             modificarButton.Name = "modificarButton";
-            modificarButton.Size = new Size(431, 32);
+            modificarButton.Size = new Size(431, 31);
             modificarButton.TabIndex = 48;
             modificarButton.Text = "EDITAR";
             modificarButton.UseVisualStyleBackColor = false;

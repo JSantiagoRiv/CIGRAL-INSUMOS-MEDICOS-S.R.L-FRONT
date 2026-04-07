@@ -34,13 +34,19 @@
             labelTitulo = new Label();
             groupBox1 = new GroupBox();
             tableLayoutPanel1 = new TableLayoutPanel();
-            txtBusquedaNombre = new TextBox();
             label1 = new Label();
-            lblBusquedaNombre = new Label();
             dtpDesde = new DateTimePicker();
             label3 = new Label();
             dtpHasta = new DateTimePicker();
+            btnExportar = new FontAwesome.Sharp.IconButton();
+            lblBusquedaNombre = new Label();
+            txtBusquedaNombre = new TextBox();
             cmbMov = new ComboBox();
+            label2 = new Label();
+            label4 = new Label();
+            txtSerie = new TextBox();
+            txtLote = new TextBox();
+            chkDevolucion = new CheckBox();
             lblPagina = new Label();
             btnSiguiente = new Button();
             btnAnterior = new Button();
@@ -62,8 +68,6 @@
             iconBtnBack = new FontAwesome.Sharp.IconButton();
             toolTip1 = new ToolTip(components);
             timerBusqueda = new System.Windows.Forms.Timer(components);
-            btnExportar = new FontAwesome.Sharp.IconButton();
-            chkDevolucion = new CheckBox();
             panel1.SuspendLayout();
             groupBox1.SuspendLayout();
             tableLayoutPanel1.SuspendLayout();
@@ -104,13 +108,14 @@
             groupBox1.Margin = new Padding(3, 2, 3, 2);
             groupBox1.Name = "groupBox1";
             groupBox1.Padding = new Padding(3, 2, 3, 2);
-            groupBox1.Size = new Size(1696, 98);
+            groupBox1.Size = new Size(1696, 136);
             groupBox1.TabIndex = 7;
             groupBox1.TabStop = false;
             groupBox1.Text = "Consultar Auditoria";
             // 
             // tableLayoutPanel1
             // 
+            tableLayoutPanel1.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             tableLayoutPanel1.ColumnCount = 9;
             tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle());
             tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle());
@@ -119,65 +124,46 @@
             tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle());
             tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle());
             tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle());
-            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
-            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
-            tableLayoutPanel1.Controls.Add(txtBusquedaNombre, 6, 0);
-            tableLayoutPanel1.Controls.Add(chkDevolucion, 7, 0);
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle());
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
             tableLayoutPanel1.Controls.Add(label1, 0, 0);
-            tableLayoutPanel1.Controls.Add(lblBusquedaNombre, 5, 0);
             tableLayoutPanel1.Controls.Add(dtpDesde, 1, 0);
-            tableLayoutPanel1.Controls.Add(label3, 2, 0);
-            tableLayoutPanel1.Controls.Add(dtpHasta, 3, 0);
-            tableLayoutPanel1.Controls.Add(cmbMov, 4, 0);
-            tableLayoutPanel1.Controls.Add(btnExportar, 8, 0);
-            tableLayoutPanel1.Dock = DockStyle.Fill;
-            tableLayoutPanel1.Location = new Point(3, 24);
+            tableLayoutPanel1.Controls.Add(label3, 0, 1);
+            tableLayoutPanel1.Controls.Add(dtpHasta, 1, 1);
+            tableLayoutPanel1.Controls.Add(btnExportar, 8, 1);
+            tableLayoutPanel1.Controls.Add(lblBusquedaNombre, 2, 1);
+            tableLayoutPanel1.Controls.Add(txtBusquedaNombre, 3, 1);
+            tableLayoutPanel1.Controls.Add(cmbMov, 3, 0);
+            tableLayoutPanel1.Controls.Add(label2, 4, 1);
+            tableLayoutPanel1.Controls.Add(label4, 6, 1);
+            tableLayoutPanel1.Controls.Add(txtSerie, 7, 1);
+            tableLayoutPanel1.Controls.Add(txtLote, 5, 1);
+            tableLayoutPanel1.Controls.Add(chkDevolucion, 5, 0);
+            tableLayoutPanel1.Location = new Point(3, 27);
             tableLayoutPanel1.Name = "tableLayoutPanel1";
-            tableLayoutPanel1.RowCount = 1;
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPanel1.Size = new Size(1690, 72);
+            tableLayoutPanel1.RowCount = 2;
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
+            tableLayoutPanel1.Size = new Size(1690, 106);
             tableLayoutPanel1.TabIndex = 0;
-            // 
-            // txtBusquedaNombre
-            // 
-            txtBusquedaNombre.Anchor = AnchorStyles.Left;
-            txtBusquedaNombre.Font = new Font("Segoe UI", 12F);
-            txtBusquedaNombre.Location = new Point(768, 21);
-            txtBusquedaNombre.Name = "txtBusquedaNombre";
-            txtBusquedaNombre.PlaceholderText = "Ingrese Nombre del Producto";
-            txtBusquedaNombre.Size = new Size(295, 29);
-            txtBusquedaNombre.TabIndex = 15;
-            txtBusquedaNombre.TextChanged += txtBusquedaNombre_TextChanged;
-            txtBusquedaNombre.KeyDown += txtBusquedaNombre_KeyDown;
             // 
             // label1
             // 
             label1.Anchor = AnchorStyles.Right;
             label1.AutoSize = true;
             label1.Font = new Font("Segoe UI", 12F);
-            label1.Location = new Point(3, 25);
+            label1.Location = new Point(3, 16);
             label1.Name = "label1";
             label1.Size = new Size(56, 21);
             label1.TabIndex = 8;
             label1.Text = "Desde:";
-            // 
-            // lblBusquedaNombre
-            // 
-            lblBusquedaNombre.Anchor = AnchorStyles.Right;
-            lblBusquedaNombre.AutoSize = true;
-            lblBusquedaNombre.Font = new Font("Segoe UI", 12F);
-            lblBusquedaNombre.Location = new Point(641, 25);
-            lblBusquedaNombre.Name = "lblBusquedaNombre";
-            lblBusquedaNombre.Size = new Size(121, 21);
-            lblBusquedaNombre.TabIndex = 14;
-            lblBusquedaNombre.Text = "Buscar Nombre:";
             // 
             // dtpDesde
             // 
             dtpDesde.Anchor = AnchorStyles.Left;
             dtpDesde.Font = new Font("Segoe UI", 12F);
             dtpDesde.Format = DateTimePickerFormat.Short;
-            dtpDesde.Location = new Point(65, 21);
+            dtpDesde.Location = new Point(65, 12);
             dtpDesde.Name = "dtpDesde";
             dtpDesde.Size = new Size(145, 29);
             dtpDesde.TabIndex = 7;
@@ -187,7 +173,7 @@
             label3.Anchor = AnchorStyles.Right;
             label3.AutoSize = true;
             label3.Font = new Font("Segoe UI", 12F);
-            label3.Location = new Point(216, 25);
+            label3.Location = new Point(7, 69);
             label3.Name = "label3";
             label3.Size = new Size(52, 21);
             label3.TabIndex = 9;
@@ -198,21 +184,121 @@
             dtpHasta.Anchor = AnchorStyles.Left;
             dtpHasta.Font = new Font("Segoe UI", 12F);
             dtpHasta.Format = DateTimePickerFormat.Short;
-            dtpHasta.Location = new Point(274, 21);
+            dtpHasta.Location = new Point(65, 65);
             dtpHasta.Name = "dtpHasta";
             dtpHasta.Size = new Size(145, 29);
             dtpHasta.TabIndex = 12;
             // 
+            // btnExportar
+            // 
+            btnExportar.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            btnExportar.BackColor = Color.Transparent;
+            btnExportar.Cursor = Cursors.Hand;
+            btnExportar.FlatAppearance.BorderSize = 0;
+            btnExportar.FlatStyle = FlatStyle.Flat;
+            btnExportar.IconChar = FontAwesome.Sharp.IconChar.Print;
+            btnExportar.IconColor = Color.Black;
+            btnExportar.IconFont = FontAwesome.Sharp.IconFont.Auto;
+            btnExportar.IconSize = 50;
+            btnExportar.Location = new Point(1629, 57);
+            btnExportar.Name = "btnExportar";
+            btnExportar.Size = new Size(58, 46);
+            btnExportar.TabIndex = 13;
+            toolTip1.SetToolTip(btnExportar, "Exportar e imprimir");
+            btnExportar.UseVisualStyleBackColor = false;
+            btnExportar.Click += btnExportar_Click;
+            // 
+            // lblBusquedaNombre
+            // 
+            lblBusquedaNombre.Anchor = AnchorStyles.Right;
+            lblBusquedaNombre.AutoSize = true;
+            lblBusquedaNombre.Font = new Font("Segoe UI", 12F);
+            lblBusquedaNombre.Location = new Point(216, 69);
+            lblBusquedaNombre.Name = "lblBusquedaNombre";
+            lblBusquedaNombre.Size = new Size(121, 21);
+            lblBusquedaNombre.TabIndex = 14;
+            lblBusquedaNombre.Text = "Buscar Nombre:";
+            // 
+            // txtBusquedaNombre
+            // 
+            txtBusquedaNombre.Anchor = AnchorStyles.None;
+            txtBusquedaNombre.Font = new Font("Segoe UI", 12F);
+            txtBusquedaNombre.Location = new Point(343, 65);
+            txtBusquedaNombre.Name = "txtBusquedaNombre";
+            txtBusquedaNombre.PlaceholderText = "Ingrese Nombre del Producto";
+            txtBusquedaNombre.Size = new Size(224, 29);
+            txtBusquedaNombre.TabIndex = 15;
+            txtBusquedaNombre.TextChanged += txtBusquedaNombre_TextChanged;
+            txtBusquedaNombre.KeyDown += txtBusquedaNombre_KeyDown;
+            // 
             // cmbMov
             // 
-            cmbMov.Anchor = AnchorStyles.None;
+            cmbMov.Anchor = AnchorStyles.Left;
             cmbMov.DropDownStyle = ComboBoxStyle.DropDownList;
             cmbMov.Font = new Font("Segoe UI", 12F);
             cmbMov.FormattingEnabled = true;
-            cmbMov.Location = new Point(425, 21);
+            cmbMov.Location = new Point(343, 12);
             cmbMov.Name = "cmbMov";
-            cmbMov.Size = new Size(210, 29);
+            cmbMov.Size = new Size(215, 29);
             cmbMov.TabIndex = 11;
+            // 
+            // label2
+            // 
+            label2.Anchor = AnchorStyles.Right;
+            label2.AutoSize = true;
+            label2.Font = new Font("Segoe UI", 12F);
+            label2.Location = new Point(573, 69);
+            label2.Name = "label2";
+            label2.Size = new Size(93, 21);
+            label2.TabIndex = 17;
+            label2.Text = "Buscar Lote:";
+            // 
+            // label4
+            // 
+            label4.Anchor = AnchorStyles.Right;
+            label4.AutoSize = true;
+            label4.Font = new Font("Segoe UI", 12F);
+            label4.Location = new Point(859, 69);
+            label4.Name = "label4";
+            label4.Size = new Size(98, 21);
+            label4.TabIndex = 18;
+            label4.Text = "Buscar Serie:";
+            // 
+            // txtSerie
+            // 
+            txtSerie.Anchor = AnchorStyles.Left;
+            txtSerie.Font = new Font("Segoe UI", 12F);
+            txtSerie.Location = new Point(963, 65);
+            txtSerie.Name = "txtSerie";
+            txtSerie.PlaceholderText = "Ingrese Número de Serie";
+            txtSerie.Size = new Size(182, 29);
+            txtSerie.TabIndex = 20;
+            txtSerie.TextChanged += txtSerie_TextChanged;
+            txtSerie.KeyDown += txtSerie_KeyDown;
+            // 
+            // txtLote
+            // 
+            txtLote.Anchor = AnchorStyles.Left;
+            txtLote.Font = new Font("Segoe UI", 12F);
+            txtLote.Location = new Point(672, 65);
+            txtLote.Name = "txtLote";
+            txtLote.PlaceholderText = "Ingrese Número de Lote";
+            txtLote.Size = new Size(181, 29);
+            txtLote.TabIndex = 21;
+            txtLote.TextChanged += txtLote_TextChanged;
+            txtLote.KeyDown += txtLote_KeyDown;
+            // 
+            // chkDevolucion
+            // 
+            chkDevolucion.Anchor = AnchorStyles.None;
+            chkDevolucion.AutoSize = true;
+            chkDevolucion.Font = new Font("Segoe UI", 12F);
+            chkDevolucion.Location = new Point(701, 14);
+            chkDevolucion.Name = "chkDevolucion";
+            chkDevolucion.Size = new Size(122, 25);
+            chkDevolucion.TabIndex = 16;
+            chkDevolucion.Text = "Devoluciones";
+            chkDevolucion.UseVisualStyleBackColor = true;
             // 
             // lblPagina
             // 
@@ -264,11 +350,12 @@
             dgvAuditoria.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dgvAuditoria.Columns.AddRange(new DataGridViewColumn[] { tipo, fechaMov, producto, deposito, lote, serie, cantidad, stockAnterior, stockPosterior, remitoIng, remitoEgr, usuario, detalle });
             dgvAuditoria.EnableHeadersVisualStyles = false;
-            dgvAuditoria.Location = new Point(0, 154);
+            dgvAuditoria.Location = new Point(3, 192);
             dgvAuditoria.Name = "dgvAuditoria";
             dgvAuditoria.ReadOnly = true;
-            dgvAuditoria.Size = new Size(1696, 727);
+            dgvAuditoria.Size = new Size(1696, 717);
             dgvAuditoria.TabIndex = 8;
+            dgvAuditoria.CellContentClick += dgvAuditoria_CellContentClick;
             // 
             // tipo
             // 
@@ -386,37 +473,6 @@
             timerBusqueda.Interval = 200;
             timerBusqueda.Tick += timerBusqueda_Tick;
             // 
-            // btnExportar
-            // 
-            btnExportar.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            btnExportar.BackColor = Color.Transparent;
-            btnExportar.Cursor = Cursors.Hand;
-            btnExportar.FlatAppearance.BorderSize = 0;
-            btnExportar.FlatStyle = FlatStyle.Flat;
-            btnExportar.IconChar = FontAwesome.Sharp.IconChar.Print;
-            btnExportar.IconColor = Color.Black;
-            btnExportar.IconFont = FontAwesome.Sharp.IconFont.Auto;
-            btnExportar.IconSize = 50;
-            btnExportar.Location = new Point(1629, 23);
-            btnExportar.Name = "btnExportar";
-            btnExportar.Size = new Size(58, 46);
-            btnExportar.TabIndex = 13;
-            toolTip1.SetToolTip(btnExportar, "Exportar e imprimir");
-            btnExportar.UseVisualStyleBackColor = false;
-            btnExportar.Click += btnExportar_Click;
-            // 
-            // chkDevolucion
-            // 
-            chkDevolucion.Anchor = AnchorStyles.None;
-            chkDevolucion.AutoSize = true;
-            chkDevolucion.Font = new Font("Segoe UI", 12F);
-            chkDevolucion.Location = new Point(1161, 23);
-            chkDevolucion.Name = "chkDevolucion";
-            chkDevolucion.Size = new Size(122, 25);
-            chkDevolucion.TabIndex = 16;
-            chkDevolucion.Text = "Devoluciones";
-            chkDevolucion.UseVisualStyleBackColor = true;
-            // 
             // UC_Auditoria
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -473,8 +529,11 @@
         private Label lblBusquedaNombre;
         private TextBox txtBusquedaNombre;
         private System.Windows.Forms.Timer timerBusqueda;
-        private TableLayoutPanel tableLayoutPanel1;
         private CheckBox chkDevolucion;
         private FontAwesome.Sharp.IconButton btnExportar;
+        private TableLayoutPanel tableLayoutPanel1;
+        private Label label4;
+        private TextBox txtLote;
+        private TextBox txtSerie;
     }
 }

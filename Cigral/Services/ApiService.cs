@@ -814,7 +814,7 @@ namespace Cigral.Services
         /// <summary>
         /// Consulta la tabla de auditoría para ver los movimientos históricos de stock (con paginación de servidor).
         /// </summary>
-        public static async Task<PaginadoResponse<AuditoriaItemDto>> ObtenerAuditoria(int? tipoMovimiento = null, string nombreProducto = "", int pageNumber = 1, int pageSize = 25)
+        public static async Task<PaginadoResponse<AuditoriaItemDto>> ObtenerAuditoria(int? tipoMovimiento = null, string nombreProducto = "", string lote = "", string serie = "", int pageNumber = 1, int pageSize = 25)
         {
                 try
                 {
@@ -826,6 +826,13 @@ namespace Cigral.Services
                     if (!string.IsNullOrWhiteSpace(nombreProducto))
                         url += $"&NombreProducto={Uri.EscapeDataString(nombreProducto.Trim())}";
 
+                    if (!string.IsNullOrWhiteSpace(lote))
+                        url += $"&CodigoLote={Uri.EscapeDataString(lote.Trim())}";
+
+                    if (!string.IsNullOrWhiteSpace(serie))
+                        url += $"&NumeroSerie={Uri.EscapeDataString(serie.Trim())}";
+
+                
                     var response = await _client.GetAsync(url);
                     string json = await response.Content.ReadAsStringAsync();
 

@@ -266,7 +266,8 @@ namespace Cigral
             Label lblDir = new Label() { Left = 20, Top = 170, Width = 100, Text = "Dirección:" }; TextBox txtDir = new TextBox() { Left = 130, Top = 170, Width = 230 };
             Button confirmation = new Button() { Text = "Guardar", Left = 260, Top = 220, Width = 100, DialogResult = DialogResult.OK, Cursor = Cursors.Hand };
 
-            EventHandler capitalizar = (senderObj, ev) => {
+            EventHandler capitalizar = (senderObj, ev) =>
+            {
                 TextBox txt = senderObj as TextBox;
                 if (txt.Text.Length == 1) { txt.Text = txt.Text.ToUpper(); txt.SelectionStart = txt.Text.Length; }
             };
@@ -313,6 +314,11 @@ namespace Cigral
                 catch (Exception ex) { MessageBox.Show("Error: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error); }
                 finally { Cursor = Cursors.Default; }
             }
+        }
+
+        private void tableLayoutPanel3_Paint(object sender, PaintEventArgs e)
+        {
+
         }
     }
 }
