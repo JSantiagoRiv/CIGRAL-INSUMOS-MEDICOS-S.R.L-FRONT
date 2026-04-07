@@ -29,14 +29,14 @@
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            DataGridViewCellStyle dataGridViewCellStyle9 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle10 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle11 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle12 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle13 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle14 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle15 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle16 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle4 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle5 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle6 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle7 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle8 = new DataGridViewCellStyle();
             panel1 = new Panel();
             labelTitulo = new Label();
             groupBox1 = new GroupBox();
@@ -381,14 +381,14 @@
             // 
             dgvIngreso.BackgroundColor = Color.White;
             dgvIngreso.BorderStyle = BorderStyle.None;
-            dataGridViewCellStyle9.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle9.BackColor = Color.MediumSeaGreen;
-            dataGridViewCellStyle9.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-            dataGridViewCellStyle9.ForeColor = Color.White;
-            dataGridViewCellStyle9.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle9.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle9.WrapMode = DataGridViewTriState.True;
-            dgvIngreso.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle9;
+            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = Color.MediumSeaGreen;
+            dataGridViewCellStyle1.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            dataGridViewCellStyle1.ForeColor = Color.White;
+            dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
+            dgvIngreso.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             dgvIngreso.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dgvIngreso.Columns.AddRange(new DataGridViewColumn[] { id, Producto, Lote, Vencimiento, Serie, Cantidad, InfoAdicional, colEliminar });
             dgvIngreso.Dock = DockStyle.Fill;
@@ -404,9 +404,9 @@
             // 
             // id
             // 
-            dataGridViewCellStyle10.SelectionBackColor = Color.White;
-            dataGridViewCellStyle10.SelectionForeColor = Color.Black;
-            id.DefaultCellStyle = dataGridViewCellStyle10;
+            dataGridViewCellStyle2.SelectionBackColor = Color.White;
+            dataGridViewCellStyle2.SelectionForeColor = Color.Black;
+            id.DefaultCellStyle = dataGridViewCellStyle2;
             id.HeaderText = "id";
             id.Name = "id";
             id.ReadOnly = true;
@@ -415,9 +415,9 @@
             // Producto
             // 
             Producto.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            dataGridViewCellStyle11.SelectionBackColor = Color.White;
-            dataGridViewCellStyle11.SelectionForeColor = Color.Black;
-            Producto.DefaultCellStyle = dataGridViewCellStyle11;
+            dataGridViewCellStyle3.SelectionBackColor = Color.White;
+            dataGridViewCellStyle3.SelectionForeColor = Color.Black;
+            Producto.DefaultCellStyle = dataGridViewCellStyle3;
             Producto.FillWeight = 30.9278278F;
             Producto.HeaderText = "Producto";
             Producto.MinimumWidth = 6;
@@ -426,9 +426,9 @@
             // Lote
             // 
             Lote.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
-            dataGridViewCellStyle12.SelectionBackColor = Color.White;
-            dataGridViewCellStyle12.SelectionForeColor = Color.Black;
-            Lote.DefaultCellStyle = dataGridViewCellStyle12;
+            dataGridViewCellStyle4.SelectionBackColor = Color.White;
+            dataGridViewCellStyle4.SelectionForeColor = Color.Black;
+            Lote.DefaultCellStyle = dataGridViewCellStyle4;
             Lote.FillWeight = 376.2887F;
             Lote.HeaderText = "Lote";
             Lote.MinimumWidth = 6;
@@ -438,9 +438,9 @@
             // Vencimiento
             // 
             Vencimiento.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
-            dataGridViewCellStyle13.SelectionBackColor = Color.White;
-            dataGridViewCellStyle13.SelectionForeColor = Color.Black;
-            Vencimiento.DefaultCellStyle = dataGridViewCellStyle13;
+            dataGridViewCellStyle5.SelectionBackColor = Color.White;
+            dataGridViewCellStyle5.SelectionForeColor = Color.Black;
+            Vencimiento.DefaultCellStyle = dataGridViewCellStyle5;
             Vencimiento.FillWeight = 30.9278278F;
             Vencimiento.HeaderText = "Vencimiento";
             Vencimiento.MinimumWidth = 6;
@@ -450,9 +450,9 @@
             // Serie
             // 
             Serie.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
-            dataGridViewCellStyle14.SelectionBackColor = Color.White;
-            dataGridViewCellStyle14.SelectionForeColor = Color.Black;
-            Serie.DefaultCellStyle = dataGridViewCellStyle14;
+            dataGridViewCellStyle6.SelectionBackColor = Color.White;
+            dataGridViewCellStyle6.SelectionForeColor = Color.Black;
+            Serie.DefaultCellStyle = dataGridViewCellStyle6;
             Serie.FillWeight = 30.9278278F;
             Serie.HeaderText = "Serie";
             Serie.MinimumWidth = 6;
@@ -462,9 +462,9 @@
             // Cantidad
             // 
             Cantidad.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
-            dataGridViewCellStyle15.SelectionBackColor = Color.White;
-            dataGridViewCellStyle15.SelectionForeColor = Color.Black;
-            Cantidad.DefaultCellStyle = dataGridViewCellStyle15;
+            dataGridViewCellStyle7.SelectionBackColor = Color.White;
+            dataGridViewCellStyle7.SelectionForeColor = Color.Black;
+            Cantidad.DefaultCellStyle = dataGridViewCellStyle7;
             Cantidad.FillWeight = 30.9278278F;
             Cantidad.HeaderText = "Cantidad";
             Cantidad.MinimumWidth = 6;
@@ -482,13 +482,13 @@
             // 
             // colEliminar
             // 
-            dataGridViewCellStyle16.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle16.BackColor = Color.White;
-            dataGridViewCellStyle16.Font = new Font("Microsoft Sans Serif", 8.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            dataGridViewCellStyle16.ForeColor = Color.Red;
-            dataGridViewCellStyle16.SelectionBackColor = Color.Transparent;
-            dataGridViewCellStyle16.SelectionForeColor = Color.Red;
-            colEliminar.DefaultCellStyle = dataGridViewCellStyle16;
+            dataGridViewCellStyle8.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle8.BackColor = Color.White;
+            dataGridViewCellStyle8.Font = new Font("Microsoft Sans Serif", 8.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            dataGridViewCellStyle8.ForeColor = Color.Red;
+            dataGridViewCellStyle8.SelectionBackColor = Color.Transparent;
+            dataGridViewCellStyle8.SelectionForeColor = Color.Red;
+            colEliminar.DefaultCellStyle = dataGridViewCellStyle8;
             colEliminar.FlatStyle = FlatStyle.Popup;
             colEliminar.HeaderText = "Acciones";
             colEliminar.Name = "colEliminar";

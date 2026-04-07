@@ -110,6 +110,7 @@ namespace Cigral.Models
         public string CodigoLote { get; set; }                   //El ? permite mandar null para que no haya conflicto con la DB.
         public DateTime? FechaVencimiento { get; set; }    //El ? permite mandar null si el producto no vence.
         public int Cantidad { get; set; }                  //Cantidad de stock que vamos a sumar.
+        public bool esDevolucion { get; set; } = false;             //Para marcar si es una devolución (en ese caso, el sv lo va a tratar como un ingreso pero con una observación extra).
     }
 
 

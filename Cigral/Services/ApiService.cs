@@ -379,7 +379,8 @@ namespace Cigral.Services
             int diasParaVencer = 0,
             int? productoId = null,
             string? codigoLote = null,
-            string? numeroSerie = null )
+            string? numeroSerie = null,
+            bool esDevolucion = false)
         {
                 try
                 {
@@ -393,8 +394,9 @@ namespace Cigral.Services
                     if (!string.IsNullOrEmpty(numeroSerie)) url += $"&NumSerie={numeroSerie}";
                     if (!string.IsNullOrEmpty(codigoLote)) url += $"&CodigoLote={codigoLote}";
                     if (productoId != null) url += $"&ProductoId={productoId}";
+                    if (esDevolucion) url += $"&EsDevolucion=true";
 
-                    var response = await _client.GetAsync(url);
+                var response = await _client.GetAsync(url);
 
                     if (response.IsSuccessStatusCode)
                     {
@@ -814,7 +816,7 @@ namespace Cigral.Services
         /// <summary>
         /// Consulta la tabla de auditoría para ver los movimientos históricos de stock (con paginación de servidor).
         /// </summary>
-        public static async Task<PaginadoResponse<AuditoriaItemDto>> ObtenerAuditoria(int? tipoMovimiento = null, string nombreProducto = "", int pageNumber = 1, int pageSize = 25)
+        public static async Task<PaginadoResponse<AuditoriaItemDto>> ObtenerAuditoria(int? tipoMovimiento = null, string nombreProducto = "", int pageNumber = 1, int pageSize = 25, bool esDevolucion = false)
         {
                 try
                 {
@@ -825,6 +827,7 @@ namespace Cigral.Services
 
                     if (!string.IsNullOrWhiteSpace(nombreProducto))
                         url += $"&NombreProducto={Uri.EscapeDataString(nombreProducto.Trim())}";
+                    if (esDevolucion) url += $"&EsDevolucion=true";
 
                     var response = await _client.GetAsync(url);
                     string json = await response.Content.ReadAsStringAsync();

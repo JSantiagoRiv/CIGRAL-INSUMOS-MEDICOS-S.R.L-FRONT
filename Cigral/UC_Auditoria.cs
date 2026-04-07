@@ -105,7 +105,7 @@ namespace Cigral
                 string textoBuscado = txtBusquedaNombre.Text;
 
                 // Le pasamos el textoBuscado a la API
-                var respuesta = await ApiServices.ObtenerAuditoria(parametroTipo, textoBuscado, _paginaActual, _filasPorPagina);
+                var respuesta = await ApiServices.ObtenerAuditoria(parametroTipo, textoBuscado, _paginaActual, _filasPorPagina, chkDevolucion.Checked);
 
 
                 // Para que no se rompa al navegar
@@ -273,6 +273,15 @@ namespace Cigral
         }
 
         private async void timerBusqueda_Tick(object sender, EventArgs e)
+        {
+            timerBusqueda.Stop();
+
+            _paginaActual = 1;
+            int tipoActual = cmbMov.SelectedValue != null ? (int)cmbMov.SelectedValue : 0;
+            await CargarGrillaAuditoria(tipoActual);
+        }
+
+        private async void chkDevolucion_CheckedChanged(object sender, EventArgs e)
         {
             timerBusqueda.Stop();
 
