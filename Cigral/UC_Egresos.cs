@@ -414,7 +414,7 @@ namespace Cigral
                             MessageBox.Show("No se encontró stock disponible de este producto (con ese Lote/Serie) en el sistema.", "Sin Stock", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         }
                     }
-                    }
+                }
                 catch (Exception ex)
                 {
                     MessageBox.Show("Error al procesar el escaneo: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -552,7 +552,7 @@ namespace Cigral
                         {
                             depositoId = depositoSeleccionado,
                             productoId = Convert.ToInt32(fila.Cells["Id"].Value),
-                            numSerie = fila.Cells["Serie"].Value?.ToString() == "Sin Número de Serie" ? null : fila.Cells["Serie"].Value?.ToString() ,
+                            numSerie = fila.Cells["Serie"].Value?.ToString() == "Sin Número de Serie" ? null : fila.Cells["Serie"].Value?.ToString(),
                             codigoLote = fila.Cells["Lote"].Value?.ToString() ?? "",
                             cantidad = Convert.ToInt32(fila.Cells["Cantidad"].Value),
                             informacionAdicional = ""
@@ -1167,6 +1167,11 @@ namespace Cigral
             }
 
             return null;
+        }
+
+        private void tableLayoutPanel1_Paint(object sender, PaintEventArgs e)
+        {
+
         }
     }
 }

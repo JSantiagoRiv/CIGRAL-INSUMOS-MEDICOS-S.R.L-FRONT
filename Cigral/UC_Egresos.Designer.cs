@@ -46,16 +46,17 @@
             dateTimePicker1 = new DateTimePicker();
             label3 = new Label();
             groupBox1 = new GroupBox();
-            lstClientes = new ListBox();
-            txtBuscarCliente = new TextBox();
+            tableLayoutPanel1 = new TableLayoutPanel();
             txtComprobante = new TextBox();
             label7 = new Label();
+            txtBuscarCliente = new TextBox();
             btnAgregarCliente = new FontAwesome.Sharp.IconButton();
-            label6 = new Label();
-            cmbDeposito = new ComboBox();
             chkConRemito = new CheckBox();
+            cmbDeposito = new ComboBox();
             txtRemito = new TextBox();
             label5 = new Label();
+            label6 = new Label();
+            lstClientes = new ListBox();
             labelTitulo = new Label();
             panel2 = new Panel();
             linkLabel1 = new LinkLabel();
@@ -73,6 +74,7 @@
             timerBusquedaCliente = new System.Windows.Forms.Timer(components);
             panel3.SuspendLayout();
             groupBox1.SuspendLayout();
+            tableLayoutPanel1.SuspendLayout();
             panel2.SuspendLayout();
             panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dgvEgreso).BeginInit();
@@ -162,9 +164,10 @@
             // 
             // label2
             // 
+            label2.Anchor = AnchorStyles.Right;
             label2.AutoSize = true;
             label2.Font = new Font("Segoe UI", 12F);
-            label2.Location = new Point(17, 38);
+            label2.Location = new Point(60, 7);
             label2.Name = "label2";
             label2.Size = new Size(61, 21);
             label2.TabIndex = 0;
@@ -184,19 +187,21 @@
             // 
             // dateTimePicker1
             // 
+            dateTimePicker1.Anchor = AnchorStyles.Left;
             dateTimePicker1.Font = new Font("Segoe UI", 12F);
             dateTimePicker1.Format = DateTimePickerFormat.Short;
-            dateTimePicker1.Location = new Point(681, 35);
+            dateTimePicker1.Location = new Point(1492, 39);
             dateTimePicker1.Margin = new Padding(3, 2, 3, 2);
             dateTimePicker1.Name = "dateTimePicker1";
-            dateTimePicker1.Size = new Size(141, 29);
+            dateTimePicker1.Size = new Size(195, 29);
             dateTimePicker1.TabIndex = 5;
             // 
             // label3
             // 
+            label3.Anchor = AnchorStyles.Right;
             label3.AutoSize = true;
             label3.Font = new Font("Segoe UI", 12F);
-            label3.Location = new Point(622, 38);
+            label3.Location = new Point(1433, 43);
             label3.Name = "label3";
             label3.Size = new Size(53, 21);
             label3.TabIndex = 4;
@@ -204,19 +209,7 @@
             // 
             // groupBox1
             // 
-            groupBox1.Controls.Add(lstClientes);
-            groupBox1.Controls.Add(txtBuscarCliente);
-            groupBox1.Controls.Add(txtComprobante);
-            groupBox1.Controls.Add(label7);
-            groupBox1.Controls.Add(btnAgregarCliente);
-            groupBox1.Controls.Add(label6);
-            groupBox1.Controls.Add(cmbDeposito);
-            groupBox1.Controls.Add(chkConRemito);
-            groupBox1.Controls.Add(txtRemito);
-            groupBox1.Controls.Add(label5);
-            groupBox1.Controls.Add(dateTimePicker1);
-            groupBox1.Controls.Add(label3);
-            groupBox1.Controls.Add(label2);
+            groupBox1.Controls.Add(tableLayoutPanel1);
             groupBox1.Dock = DockStyle.Top;
             groupBox1.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
             groupBox1.Location = new Point(0, 56);
@@ -229,56 +222,79 @@
             groupBox1.Text = "Datos del Cliente";
             groupBox1.Enter += groupBox1_Enter;
             // 
-            // lstClientes
+            // tableLayoutPanel1
             // 
-            lstClientes.Font = new Font("Segoe UI", 12F);
-            lstClientes.FormattingEnabled = true;
-            lstClientes.Location = new Point(84, 71);
-            lstClientes.Name = "lstClientes";
-            lstClientes.Size = new Size(179, 277);
-            lstClientes.TabIndex = 16;
-            lstClientes.Visible = false;
-            lstClientes.Click += lstClientes_Click;
-            lstClientes.SelectedIndexChanged += lstClientes_SelectedIndexChanged;
-            // 
-            // txtBuscarCliente
-            // 
-            txtBuscarCliente.Enabled = false;
-            txtBuscarCliente.Font = new Font("Segoe UI", 12F);
-            txtBuscarCliente.Location = new Point(84, 36);
-            txtBuscarCliente.Name = "txtBuscarCliente";
-            txtBuscarCliente.Size = new Size(179, 29);
-            txtBuscarCliente.TabIndex = 15;
-            txtBuscarCliente.TextChanged += txtBuscarCliente_TextChanged;
+            tableLayoutPanel1.ColumnCount = 6;
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle());
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle());
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle());
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle());
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle());
+            tableLayoutPanel1.Controls.Add(label2, 0, 0);
+            tableLayoutPanel1.Controls.Add(dateTimePicker1, 5, 1);
+            tableLayoutPanel1.Controls.Add(label3, 4, 1);
+            tableLayoutPanel1.Controls.Add(txtComprobante, 3, 1);
+            tableLayoutPanel1.Controls.Add(label7, 2, 1);
+            tableLayoutPanel1.Controls.Add(txtBuscarCliente, 1, 0);
+            tableLayoutPanel1.Controls.Add(btnAgregarCliente, 2, 0);
+            tableLayoutPanel1.Controls.Add(chkConRemito, 3, 0);
+            tableLayoutPanel1.Controls.Add(cmbDeposito, 5, 0);
+            tableLayoutPanel1.Controls.Add(txtRemito, 1, 1);
+            tableLayoutPanel1.Controls.Add(label5, 0, 1);
+            tableLayoutPanel1.Controls.Add(label6, 4, 0);
+            tableLayoutPanel1.Dock = DockStyle.Fill;
+            tableLayoutPanel1.Location = new Point(3, 24);
+            tableLayoutPanel1.Name = "tableLayoutPanel1";
+            tableLayoutPanel1.RowCount = 2;
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
+            tableLayoutPanel1.Size = new Size(1690, 72);
+            tableLayoutPanel1.TabIndex = 0;
+            tableLayoutPanel1.Paint += tableLayoutPanel1_Paint;
             // 
             // txtComprobante
             // 
+            txtComprobante.Anchor = AnchorStyles.Left;
             txtComprobante.Enabled = false;
             txtComprobante.Font = new Font("Segoe UI", 12F);
-            txtComprobante.Location = new Point(1021, 35);
+            txtComprobante.Location = new Point(503, 39);
             txtComprobante.Name = "txtComprobante";
-            txtComprobante.Size = new Size(159, 29);
+            txtComprobante.Size = new Size(215, 29);
             txtComprobante.TabIndex = 14;
             // 
             // label7
             // 
+            label7.Anchor = AnchorStyles.Left;
             label7.AutoSize = true;
             label7.Font = new Font("Segoe UI", 12F);
-            label7.Location = new Point(839, 39);
+            label7.Location = new Point(348, 43);
             label7.Name = "label7";
-            label7.Size = new Size(176, 21);
+            label7.Size = new Size(149, 21);
             label7.TabIndex = 13;
-            label7.Text = "Comprobante Asociado:";
+            label7.Text = "Comprobante Asoc.:";
+            // 
+            // txtBuscarCliente
+            // 
+            txtBuscarCliente.Anchor = AnchorStyles.Left;
+            txtBuscarCliente.Enabled = false;
+            txtBuscarCliente.Font = new Font("Segoe UI", 12F);
+            txtBuscarCliente.Location = new Point(127, 3);
+            txtBuscarCliente.Name = "txtBuscarCliente";
+            txtBuscarCliente.Size = new Size(215, 29);
+            txtBuscarCliente.TabIndex = 15;
+            txtBuscarCliente.TextChanged += txtBuscarCliente_TextChanged;
             // 
             // btnAgregarCliente
             // 
+            btnAgregarCliente.Anchor = AnchorStyles.Left;
             btnAgregarCliente.Enabled = false;
             btnAgregarCliente.FlatStyle = FlatStyle.Flat;
             btnAgregarCliente.IconChar = FontAwesome.Sharp.IconChar.Add;
             btnAgregarCliente.IconColor = Color.Black;
             btnAgregarCliente.IconFont = FontAwesome.Sharp.IconFont.Solid;
             btnAgregarCliente.IconSize = 25;
-            btnAgregarCliente.Location = new Point(266, 36);
+            btnAgregarCliente.Location = new Point(345, 3);
             btnAgregarCliente.Margin = new Padding(0, 3, 3, 3);
             btnAgregarCliente.Name = "btnAgregarCliente";
             btnAgregarCliente.Size = new Size(33, 29);
@@ -286,31 +302,12 @@
             btnAgregarCliente.UseVisualStyleBackColor = true;
             btnAgregarCliente.Click += btnAgregarCliente_Click;
             // 
-            // label6
-            // 
-            label6.AutoSize = true;
-            label6.Font = new Font("Segoe UI", 12F);
-            label6.Location = new Point(1401, 38);
-            label6.Name = "label6";
-            label6.Size = new Size(75, 21);
-            label6.TabIndex = 10;
-            label6.Text = "Depósito:";
-            // 
-            // cmbDeposito
-            // 
-            cmbDeposito.DropDownStyle = ComboBoxStyle.DropDownList;
-            cmbDeposito.Font = new Font("Segoe UI", 12F);
-            cmbDeposito.FormattingEnabled = true;
-            cmbDeposito.Location = new Point(1482, 36);
-            cmbDeposito.Name = "cmbDeposito";
-            cmbDeposito.Size = new Size(191, 29);
-            cmbDeposito.TabIndex = 9;
-            // 
             // chkConRemito
             // 
+            chkConRemito.Anchor = AnchorStyles.Left;
             chkConRemito.AutoSize = true;
             chkConRemito.Font = new Font("Segoe UI", 12F);
-            chkConRemito.Location = new Point(1197, 37);
+            chkConRemito.Location = new Point(503, 5);
             chkConRemito.Name = "chkConRemito";
             chkConRemito.Size = new Size(159, 25);
             chkConRemito.TabIndex = 8;
@@ -318,27 +315,63 @@
             chkConRemito.UseVisualStyleBackColor = true;
             chkConRemito.CheckedChanged += chkConRemito_CheckedChanged;
             // 
+            // cmbDeposito
+            // 
+            cmbDeposito.Anchor = AnchorStyles.Left;
+            cmbDeposito.DropDownStyle = ComboBoxStyle.DropDownList;
+            cmbDeposito.Font = new Font("Segoe UI", 12F);
+            cmbDeposito.FormattingEnabled = true;
+            cmbDeposito.Location = new Point(1492, 3);
+            cmbDeposito.Name = "cmbDeposito";
+            cmbDeposito.Size = new Size(195, 29);
+            cmbDeposito.TabIndex = 9;
+            // 
             // txtRemito
             // 
+            txtRemito.Anchor = AnchorStyles.Left;
             txtRemito.Enabled = false;
             txtRemito.Font = new Font("Segoe UI", 12F);
-            txtRemito.Location = new Point(435, 35);
+            txtRemito.Location = new Point(127, 39);
             txtRemito.Margin = new Padding(3, 2, 3, 2);
             txtRemito.Name = "txtRemito";
             txtRemito.ReadOnly = true;
-            txtRemito.Size = new Size(159, 29);
+            txtRemito.Size = new Size(215, 29);
             txtRemito.TabIndex = 7;
             // 
             // label5
             // 
+            label5.Anchor = AnchorStyles.Left;
             label5.AutoSize = true;
             label5.Font = new Font("Segoe UI", 12F);
-            label5.Location = new Point(311, 38);
+            label5.Location = new Point(3, 43);
             label5.Name = "label5";
             label5.Size = new Size(118, 21);
             label5.TabIndex = 6;
             label5.Text = "Nro. de Remito:";
             label5.Click += label5_Click;
+            // 
+            // label6
+            // 
+            label6.Anchor = AnchorStyles.Right;
+            label6.AutoSize = true;
+            label6.Font = new Font("Segoe UI", 12F);
+            label6.Location = new Point(1411, 7);
+            label6.Name = "label6";
+            label6.Size = new Size(75, 21);
+            label6.TabIndex = 10;
+            label6.Text = "Depósito:";
+            // 
+            // lstClientes
+            // 
+            lstClientes.Font = new Font("Segoe UI", 12F);
+            lstClientes.FormattingEnabled = true;
+            lstClientes.Location = new Point(287, -38);
+            lstClientes.Name = "lstClientes";
+            lstClientes.Size = new Size(179, 277);
+            lstClientes.TabIndex = 16;
+            lstClientes.Visible = false;
+            lstClientes.Click += lstClientes_Click;
+            lstClientes.SelectedIndexChanged += lstClientes_SelectedIndexChanged;
             // 
             // labelTitulo
             // 
@@ -356,6 +389,7 @@
             // panel2
             // 
             panel2.BackColor = SystemColors.ScrollBar;
+            panel2.Controls.Add(lstClientes);
             panel2.Controls.Add(linkLabel1);
             panel2.Controls.Add(label1);
             panel2.Controls.Add(txtEscaner);
@@ -534,7 +568,8 @@
             Load += UC_Egresos_Load;
             panel3.ResumeLayout(false);
             groupBox1.ResumeLayout(false);
-            groupBox1.PerformLayout();
+            tableLayoutPanel1.ResumeLayout(false);
+            tableLayoutPanel1.PerformLayout();
             panel2.ResumeLayout(false);
             panel2.PerformLayout();
             panel1.ResumeLayout(false);
@@ -579,5 +614,6 @@
         private TextBox txtBuscarCliente;
         private ListBox lstClientes;
         private System.Windows.Forms.Timer timerBusquedaCliente;
+        private TableLayoutPanel tableLayoutPanel1;
     }
 }

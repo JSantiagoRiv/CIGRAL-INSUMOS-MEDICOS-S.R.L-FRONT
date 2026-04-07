@@ -330,10 +330,10 @@
             modificarButton.FlatStyle = FlatStyle.Flat;
             modificarButton.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             modificarButton.ForeColor = Color.Black;
-            modificarButton.Location = new Point(3, 661);
-            modificarButton.Margin = new Padding(3, 3, 15, 3);
+            modificarButton.Location = new Point(250, 661);
+            modificarButton.Margin = new Padding(250, 3, 110, 3);
             modificarButton.Name = "modificarButton";
-            modificarButton.Size = new Size(773, 34);
+            modificarButton.Size = new Size(431, 34);
             modificarButton.TabIndex = 48;
             modificarButton.Text = "EDITAR";
             modificarButton.UseVisualStyleBackColor = false;

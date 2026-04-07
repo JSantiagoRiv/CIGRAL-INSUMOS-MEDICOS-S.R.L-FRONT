@@ -47,10 +47,12 @@
             btnAnterior = new Button();
             iconBtnBack = new FontAwesome.Sharp.IconButton();
             timerBusqueda = new System.Windows.Forms.Timer(components);
+            tableLayoutPanel1 = new TableLayoutPanel();
             panel1.SuspendLayout();
             groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dgvRemitos).BeginInit();
             panel3.SuspendLayout();
+            tableLayoutPanel1.SuspendLayout();
             SuspendLayout();
             // 
             // panel1
@@ -79,14 +81,7 @@
             // 
             // groupBox1
             // 
-            groupBox1.Controls.Add(label3);
-            groupBox1.Controls.Add(txtNroRemito);
-            groupBox1.Controls.Add(dtpHasta);
-            groupBox1.Controls.Add(label2);
-            groupBox1.Controls.Add(label1);
-            groupBox1.Controls.Add(dtpDesde);
-            groupBox1.Controls.Add(rbEgresos);
-            groupBox1.Controls.Add(rbIngresos);
+            groupBox1.Controls.Add(tableLayoutPanel1);
             groupBox1.Dock = DockStyle.Top;
             groupBox1.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
             groupBox1.Location = new Point(0, 56);
@@ -100,9 +95,10 @@
             // 
             // label3
             // 
+            label3.Anchor = AnchorStyles.Right;
             label3.AutoSize = true;
             label3.Font = new Font("Segoe UI", 12F);
-            label3.Location = new Point(700, 40);
+            label3.Location = new Point(598, 25);
             label3.Name = "label3";
             label3.Size = new Size(118, 21);
             label3.TabIndex = 7;
@@ -110,8 +106,9 @@
             // 
             // txtNroRemito
             // 
+            txtNroRemito.Anchor = AnchorStyles.Left;
             txtNroRemito.Font = new Font("Segoe UI", 12F);
-            txtNroRemito.Location = new Point(824, 37);
+            txtNroRemito.Location = new Point(722, 21);
             txtNroRemito.Name = "txtNroRemito";
             txtNroRemito.PlaceholderText = "Ingrese Nro. de Remito";
             txtNroRemito.Size = new Size(170, 29);
@@ -119,9 +116,10 @@
             // 
             // dtpHasta
             // 
+            dtpHasta.Anchor = AnchorStyles.Left;
             dtpHasta.Font = new Font("Segoe UI", 12F);
             dtpHasta.Format = DateTimePickerFormat.Short;
-            dtpHasta.Location = new Point(527, 38);
+            dtpHasta.Location = new Point(451, 21);
             dtpHasta.Name = "dtpHasta";
             dtpHasta.Size = new Size(141, 29);
             dtpHasta.TabIndex = 5;
@@ -129,9 +127,10 @@
             // 
             // label2
             // 
+            label2.Anchor = AnchorStyles.Right;
             label2.AutoSize = true;
             label2.Font = new Font("Segoe UI", 12F);
-            label2.Location = new Point(469, 40);
+            label2.Location = new Point(393, 25);
             label2.Name = "label2";
             label2.Size = new Size(52, 21);
             label2.TabIndex = 4;
@@ -139,9 +138,10 @@
             // 
             // label1
             // 
+            label1.Anchor = AnchorStyles.Right;
             label1.AutoSize = true;
             label1.Font = new Font("Segoe UI", 12F);
-            label1.Location = new Point(237, 40);
+            label1.Location = new Point(184, 25);
             label1.Name = "label1";
             label1.Size = new Size(56, 21);
             label1.TabIndex = 3;
@@ -149,9 +149,10 @@
             // 
             // dtpDesde
             // 
+            dtpDesde.Anchor = AnchorStyles.Left;
             dtpDesde.Font = new Font("Segoe UI", 12F);
             dtpDesde.Format = DateTimePickerFormat.Short;
-            dtpDesde.Location = new Point(304, 38);
+            dtpDesde.Location = new Point(246, 21);
             dtpDesde.Name = "dtpDesde";
             dtpDesde.Size = new Size(141, 29);
             dtpDesde.TabIndex = 2;
@@ -159,9 +160,10 @@
             // 
             // rbEgresos
             // 
+            rbEgresos.Anchor = AnchorStyles.None;
             rbEgresos.AutoSize = true;
             rbEgresos.Font = new Font("Segoe UI", 12F);
-            rbEgresos.Location = new Point(115, 38);
+            rbEgresos.Location = new Point(96, 23);
             rbEgresos.Name = "rbEgresos";
             rbEgresos.Size = new Size(82, 25);
             rbEgresos.TabIndex = 1;
@@ -171,10 +173,11 @@
             // 
             // rbIngresos
             // 
+            rbIngresos.Anchor = AnchorStyles.None;
             rbIngresos.AutoSize = true;
             rbIngresos.Checked = true;
             rbIngresos.Font = new Font("Segoe UI", 12F);
-            rbIngresos.Location = new Point(17, 38);
+            rbIngresos.Location = new Point(3, 23);
             rbIngresos.Name = "rbIngresos";
             rbIngresos.Size = new Size(87, 25);
             rbIngresos.TabIndex = 0;
@@ -267,6 +270,33 @@
             timerBusqueda.Interval = 200;
             timerBusqueda.Tick += timerBusqueda_Tick;
             // 
+            // tableLayoutPanel1
+            // 
+            tableLayoutPanel1.ColumnCount = 8;
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle());
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle());
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle());
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle());
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle());
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle());
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle());
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle());
+            tableLayoutPanel1.Controls.Add(label3, 6, 0);
+            tableLayoutPanel1.Controls.Add(rbIngresos, 0, 0);
+            tableLayoutPanel1.Controls.Add(rbEgresos, 1, 0);
+            tableLayoutPanel1.Controls.Add(label1, 2, 0);
+            tableLayoutPanel1.Controls.Add(dtpHasta, 5, 0);
+            tableLayoutPanel1.Controls.Add(dtpDesde, 3, 0);
+            tableLayoutPanel1.Controls.Add(label2, 4, 0);
+            tableLayoutPanel1.Controls.Add(txtNroRemito, 7, 0);
+            tableLayoutPanel1.Dock = DockStyle.Fill;
+            tableLayoutPanel1.Location = new Point(3, 24);
+            tableLayoutPanel1.Name = "tableLayoutPanel1";
+            tableLayoutPanel1.RowCount = 1;
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            tableLayoutPanel1.Size = new Size(1690, 72);
+            tableLayoutPanel1.TabIndex = 0;
+            // 
             // UC_Remitos
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -280,9 +310,10 @@
             Load += UC_Remitos_Load;
             panel1.ResumeLayout(false);
             groupBox1.ResumeLayout(false);
-            groupBox1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)dgvRemitos).EndInit();
             panel3.ResumeLayout(false);
+            tableLayoutPanel1.ResumeLayout(false);
+            tableLayoutPanel1.PerformLayout();
             ResumeLayout(false);
         }
 
@@ -306,5 +337,6 @@
         private Button btnSiguiente;
         private Button btnAnterior;
         private System.Windows.Forms.Timer timerBusqueda;
+        private TableLayoutPanel tableLayoutPanel1;
     }
 }
