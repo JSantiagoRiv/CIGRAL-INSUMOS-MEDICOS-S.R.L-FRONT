@@ -34,7 +34,6 @@
             labelTitulo = new Label();
             groupBox1 = new GroupBox();
             tableLayoutPanel1 = new TableLayoutPanel();
-            btnExcel = new FontAwesome.Sharp.IconButton();
             label2 = new Label();
             chkVencidos = new CheckBox();
             txtBuscar = new TextBox();
@@ -42,8 +41,13 @@
             iconBtnSearch = new FontAwesome.Sharp.IconButton();
             cmbDireccionOrden = new ComboBox();
             label3 = new Label();
+            btnExcel = new FontAwesome.Sharp.IconButton();
             label1 = new Label();
             cmbOrdenar = new ComboBox();
+            label4 = new Label();
+            txtLote = new TextBox();
+            label5 = new Label();
+            txtSerie = new TextBox();
             lblTotalProductos = new Label();
             lblPagina = new Label();
             btnSiguiente = new Button();
@@ -108,14 +112,15 @@
             // 
             // tableLayoutPanel1
             // 
-            tableLayoutPanel1.ColumnCount = 6;
+            tableLayoutPanel1.ColumnCount = 8;
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle());
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle());
             tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle());
             tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle());
             tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle());
             tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle());
             tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle());
             tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-            tableLayoutPanel1.Controls.Add(btnExcel, 5, 1);
             tableLayoutPanel1.Controls.Add(label2, 0, 1);
             tableLayoutPanel1.Controls.Add(chkVencidos, 0, 0);
             tableLayoutPanel1.Controls.Add(txtBuscar, 1, 1);
@@ -123,8 +128,13 @@
             tableLayoutPanel1.Controls.Add(iconBtnSearch, 2, 1);
             tableLayoutPanel1.Controls.Add(cmbDireccionOrden, 4, 0);
             tableLayoutPanel1.Controls.Add(label3, 3, 0);
-            tableLayoutPanel1.Controls.Add(label1, 3, 1);
-            tableLayoutPanel1.Controls.Add(cmbOrdenar, 4, 1);
+            tableLayoutPanel1.Controls.Add(btnExcel, 7, 1);
+            tableLayoutPanel1.Controls.Add(label1, 5, 0);
+            tableLayoutPanel1.Controls.Add(cmbOrdenar, 6, 0);
+            tableLayoutPanel1.Controls.Add(label4, 3, 1);
+            tableLayoutPanel1.Controls.Add(txtLote, 4, 1);
+            tableLayoutPanel1.Controls.Add(label5, 5, 1);
+            tableLayoutPanel1.Controls.Add(txtSerie, 6, 1);
             tableLayoutPanel1.Dock = DockStyle.Fill;
             tableLayoutPanel1.Location = new Point(3, 24);
             tableLayoutPanel1.Name = "tableLayoutPanel1";
@@ -133,25 +143,6 @@
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
             tableLayoutPanel1.Size = new Size(1690, 106);
             tableLayoutPanel1.TabIndex = 12;
-            // 
-            // btnExcel
-            // 
-            btnExcel.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            btnExcel.BackColor = Color.Transparent;
-            btnExcel.Cursor = Cursors.Hand;
-            btnExcel.FlatAppearance.BorderSize = 0;
-            btnExcel.FlatStyle = FlatStyle.Flat;
-            btnExcel.IconChar = FontAwesome.Sharp.IconChar.Print;
-            btnExcel.IconColor = Color.Black;
-            btnExcel.IconFont = FontAwesome.Sharp.IconFont.Auto;
-            btnExcel.IconSize = 50;
-            btnExcel.Location = new Point(1640, 56);
-            btnExcel.Name = "btnExcel";
-            btnExcel.Size = new Size(47, 47);
-            btnExcel.TabIndex = 14;
-            toolTip1.SetToolTip(btnExcel, "Exportar a Excel");
-            btnExcel.UseVisualStyleBackColor = false;
-            btnExcel.Click += btnExcel_Click;
             // 
             // label2
             // 
@@ -185,7 +176,7 @@
             txtBuscar.Font = new Font("Segoe UI", 12F);
             txtBuscar.Location = new Point(155, 65);
             txtBuscar.Name = "txtBuscar";
-            txtBuscar.Size = new Size(384, 29);
+            txtBuscar.Size = new Size(205, 29);
             txtBuscar.TabIndex = 9;
             txtBuscar.TextChanged += txtBuscar_TextChanged;
             txtBuscar.KeyDown += txtBuscar_KeyDown;
@@ -195,7 +186,7 @@
             chkProximosAVencer.Anchor = AnchorStyles.None;
             chkProximosAVencer.AutoSize = true;
             chkProximosAVencer.Font = new Font("Segoe UI", 12F);
-            chkProximosAVencer.Location = new Point(233, 14);
+            chkProximosAVencer.Location = new Point(155, 14);
             chkProximosAVencer.Name = "chkProximosAVencer";
             chkProximosAVencer.Size = new Size(228, 25);
             chkProximosAVencer.TabIndex = 10;
@@ -211,7 +202,7 @@
             iconBtnSearch.IconColor = Color.Black;
             iconBtnSearch.IconFont = FontAwesome.Sharp.IconFont.Auto;
             iconBtnSearch.IconSize = 25;
-            iconBtnSearch.Location = new Point(545, 65);
+            iconBtnSearch.Location = new Point(389, 65);
             iconBtnSearch.Margin = new Padding(3, 2, 3, 2);
             iconBtnSearch.Name = "iconBtnSearch";
             iconBtnSearch.Size = new Size(49, 29);
@@ -227,7 +218,7 @@
             cmbDireccionOrden.Font = new Font("Segoe UI", 12F);
             cmbDireccionOrden.FormattingEnabled = true;
             cmbDireccionOrden.Items.AddRange(new object[] { "Ascendente", "Descendente" });
-            cmbDireccionOrden.Location = new Point(794, 12);
+            cmbDireccionOrden.Location = new Point(638, 12);
             cmbDireccionOrden.Name = "cmbDireccionOrden";
             cmbDireccionOrden.Size = new Size(198, 29);
             cmbDireccionOrden.TabIndex = 16;
@@ -238,18 +229,37 @@
             label3.Anchor = AnchorStyles.Right;
             label3.AutoSize = true;
             label3.Font = new Font("Segoe UI", 12F);
-            label3.Location = new Point(600, 16);
+            label3.Location = new Point(444, 16);
             label3.Name = "label3";
             label3.Size = new Size(188, 21);
             label3.TabIndex = 17;
             label3.Text = "Ascendente/Descendente:";
+            // 
+            // btnExcel
+            // 
+            btnExcel.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            btnExcel.BackColor = Color.Transparent;
+            btnExcel.Cursor = Cursors.Hand;
+            btnExcel.FlatAppearance.BorderSize = 0;
+            btnExcel.FlatStyle = FlatStyle.Flat;
+            btnExcel.IconChar = FontAwesome.Sharp.IconChar.Print;
+            btnExcel.IconColor = Color.Black;
+            btnExcel.IconFont = FontAwesome.Sharp.IconFont.Auto;
+            btnExcel.IconSize = 50;
+            btnExcel.Location = new Point(1640, 56);
+            btnExcel.Name = "btnExcel";
+            btnExcel.Size = new Size(47, 47);
+            btnExcel.TabIndex = 14;
+            toolTip1.SetToolTip(btnExcel, "Exportar a Excel");
+            btnExcel.UseVisualStyleBackColor = false;
+            btnExcel.Click += btnExcel_Click;
             // 
             // label1
             // 
             label1.Anchor = AnchorStyles.Right;
             label1.AutoSize = true;
             label1.Font = new Font("Segoe UI", 12F);
-            label1.Location = new Point(689, 69);
+            label1.Location = new Point(842, 16);
             label1.Name = "label1";
             label1.Size = new Size(99, 21);
             label1.TabIndex = 15;
@@ -262,11 +272,55 @@
             cmbOrdenar.Font = new Font("Segoe UI", 12F);
             cmbOrdenar.FormattingEnabled = true;
             cmbOrdenar.Items.AddRange(new object[] { "Producto", "Vencimiento", "Cantidad" });
-            cmbOrdenar.Location = new Point(794, 65);
+            cmbOrdenar.Location = new Point(947, 12);
             cmbOrdenar.Name = "cmbOrdenar";
             cmbOrdenar.Size = new Size(198, 29);
             cmbOrdenar.TabIndex = 12;
             cmbOrdenar.SelectedIndexChanged += cmbOrdenar_SelectedIndexChanged;
+            // 
+            // label4
+            // 
+            label4.Anchor = AnchorStyles.Right;
+            label4.AutoSize = true;
+            label4.Font = new Font("Segoe UI", 12F);
+            label4.Location = new Point(539, 69);
+            label4.Name = "label4";
+            label4.Size = new Size(93, 21);
+            label4.TabIndex = 18;
+            label4.Text = "Buscar Lote:";
+            // 
+            // txtLote
+            // 
+            txtLote.Anchor = AnchorStyles.Left;
+            txtLote.Font = new Font("Segoe UI", 12F);
+            txtLote.Location = new Point(638, 65);
+            txtLote.Name = "txtLote";
+            txtLote.Size = new Size(198, 29);
+            txtLote.TabIndex = 19;
+            txtLote.TextChanged += txtLote_TextChanged;
+            txtLote.KeyDown += txtLote_KeyDown;
+            // 
+            // label5
+            // 
+            label5.Anchor = AnchorStyles.Right;
+            label5.AutoSize = true;
+            label5.Font = new Font("Segoe UI", 12F);
+            label5.Location = new Point(843, 69);
+            label5.Name = "label5";
+            label5.Size = new Size(98, 21);
+            label5.TabIndex = 20;
+            label5.Text = "Buscar Serie:";
+            // 
+            // txtSerie
+            // 
+            txtSerie.Anchor = AnchorStyles.Left;
+            txtSerie.Font = new Font("Segoe UI", 12F);
+            txtSerie.Location = new Point(947, 65);
+            txtSerie.Name = "txtSerie";
+            txtSerie.Size = new Size(198, 29);
+            txtSerie.TabIndex = 21;
+            txtSerie.TextChanged += txtSerie_TextChanged;
+            txtSerie.KeyDown += txtSerie_KeyDown;
             // 
             // lblTotalProductos
             // 
@@ -485,5 +539,9 @@
         private DataGridViewTextBoxColumn Vencimiento;
         private DataGridViewTextBoxColumn Estado;
         private TableLayoutPanel tableLayoutPanel1;
+        private Label label4;
+        private TextBox txtLote;
+        private Label label5;
+        private TextBox txtSerie;
     }
 }

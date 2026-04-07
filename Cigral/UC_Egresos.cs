@@ -846,7 +846,7 @@ namespace Cigral
                         buscar: txtBuscar.Text.Trim(),
                         ocultarCero: false,
                         soloVencidos: false,
-                        codigoLote: txtLote.Text.Trim(),     // <- Nuevo parámetro
+                        lote: txtLote.Text.Trim(),     // <- Nuevo parámetro
                         numeroSerie: txtSerie.Text.Trim()    // <- Nuevo parámetro
                     );
 
