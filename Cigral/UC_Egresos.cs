@@ -67,36 +67,17 @@ namespace Cigral
 
         private async void chkConRemito_CheckedChanged(object sender, EventArgs e)
         {
-            if (chkConRemito.Checked)
-            {
-                // Habilitamos el buscador y el botón +
-                txtBuscarCliente.Enabled = true;
-                btnAgregarCliente.Enabled = true;
-                txtBuscarCliente.Focus();
-                txtComprobante.Enabled = chkConRemito.Checked;
+            // Habilitamos el buscador y el botón +
+            txtBuscarCliente.Enabled = chkConRemito.Checked;
+            btnAgregarCliente.Enabled = chkConRemito.Checked;
+            txtBuscarCliente.Focus();
+            txtComprobante.Enabled = chkConRemito.Checked;
+            txtRemito.Enabled = chkConRemito.Checked;
 
-                Cursor = Cursors.WaitCursor;
-                try
-                {
-                    int idDepositoSeleccionado = cmbDeposito.SelectedValue != null ? (int)cmbDeposito.SelectedValue : 1;
-                    txtRemito.Text = await ApiServices.ObtenerSiguienteNumeroRemito(idDepositoSeleccionado, false);
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Error: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    chkConRemito.Checked = false;
-                }
-                finally { Cursor = Cursors.Default; }
-            }
-            else
-            {
-                txtRemito.Clear();
-                txtBuscarCliente.Clear(); // Limpiamos el texto
-                idClienteSeleccionado = 0; // Borramos el ID
-                txtBuscarCliente.Enabled = false; // Bloqueamos el buscador
-                btnAgregarCliente.Enabled = false; // Bloqueamos el +
-                txtComprobante.Clear();
-            }
+            txtRemito.Clear();
+            txtBuscarCliente.Clear(); // Limpiamos el texto
+            idClienteSeleccionado = 0; // Borramos el ID
+            txtComprobante.Clear();
         }
 
         private void label5_Click(object sender, EventArgs e) { }
@@ -310,7 +291,7 @@ namespace Cigral
                         }
 
                         var existenciasPosibles = await ApiServices.ObtenerExistencias(productoId: productoParseado.ProductoId, numeroSerie: productoParseado.NumeroSerie, codigoLote: productoParseado.Lote);
-                        if(existenciasPosibles == null)
+                        if (existenciasPosibles == null)
                         {
                             MessageBox.Show("No se encontró stock disponible de este producto (con ese Lote/Serie) en el sistema.", "Sin Stock", MessageBoxButtons.OK, MessageBoxIcon.Error);
                             return;
@@ -1170,6 +1151,16 @@ namespace Cigral
         }
 
         private void tableLayoutPanel1_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        private void txtComprobante_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void txtRemito_TextChanged(object sender, EventArgs e)
         {
 
         }

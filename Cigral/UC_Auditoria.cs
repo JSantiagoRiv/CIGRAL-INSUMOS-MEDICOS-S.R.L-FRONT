@@ -102,10 +102,13 @@ namespace Cigral
                 int? parametroTipo = tipo == 0 ? (int?)null : tipo;
 
                 // Leemos lo que escribió el usuario
-                string textoBuscado = txtBusquedaNombre.Text;
+                string textoBuscado = txtBusquedaNombre.Text.Trim();
+                string loteBuscado = txtLote.Text.Trim();
+                string serieBuscada = txtSerie.Text.Trim();
+               
 
                 // Le pasamos el textoBuscado a la API
-                var respuesta = await ApiServices.ObtenerAuditoria(parametroTipo, textoBuscado, _paginaActual, _filasPorPagina, chkDevolucion.Checked);
+               var respuesta = await ApiServices.ObtenerAuditoria(parametroTipo, textoBuscado, loteBuscado, serieBuscada, _paginaActual, _filasPorPagina);
 
 
                 // Para que no se rompa al navegar
@@ -281,6 +284,50 @@ namespace Cigral
             await CargarGrillaAuditoria(tipoActual);
         }
 
+        private void groupBox1_Enter(object sender, EventArgs e)
+        {
+
+        }
+
+        private void dgvAuditoria_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
+        }
+
+        private void txtLote_TextChanged(object sender, EventArgs e)
+        {
+            timerBusqueda.Stop();
+            timerBusqueda.Start();
+        }
+
+        private void txtSerie_TextChanged(object sender, EventArgs e)
+        {
+            timerBusqueda.Stop();
+            timerBusqueda.Start();
+        }
+
+        private async void txtLote_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                e.SuppressKeyPress = true;
+                timerBusqueda.Stop();
+                _paginaActual = 1;
+                int tipoActual = cmbMov.SelectedValue != null ? (int)cmbMov.SelectedValue : 0;
+                await CargarGrillaAuditoria(tipoActual);
+            }
+        }
+
+        private async void txtSerie_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                e.SuppressKeyPress = true;
+                timerBusqueda.Stop();
+                _paginaActual = 1;
+                int tipoActual = cmbMov.SelectedValue != null ? (int)cmbMov.SelectedValue : 0;
+                await CargarGrillaAuditoria(tipoActual);
+            }
         private async void chkDevolucion_CheckedChanged(object sender, EventArgs e)
         {
             timerBusqueda.Stop();

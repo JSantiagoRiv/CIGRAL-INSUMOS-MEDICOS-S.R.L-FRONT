@@ -223,6 +223,7 @@
             textRemito.Name = "textRemito";
             textRemito.Size = new Size(215, 29);
             textRemito.TabIndex = 3;
+            textRemito.TextChanged += textRemito_TextChanged;
             // 
             // txtBuscarCliente
             // 
@@ -334,7 +335,7 @@
             // 
             lblIngresoManual.Anchor = AnchorStyles.None;
             lblIngresoManual.AutoSize = true;
-            lblIngresoManual.Location = new Point(918, 101);
+            lblIngresoManual.Location = new Point(929, 101);
             lblIngresoManual.Name = "lblIngresoManual";
             lblIngresoManual.Size = new Size(62, 15);
             lblIngresoManual.TabIndex = 3;

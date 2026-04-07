@@ -179,7 +179,7 @@
             label4.AutoSize = true;
             label4.Font = new Font("Segoe UI", 12F);
             label4.ForeColor = Color.Black;
-            label4.Location = new Point(695, 16);
+            label4.Location = new Point(676, 16);
             label4.Name = "label4";
             label4.Size = new Size(201, 21);
             label4.TabIndex = 0;
@@ -262,6 +262,7 @@
             txtComprobante.Name = "txtComprobante";
             txtComprobante.Size = new Size(215, 29);
             txtComprobante.TabIndex = 14;
+            txtComprobante.TextChanged += txtComprobante_TextChanged;
             // 
             // label7
             // 
@@ -334,9 +335,9 @@
             txtRemito.Location = new Point(127, 39);
             txtRemito.Margin = new Padding(3, 2, 3, 2);
             txtRemito.Name = "txtRemito";
-            txtRemito.ReadOnly = true;
             txtRemito.Size = new Size(215, 29);
             txtRemito.TabIndex = 7;
+            txtRemito.TextChanged += txtRemito_TextChanged;
             // 
             // label5
             // 
@@ -406,7 +407,7 @@
             // 
             linkLabel1.Anchor = AnchorStyles.None;
             linkLabel1.AutoSize = true;
-            linkLabel1.Location = new Point(944, 101);
+            linkLabel1.Location = new Point(931, 101);
             linkLabel1.Name = "linkLabel1";
             linkLabel1.Size = new Size(62, 15);
             linkLabel1.TabIndex = 3;
@@ -418,7 +419,7 @@
             // 
             label1.Anchor = AnchorStyles.None;
             label1.AutoSize = true;
-            label1.Location = new Point(599, 101);
+            label1.Location = new Point(576, 101);
             label1.Name = "label1";
             label1.Size = new Size(349, 15);
             label1.TabIndex = 2;
