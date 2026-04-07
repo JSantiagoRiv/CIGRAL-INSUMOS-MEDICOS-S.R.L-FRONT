@@ -137,8 +137,8 @@ namespace Cigral
             if (dgvRemitos.Columns["numeroRemito"] != null) dgvRemitos.Columns["numeroRemito"].HeaderText = "Nro. Remito";
             if (dgvRemitos.Columns["comprobanteAsociado"] != null) dgvRemitos.Columns["comprobanteAsociado"].HeaderText = "Comprobante Asociado";
             if (dgvRemitos.Columns["fecha"] != null) dgvRemitos.Columns["fecha"].HeaderText = "Fecha";
-            if (dgvRemitos.Columns["depositoNombre"] != null) dgvRemitos.Columns["depositoNombre"].HeaderText = "Depósito";
-            if (dgvRemitos.Columns["entidadNombre"] != null) dgvRemitos.Columns["entidadNombre"].HeaderText = "Entidad";
+            if (dgvRemitos.Columns["nombreDeposito"] != null) dgvRemitos.Columns["nombreDeposito"].HeaderText = "Depósito";
+            if (dgvRemitos.Columns["nombreEntidad"] != null) dgvRemitos.Columns["nombreEntidad"].HeaderText = "Entidad";
             if (dgvRemitos.Columns["observaciones"] != null) dgvRemitos.Columns["observaciones"].HeaderText = "Observaciones";
 
             // C. Pinta el fondo según si son ingresos (verde clarito) o egresos (rojo clarito)

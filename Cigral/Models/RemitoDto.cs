@@ -92,10 +92,10 @@ namespace Cigral.Models
         public DateTime fecha { get; set; }
 
         public int depositoId { get; set; }
-        public string depositoNombre { get; set; } // ¡Clave para que se lea bien!
+        public string nombreDeposito { get; set; } // ¡Clave para que se lea bien!
 
         public int entidadId { get; set; }
-        public string entidadNombre { get; set; }  // Proveedor o Cliente
+        public string nombreEntidad { get; set; }  // Proveedor o Cliente
         public string comprobanteAsociado { get; set; }
 
         public string observaciones { get; set; }

@@ -378,7 +378,7 @@ namespace Cigral.Services
             int pageNumber = 1,
             int diasParaVencer = 0,
             int? productoId = null,
-            string? codigoLote = "",
+            string? lote = "",
             string? numeroSerie = "",
             bool esDevolucion = false)
         {
@@ -824,7 +824,7 @@ namespace Cigral.Services
         /// <summary>
         /// Consulta la tabla de auditoría para ver los movimientos históricos de stock (con paginación de servidor).
         /// </summary>
-        public static async Task<PaginadoResponse<AuditoriaItemDto>> ObtenerAuditoria(int? tipoMovimiento = null, string nombreProducto = "", string lote = "", string serie = "", int pageNumber = 1, int pageSize = 25)
+        public static async Task<PaginadoResponse<AuditoriaItemDto>> ObtenerAuditoria(int? tipoMovimiento = null, string nombreProducto = "", string lote = "", string serie = "", bool esDevolucion = false, int pageNumber = 1, int pageSize = 25)
         {
                 try
                 {
