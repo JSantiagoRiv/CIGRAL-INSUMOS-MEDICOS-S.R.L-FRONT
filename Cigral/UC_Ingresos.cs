@@ -547,14 +547,15 @@ namespace Cigral
                 {
                     if (fila.IsNewRow) continue;
 
-                    string serieExistente = fila.Cells["Serie"].Value?.ToString();
+                    //string serieExistente = fila.Cells["Serie"].Value?.ToString();
 
-                    if (!string.IsNullOrEmpty(productoParseado.NumeroSerie) && serieExistente == productoParseado.NumeroSerie)
+                    /*if (!string.IsNullOrEmpty(productoParseado.NumeroSerie) && serieExistente == productoParseado.NumeroSerie)
                     {
                         MessageBox.Show($"El número de serie {productoParseado.NumeroSerie} ya fue escaneado.", "Serie duplicada", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         textScanner.Focus();
                         return;
                     }
+                    */
                 }
 
                 if (productoParseado != null)
@@ -1475,12 +1476,13 @@ namespace Cigral
         /// </summary>
         private string PedirCodigoComplementario(string codigoBase)
         {
-            string codigoFinal = codigoBase;
+            // Limpiamos la base por las dudas
+            string codigoFinal = codigoBase != null ? codigoBase.Trim() : "";
 
             Form prompt = new Form()
             {
                 Width = 450,
-                Height = 220,
+                Height = 250, // ⬆️ AUMENTADO: Le dimos 30px más de alto a la ventana para que entre todo bien
                 FormBorderStyle = FormBorderStyle.FixedDialog,
                 Text = "Código Dividido Detectado",
                 StartPosition = FormStartPosition.CenterScreen,
@@ -1502,31 +1504,46 @@ namespace Cigral
                 Left = 20,
                 Top = 60,
                 Width = 400,
+                Height = 45, // Ocupa desde Y=60 hasta Y=105
                 Font = new Font("Segoe UI", 9, FontStyle.Bold),
                 Text = $"Código actual: {codigoFinal}"
             };
 
-            TextBox txtScanExtra = new TextBox() { Left = 20, Top = 85, Width = 390 };
+            // ⬇️ BAJADO: Lo movimos de Top=85 a Top=115 para que quede debajo del Label
+            TextBox txtScanExtra = new TextBox() { Left = 20, Top = 115, Width = 390 };
 
-            Button btnConfirmar = new Button() { Text = "Confirmar", Left = 210, Top = 130, Width = 100, DialogResult = DialogResult.OK, Cursor = Cursors.Hand };
-            Button btnCancelar = new Button() { Text = "Cancelar", Left = 320, Top = 130, Width = 90, DialogResult = DialogResult.Cancel, Cursor = Cursors.Hand };
+            // ⬇️ BAJADOS: Movimos los botones de Top=130 a Top=160
+            // ATENCIÓN: Le quitamos el DialogResult automático al botón confirmar
+            Button btnConfirmar = new Button() { Text = "Confirmar", Left = 210, Top = 160, Width = 100, Cursor = Cursors.Hand };
+            Button btnCancelar = new Button() { Text = "Cancelar", Left = 320, Top = 160, Width = 90, DialogResult = DialogResult.Cancel, Cursor = Cursors.Hand };
 
-            // Lógica para ir concatenando cada vez que el lector dispara un "Enter"
             txtScanExtra.KeyDown += (senderObj, eArgs) =>
             {
                 if (eArgs.KeyCode == Keys.Enter)
                 {
-                    eArgs.SuppressKeyPress = true; // Evita el sonido de Windows
+                    eArgs.SuppressKeyPress = true;
                     string extra = txtScanExtra.Text.Trim();
 
                     if (!string.IsNullOrEmpty(extra))
                     {
-                        // Se concatena directamente sin espacios
                         codigoFinal += extra;
                         lblBase.Text = $"Código actual: {codigoFinal}";
                         txtScanExtra.Clear();
                     }
                 }
+            };
+
+            // Lógica para atrapar textos pegados sin Enter
+            btnConfirmar.Click += (sender, e) =>
+            {
+                string extra = txtScanExtra.Text.Trim();
+                if (!string.IsNullOrEmpty(extra))
+                {
+                    codigoFinal += extra;
+                }
+
+                prompt.DialogResult = DialogResult.OK;
+                prompt.Close();
             };
 
             prompt.Controls.Add(lblInfo);
@@ -1535,10 +1552,7 @@ namespace Cigral
             prompt.Controls.Add(btnConfirmar);
             prompt.Controls.Add(btnCancelar);
 
-            // NOTA: No seteamos AcceptButton al botón confirmar para que el ENTER del escáner no cierre la ventana prematuramente.
             prompt.CancelButton = btnCancelar;
-
-            // Foco inicial automático en el escáner extra
             prompt.Shown += (s, e) => txtScanExtra.Focus();
 
             if (prompt.ShowDialog() == DialogResult.OK)
@@ -1546,7 +1560,7 @@ namespace Cigral
                 return codigoFinal;
             }
 
-            return null; // Si cancela, devuelve null
+            return null;
         }
     }
 }

@@ -310,7 +310,16 @@ namespace Cigral
                         }
 
                         var existenciasPosibles = await ApiServices.ObtenerExistencias(productoId: productoParseado.ProductoId, numeroSerie: productoParseado.NumeroSerie, codigoLote: productoParseado.Lote);
-                        var existenciaIndicada = existenciasPosibles.items.FirstOrDefault(x => x.CodigoLote == productoParseado.Lote && x.NumSerie == productoParseado.NumeroSerie && x.ProductoId == productoParseado.ProductoId);
+                        if(existenciasPosibles == null)
+                        {
+                            MessageBox.Show("No se encontró stock disponible de este producto (con ese Lote/Serie) en el sistema.", "Sin Stock", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            return;
+                        }
+                        var existenciaIndicada = existenciasPosibles.items.FirstOrDefault(x =>
+                            x.ProductoId == productoParseado.ProductoId && // El ProductoId siempre debe coincidir
+                            (String.IsNullOrEmpty(productoParseado.Lote) || x.CodigoLote == productoParseado.Lote) &&
+                            (String.IsNullOrEmpty(productoParseado.NumeroSerie) || x.NumSerie == productoParseado.NumeroSerie) // Aquí evalúas NumeroSerie
+                        );
 
                         if (existenciaIndicada != null)
                         {
@@ -351,7 +360,7 @@ namespace Cigral
                                     // CASO A: El producto tiene un número de serie específico
                                     if (!string.IsNullOrEmpty(numeroSerie))
                                     {
-                                        if (serieFila == numeroSerie)
+                                        if (serieFila == numeroSerie && serieFila != "Sin Número de Serie")
                                         {
                                             MessageBox.Show($"El producto con número de serie '{numeroSerie}' ya fue escaneado y está en la lista.", "Serie Duplicada", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                                             return; // Bloqueamos el doble escaneo de una misma serie
@@ -499,7 +508,7 @@ namespace Cigral
                         {
                             productoId = Convert.ToInt32(fila.Cells["Id"].Value),
                             codigoLote = fila.Cells["Lote"].Value?.ToString() ?? "",
-                            numeroSerie = fila.Cells["Serie"].Value?.ToString() ?? "",
+                            numeroSerie = fila.Cells["Serie"].Value?.ToString() != "Sin Número de Serie" ? fila.Cells["Serie"].Value?.ToString() : null,
                             cantidad = Convert.ToInt32(fila.Cells["Cantidad"].Value)
                         };
 
@@ -769,8 +778,15 @@ namespace Cigral
                 MaximizeBox = false
             };
 
+            // 1. REORGANIZAMOS LOS CONTROLES SUPERIORES PARA QUE ENTREN LOS 3 CAMPOS
             Label lblInfo = new Label() { Left = 20, Top = 15, Width = 60, Text = "Nombre:" };
-            TextBox txtBuscar = new TextBox() { Left = 90, Top = 12, Width = 550 };
+            TextBox txtBuscar = new TextBox() { Left = 80, Top = 12, Width = 250 }; // Redujimos el ancho
+
+            Label lblLote = new Label() { Left = 340, Top = 15, Width = 40, Text = "Lote:" };
+            TextBox txtLote = new TextBox() { Left = 380, Top = 12, Width = 150 };
+
+            Label lblSerie = new Label() { Left = 540, Top = 15, Width = 45, Text = "Serie:" };
+            TextBox txtSerie = new TextBox() { Left = 585, Top = 12, Width = 150 };
 
             DataGridView dgvResultados = new DataGridView()
             {
@@ -802,42 +818,26 @@ namespace Cigral
 
                     if (col.Name == "ProductoNombre") col.HeaderText = "Producto";
                     if (col.Name == "ProductoCodigo") col.HeaderText = "Código";
-                    if (col.Name == "DepositoNombre") {
-                        col.HeaderText = "Depósito";
-                        col.Width = 80;
-                        }
-                    if (col.Name == "CodigoLote") {
-                        col.HeaderText = "Lote";
-                        col.Width = 80;
-                        }
-                    if (col.Name == "NumSerie") {
-                        col.HeaderText = "Serie";
-                        col.Width = 100;
-                        } // Agregamos la cabecera para la serie
-                    if (col.Name == "FechaVencimiento") {
-                        col.HeaderText = "Vencimiento";
-                        col.Width = 80;
-                        }
-                    if (col.Name == "Cantidad") {
-                        col.HeaderText = "Stock";
-                        col.Width = 50;
-                        }
-                    if (col.Name == "ProductoGtin") {
-                        col.HeaderText = "GTIN";
-                        col.Width = 100;
-                        }
-                    if (col.Name == "productoCodigoInterno") {
-                        col.HeaderText = "Cod. Int.";
-                        col.Width = 100;
-                        }
+                    if (col.Name == "DepositoNombre") { col.HeaderText = "Depósito"; col.Width = 80; }
+                    if (col.Name == "CodigoLote") { col.HeaderText = "Lote"; col.Width = 80; }
+                    if (col.Name == "NumSerie") { col.HeaderText = "Serie"; col.Width = 100; }
+                    if (col.Name == "FechaVencimiento") { col.HeaderText = "Vencimiento"; col.Width = 80; }
+                    if (col.Name == "Cantidad") { col.HeaderText = "Stock"; col.Width = 50; }
+                    if (col.Name == "ProductoGtin") { col.HeaderText = "GTIN"; col.Width = 100; }
+                    if (col.Name == "productoCodigoInterno") { col.HeaderText = "Cod. Int."; col.Width = 100; }
                 }
             };
 
             buscadorStock.Controls.Add(lblInfo);
             buscadorStock.Controls.Add(txtBuscar);
+            // 2. AGREGAMOS LOS NUEVOS CONTROLES AL FORMULARIO
+            buscadorStock.Controls.Add(lblLote);
+            buscadorStock.Controls.Add(txtLote);
+            buscadorStock.Controls.Add(lblSerie);
+            buscadorStock.Controls.Add(txtSerie);
+
             buscadorStock.Controls.Add(dgvResultados);
 
-            // SOLUCIÓN 1A: Extraer .items para el evento Load
             buscadorStock.Load += async (s, args) =>
             {
                 buscadorStock.Cursor = Cursors.WaitCursor;
@@ -853,7 +853,6 @@ namespace Cigral
                 finally { buscadorStock.Cursor = Cursors.Default; }
             };
 
-            // SOLUCIÓN 1B: Extraer .items para el evento de Búsqueda
             Func<Task> realizarBusqueda = async () =>
             {
                 if (buscadorStock.IsDisposed) return;
@@ -861,7 +860,15 @@ namespace Cigral
                 buscadorStock.Cursor = Cursors.WaitCursor;
                 try
                 {
-                    var stockFisico = await ApiServices.ObtenerExistencias(txtBuscar.Text.Trim(), ocultarCero: false, soloVencidos: false);
+                    // 3. PASAMOS LOS VALORES DE LOTE Y SERIE AL MÉTODO DE LA API
+                    var stockFisico = await ApiServices.ObtenerExistencias(
+                        buscar: txtBuscar.Text.Trim(),
+                        ocultarCero: false,
+                        soloVencidos: false,
+                        codigoLote: txtLote.Text.Trim(),     // <- Nuevo parámetro
+                        numeroSerie: txtSerie.Text.Trim()    // <- Nuevo parámetro
+                    );
+
                     if (buscadorStock.IsDisposed) return;
 
                     if (stockFisico != null && stockFisico.items != null)
@@ -892,13 +899,18 @@ namespace Cigral
                 await realizarBusqueda();
             };
 
-            txtBuscar.TextChanged += (s, ev) =>
+            // 4. ASIGNAMOS EVENTOS A LOS NUEVOS TEXTBOXES PARA LA BÚSQUEDA EN TIEMPO REAL
+            EventHandler onTextChanged = (s, ev) =>
             {
                 timerBusquedaModal.Stop();
                 timerBusquedaModal.Start();
             };
 
-            txtBuscar.KeyDown += async (s, ev) =>
+            txtBuscar.TextChanged += onTextChanged;
+            txtLote.TextChanged += onTextChanged;
+            txtSerie.TextChanged += onTextChanged;
+
+            KeyEventHandler onKeyDown = async (s, ev) =>
             {
                 if (ev.KeyCode == Keys.Enter)
                 {
@@ -907,6 +919,10 @@ namespace Cigral
                     await realizarBusqueda();
                 }
             };
+
+            txtBuscar.KeyDown += onKeyDown;
+            txtLote.KeyDown += onKeyDown;
+            txtSerie.KeyDown += onKeyDown;
 
             dgvResultados.CellDoubleClick += (s, args) =>
             {
@@ -938,7 +954,6 @@ namespace Cigral
                 string nombre = filaStock.Cells["ProductoNombre"].Value?.ToString() ?? "Desconocido";
                 string lote = filaStock.Cells["CodigoLote"].Value?.ToString() ?? "";
 
-                // SOLUCIÓN 2A: Extraemos la Serie de la grilla de búsqueda
                 string serie = "";
                 if (dgvResultados.Columns.Contains("NumSerie"))
                 {
@@ -950,7 +965,6 @@ namespace Cigral
                     cmbDeposito.SelectedValue = Convert.ToInt32(filaStock.Cells["DepositoId"].Value);
                 }
 
-                // Le pasamos la serie para que se vea en el modal si existe
                 int aRetirar = PedirCantidadSueltas(nombre, cantDisponible, lote, serie);
                 if (aRetirar == 0) return;
 
@@ -963,13 +977,11 @@ namespace Cigral
                     string loteExistente = filaMain.Cells["Lote"].Value?.ToString() ?? "";
                     string serieExistente = filaMain.Cells["Serie"].Value?.ToString() ?? "";
 
-                    // SOLUCIÓN 2B: Separamos la validación de Serie y Lote
                     if (idExistente == idProd)
                     {
                         if (!string.IsNullOrEmpty(serie))
                         {
-                            // Si el producto tiene Serie, y ya está en la grilla, bloqueamos.
-                            if (serieExistente == serie)
+                            if (serieExistente == serie && serieExistente != "Sin Número de Serie")
                             {
                                 MessageBox.Show($"Este producto con serie '{serie}' ya está en la lista.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                                 return;
@@ -977,7 +989,6 @@ namespace Cigral
                         }
                         else if (loteExistente == lote)
                         {
-                            // Si no tiene serie, se maneja por lote acumulable
                             int cantActualEnGrilla = Convert.ToInt32(filaMain.Cells["Cantidad"].Value);
                             if ((cantActualEnGrilla + aRetirar) > cantDisponible)
                             {
@@ -1000,7 +1011,7 @@ namespace Cigral
                     filaMain.Cells["id"].Value = idProd;
                     filaMain.Cells["Producto"].Value = nombre;
                     filaMain.Cells["Lote"].Value = lote;
-                    filaMain.Cells["Serie"].Value = serie; // SOLUCIÓN 2C: Guardamos la Serie en la grilla
+                    filaMain.Cells["Serie"].Value = serie;
                     filaMain.Cells["Vencimiento"].Value = fechaVencStr;
                     filaMain.Cells["Cantidad"].Value = aRetirar;
                 }
@@ -1071,12 +1082,13 @@ namespace Cigral
         /// </summary>
         private string PedirCodigoComplementario(string codigoBase)
         {
-            string codigoFinal = codigoBase;
+            // Limpiamos la base por las dudas
+            string codigoFinal = codigoBase != null ? codigoBase.Trim() : "";
 
             Form prompt = new Form()
             {
                 Width = 450,
-                Height = 220,
+                Height = 250, // ⬆️ AUMENTADO: Le dimos 30px más de alto a la ventana para que entre todo bien
                 FormBorderStyle = FormBorderStyle.FixedDialog,
                 Text = "Código Dividido Detectado",
                 StartPosition = FormStartPosition.CenterScreen,
@@ -1098,31 +1110,46 @@ namespace Cigral
                 Left = 20,
                 Top = 60,
                 Width = 400,
+                Height = 45, // Ocupa desde Y=60 hasta Y=105
                 Font = new Font("Segoe UI", 9, FontStyle.Bold),
                 Text = $"Código actual: {codigoFinal}"
             };
 
-            TextBox txtScanExtra = new TextBox() { Left = 20, Top = 85, Width = 390 };
+            // ⬇️ BAJADO: Lo movimos de Top=85 a Top=115 para que quede debajo del Label
+            TextBox txtScanExtra = new TextBox() { Left = 20, Top = 115, Width = 390 };
 
-            Button btnConfirmar = new Button() { Text = "Confirmar", Left = 210, Top = 130, Width = 100, DialogResult = DialogResult.OK, Cursor = Cursors.Hand };
-            Button btnCancelar = new Button() { Text = "Cancelar", Left = 320, Top = 130, Width = 90, DialogResult = DialogResult.Cancel, Cursor = Cursors.Hand };
+            // ⬇️ BAJADOS: Movimos los botones de Top=130 a Top=160
+            // ATENCIÓN: Le quitamos el DialogResult automático al botón confirmar
+            Button btnConfirmar = new Button() { Text = "Confirmar", Left = 210, Top = 160, Width = 100, Cursor = Cursors.Hand };
+            Button btnCancelar = new Button() { Text = "Cancelar", Left = 320, Top = 160, Width = 90, DialogResult = DialogResult.Cancel, Cursor = Cursors.Hand };
 
-            // Lógica para ir concatenando cada vez que el lector dispara un "Enter"
             txtScanExtra.KeyDown += (senderObj, eArgs) =>
             {
                 if (eArgs.KeyCode == Keys.Enter)
                 {
-                    eArgs.SuppressKeyPress = true; // Evita el sonido de Windows
+                    eArgs.SuppressKeyPress = true;
                     string extra = txtScanExtra.Text.Trim();
 
                     if (!string.IsNullOrEmpty(extra))
                     {
-                        // Se concatena directamente sin espacios
                         codigoFinal += extra;
                         lblBase.Text = $"Código actual: {codigoFinal}";
                         txtScanExtra.Clear();
                     }
                 }
+            };
+
+            // Lógica para atrapar textos pegados sin Enter
+            btnConfirmar.Click += (sender, e) =>
+            {
+                string extra = txtScanExtra.Text.Trim();
+                if (!string.IsNullOrEmpty(extra))
+                {
+                    codigoFinal += extra;
+                }
+
+                prompt.DialogResult = DialogResult.OK;
+                prompt.Close();
             };
 
             prompt.Controls.Add(lblInfo);
@@ -1131,10 +1158,7 @@ namespace Cigral
             prompt.Controls.Add(btnConfirmar);
             prompt.Controls.Add(btnCancelar);
 
-            // NOTA: No seteamos AcceptButton al botón confirmar para que el ENTER del escáner no cierre la ventana prematuramente.
             prompt.CancelButton = btnCancelar;
-
-            // Foco inicial automático en el escáner extra
             prompt.Shown += (s, e) => txtScanExtra.Focus();
 
             if (prompt.ShowDialog() == DialogResult.OK)
@@ -1142,7 +1166,7 @@ namespace Cigral
                 return codigoFinal;
             }
 
-            return null; // Si cancela, devuelve null
+            return null;
         }
     }
 }
