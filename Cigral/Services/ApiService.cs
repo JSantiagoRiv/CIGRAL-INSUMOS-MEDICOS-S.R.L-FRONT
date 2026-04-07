@@ -387,12 +387,12 @@ namespace Cigral.Services
 
                     if (!string.IsNullOrEmpty(buscar)) url += $"&NombreProducto={buscar}";
                     url += $"&ordenarPor={ordenarPor}&esDescendente={esDescendente.ToString().ToLower()}";
-                    if (ocultarCero) url += "&OculrarCero=true";
-                    if (soloVencidos) url += "$SoloConVencimiento=true";
+                    if (ocultarCero) url += "&OcultarCero=true";
+                    if (soloVencidos) url += "$&SoloConVencimiento=true";
                     if (diasParaVencer != 0) url += $"&DiasParaVencer={diasParaVencer}";
-                    if (!string.IsNullOrEmpty(numeroSerie)) url += $"NumSerie={numeroSerie}";
-                    if (!string.IsNullOrEmpty(codigoLote)) url += $"CodigoLote={codigoLote}";
-                    if (productoId != null) url += $"ProductoId={productoId}";
+                    if (!string.IsNullOrEmpty(numeroSerie)) url += $"&NumSerie={numeroSerie}";
+                    if (!string.IsNullOrEmpty(codigoLote)) url += $"&CodigoLote={codigoLote}";
+                    if (productoId != null) url += $"&ProductoId={productoId}";
 
                     var response = await _client.GetAsync(url);
 
