@@ -63,6 +63,9 @@ namespace Cigral
 
                 // 1. Captura lo que el usuario puso en el buscador de texto
                 string textoABuscar = txtBuscar.Text.Trim();
+                string loteBuscado = txtLote.Text.Trim();
+                string serieBuscada = txtSerie.Text.Trim();
+
 
                 // 2. Mapeo del ComboBox a los números que espera el Backend para ordenar
                 int ordenBackend = 0; // Por defecto ordena por ID
@@ -75,8 +78,10 @@ namespace Cigral
 
                 // 4. Dispara a la API (Trae la lista cruda filtrada por texto y ordenada)
 
-                var resultado = chkProximosAVencer.Checked ? await ApiServices.ObtenerExistencias(textoABuscar, false, false, ordenBackend, descendente, pageNumber: _paginaActual, diasParaVencer: 180 )
-                                                    : await ApiServices.ObtenerExistencias(textoABuscar, false, false, ordenBackend, descendente, pageNumber: _paginaActual);
+                // 2. Disparamos a la API pasándole los nuevos parámetros 'loteBuscado' y 'serieBuscada'
+                var resultado = chkProximosAVencer.Checked
+                    ? await ApiServices.ObtenerExistencias(textoABuscar, false, false, ordenBackend, descendente, pageNumber: _paginaActual, diasParaVencer: 180, lote: loteBuscado, numeroSerie: serieBuscada)
+                    : await ApiServices.ObtenerExistencias(textoABuscar, false, false, ordenBackend, descendente, pageNumber: _paginaActual, lote: loteBuscado, numeroSerie: serieBuscada);
 
                 List<ExistenciaDto> listaFiltrada = resultado.items;
 
@@ -98,7 +103,7 @@ namespace Cigral
                 }
 
                 // C) Próximos a Vencer (Menos de 6 meses)
-                
+
 
                 // --- PARTE C: ACTUALIZACIÓN VISUAL ---
 
@@ -250,7 +255,7 @@ namespace Cigral
         private async void chkOcultarCero_CheckedChanged(object sender, EventArgs e) => await CargarDatosFiltrados();
         private async void chkVencidos_CheckedChanged(object sender, EventArgs e)
         {
-            _paginaActual = 1; 
+            _paginaActual = 1;
             await CargarDatosFiltrados();
         }
         private async void chkProximosAVencer_CheckedChanged(object sender, EventArgs e)
@@ -321,6 +326,38 @@ namespace Cigral
             }
         }
 
-        
+        private void txtLote_TextChanged(object sender, EventArgs e)
+        {
+            timerBusqueda.Stop();
+            timerBusqueda.Start();
+        }
+
+        private void txtLote_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                e.SuppressKeyPress = true;
+                timerBusqueda.Stop();
+                _paginaActual = 1;
+                _ = CargarDatosFiltrados();
+            }
+        }
+
+        private void txtSerie_TextChanged(object sender, EventArgs e)
+        {
+            timerBusqueda.Stop();
+            timerBusqueda.Start();
+        }
+
+        private void txtSerie_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                e.SuppressKeyPress = true;
+                timerBusqueda.Stop();
+                _paginaActual = 1;
+                _ = CargarDatosFiltrados();
+            }
+        }
     }
 }

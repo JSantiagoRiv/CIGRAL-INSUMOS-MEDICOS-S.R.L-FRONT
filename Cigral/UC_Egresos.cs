@@ -309,7 +309,7 @@ namespace Cigral
                             return;
                         }
 
-                        var existenciasPosibles = await ApiServices.ObtenerExistencias(productoId: productoParseado.ProductoId, numeroSerie: productoParseado.NumeroSerie, codigoLote: productoParseado.Lote);
+                        var existenciasPosibles = await ApiServices.ObtenerExistencias(productoId: productoParseado.ProductoId, numeroSerie: productoParseado.NumeroSerie, lote: productoParseado.Lote);
                         if(existenciasPosibles == null)
                         {
                             MessageBox.Show("No se encontró stock disponible de este producto (con ese Lote/Serie) en el sistema.", "Sin Stock", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -865,7 +865,7 @@ namespace Cigral
                         buscar: txtBuscar.Text.Trim(),
                         ocultarCero: false,
                         soloVencidos: false,
-                        codigoLote: txtLote.Text.Trim(),     // <- Nuevo parámetro
+                        lote: txtLote.Text.Trim(),     // <- Nuevo parámetro
                         numeroSerie: txtSerie.Text.Trim()    // <- Nuevo parámetro
                     );
 

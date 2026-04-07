@@ -108,7 +108,7 @@ namespace Cigral
                
 
                 // Le pasamos el textoBuscado a la API
-                var respuesta = await ApiServices.ObtenerAuditoria(parametroTipo,loteBuscado, serieBuscada, textoBuscado, _paginaActual, _filasPorPagina);
+                var respuesta = await ApiServices.ObtenerAuditoria(parametroTipo,textoBuscado, loteBuscado, serieBuscada, _paginaActual, _filasPorPagina);
 
 
                 // Para que no se rompa al navegar

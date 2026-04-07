@@ -378,8 +378,7 @@ namespace Cigral.Services
             int pageNumber = 1,
             int diasParaVencer = 0,
             int? productoId = null,
-            string? codigoLote = null,
-            string? numeroSerie = null )
+            string lote = "", string numeroSerie = "")
         {
                 try
                 {
@@ -390,8 +389,16 @@ namespace Cigral.Services
                     if (ocultarCero) url += "&OcultarCero=true";
                     if (soloVencidos) url += "$&SoloConVencimiento=true";
                     if (diasParaVencer != 0) url += $"&DiasParaVencer={diasParaVencer}";
-                    if (!string.IsNullOrEmpty(numeroSerie)) url += $"&NumSerie={numeroSerie}";
-                    if (!string.IsNullOrEmpty(codigoLote)) url += $"&CodigoLote={codigoLote}";
+
+                    if (!string.IsNullOrWhiteSpace(lote))
+                    url += $"&CodigoLote={Uri.EscapeDataString(lote.Trim())}";
+
+                     if (!string.IsNullOrWhiteSpace(numeroSerie))
+                    url += $"&NumSerie={Uri.EscapeDataString(numeroSerie.Trim())}";
+
+
+                if (!string.IsNullOrEmpty(numeroSerie)) url += $"&NumSerie={numeroSerie}";
+                    if (!string.IsNullOrEmpty(lote)) url += $"&CodigoLote={lote}";
                     if (productoId != null) url += $"&ProductoId={productoId}";
 
                     var response = await _client.GetAsync(url);
