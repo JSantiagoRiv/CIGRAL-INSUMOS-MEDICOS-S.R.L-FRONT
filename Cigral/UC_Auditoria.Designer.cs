@@ -29,13 +29,12 @@
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
             panel1 = new Panel();
             labelTitulo = new Label();
             groupBox1 = new GroupBox();
             tableLayoutPanel1 = new TableLayoutPanel();
             txtBusquedaNombre = new TextBox();
-            btnExportar = new FontAwesome.Sharp.IconButton();
             label1 = new Label();
             lblBusquedaNombre = new Label();
             dtpDesde = new DateTimePicker();
@@ -63,6 +62,8 @@
             iconBtnBack = new FontAwesome.Sharp.IconButton();
             toolTip1 = new ToolTip(components);
             timerBusqueda = new System.Windows.Forms.Timer(components);
+            btnExportar = new FontAwesome.Sharp.IconButton();
+            chkDevolucion = new CheckBox();
             panel1.SuspendLayout();
             groupBox1.SuspendLayout();
             tableLayoutPanel1.SuspendLayout();
@@ -110,7 +111,7 @@
             // 
             // tableLayoutPanel1
             // 
-            tableLayoutPanel1.ColumnCount = 8;
+            tableLayoutPanel1.ColumnCount = 9;
             tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle());
             tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle());
             tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle());
@@ -118,15 +119,17 @@
             tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle());
             tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle());
             tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle());
-            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle());
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
             tableLayoutPanel1.Controls.Add(txtBusquedaNombre, 6, 0);
-            tableLayoutPanel1.Controls.Add(btnExportar, 7, 0);
+            tableLayoutPanel1.Controls.Add(chkDevolucion, 7, 0);
             tableLayoutPanel1.Controls.Add(label1, 0, 0);
             tableLayoutPanel1.Controls.Add(lblBusquedaNombre, 5, 0);
             tableLayoutPanel1.Controls.Add(dtpDesde, 1, 0);
             tableLayoutPanel1.Controls.Add(label3, 2, 0);
             tableLayoutPanel1.Controls.Add(dtpHasta, 3, 0);
             tableLayoutPanel1.Controls.Add(cmbMov, 4, 0);
+            tableLayoutPanel1.Controls.Add(btnExportar, 8, 0);
             tableLayoutPanel1.Dock = DockStyle.Fill;
             tableLayoutPanel1.Location = new Point(3, 24);
             tableLayoutPanel1.Name = "tableLayoutPanel1";
@@ -146,25 +149,6 @@
             txtBusquedaNombre.TabIndex = 15;
             txtBusquedaNombre.TextChanged += txtBusquedaNombre_TextChanged;
             txtBusquedaNombre.KeyDown += txtBusquedaNombre_KeyDown;
-            // 
-            // btnExportar
-            // 
-            btnExportar.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            btnExportar.BackColor = Color.Transparent;
-            btnExportar.Cursor = Cursors.Hand;
-            btnExportar.FlatAppearance.BorderSize = 0;
-            btnExportar.FlatStyle = FlatStyle.Flat;
-            btnExportar.IconChar = FontAwesome.Sharp.IconChar.Print;
-            btnExportar.IconColor = Color.Black;
-            btnExportar.IconFont = FontAwesome.Sharp.IconFont.Auto;
-            btnExportar.IconSize = 50;
-            btnExportar.Location = new Point(1629, 23);
-            btnExportar.Name = "btnExportar";
-            btnExportar.Size = new Size(58, 46);
-            btnExportar.TabIndex = 13;
-            toolTip1.SetToolTip(btnExportar, "Exportar e imprimir");
-            btnExportar.UseVisualStyleBackColor = false;
-            btnExportar.Click += btnExportar_Click;
             // 
             // label1
             // 
@@ -269,14 +253,14 @@
             dgvAuditoria.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dgvAuditoria.BackgroundColor = Color.White;
             dgvAuditoria.BorderStyle = BorderStyle.None;
-            dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle3.BackColor = Color.Indigo;
-            dataGridViewCellStyle3.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-            dataGridViewCellStyle3.ForeColor = Color.White;
-            dataGridViewCellStyle3.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle3.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle3.WrapMode = DataGridViewTriState.True;
-            dgvAuditoria.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = Color.Indigo;
+            dataGridViewCellStyle1.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            dataGridViewCellStyle1.ForeColor = Color.White;
+            dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
+            dgvAuditoria.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             dgvAuditoria.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dgvAuditoria.Columns.AddRange(new DataGridViewColumn[] { tipo, fechaMov, producto, deposito, lote, serie, cantidad, stockAnterior, stockPosterior, remitoIng, remitoEgr, usuario, detalle });
             dgvAuditoria.EnableHeadersVisualStyles = false;
@@ -402,6 +386,37 @@
             timerBusqueda.Interval = 200;
             timerBusqueda.Tick += timerBusqueda_Tick;
             // 
+            // btnExportar
+            // 
+            btnExportar.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            btnExportar.BackColor = Color.Transparent;
+            btnExportar.Cursor = Cursors.Hand;
+            btnExportar.FlatAppearance.BorderSize = 0;
+            btnExportar.FlatStyle = FlatStyle.Flat;
+            btnExportar.IconChar = FontAwesome.Sharp.IconChar.Print;
+            btnExportar.IconColor = Color.Black;
+            btnExportar.IconFont = FontAwesome.Sharp.IconFont.Auto;
+            btnExportar.IconSize = 50;
+            btnExportar.Location = new Point(1629, 23);
+            btnExportar.Name = "btnExportar";
+            btnExportar.Size = new Size(58, 46);
+            btnExportar.TabIndex = 13;
+            toolTip1.SetToolTip(btnExportar, "Exportar e imprimir");
+            btnExportar.UseVisualStyleBackColor = false;
+            btnExportar.Click += btnExportar_Click;
+            // 
+            // chkDevolucion
+            // 
+            chkDevolucion.Anchor = AnchorStyles.None;
+            chkDevolucion.AutoSize = true;
+            chkDevolucion.Font = new Font("Segoe UI", 12F);
+            chkDevolucion.Location = new Point(1161, 23);
+            chkDevolucion.Name = "chkDevolucion";
+            chkDevolucion.Size = new Size(122, 25);
+            chkDevolucion.TabIndex = 16;
+            chkDevolucion.Text = "Devoluciones";
+            chkDevolucion.UseVisualStyleBackColor = true;
+            // 
             // UC_Auditoria
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -435,7 +450,6 @@
         private DataGridView dgvAuditoria;
         private Panel panel3;
         private FontAwesome.Sharp.IconButton iconBtnBack;
-        private FontAwesome.Sharp.IconButton btnExportar;
         private ToolTip toolTip1;
         private DataGridViewTextBoxColumn tipo;
         private DataGridViewTextBoxColumn fechaMov;
@@ -460,5 +474,7 @@
         private TextBox txtBusquedaNombre;
         private System.Windows.Forms.Timer timerBusqueda;
         private TableLayoutPanel tableLayoutPanel1;
+        private CheckBox chkDevolucion;
+        private FontAwesome.Sharp.IconButton btnExportar;
     }
 }

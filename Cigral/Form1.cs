@@ -27,7 +27,7 @@ namespace Cigral
         {
             // Arranca la aplicación simulando un clic en el botón de Inicio 
             // para que cargue el Dashboard por defecto.
-            btnInicio.PerformClick();
+           
         }
 
         // --- NAVEGACIÓN Y RENDERIZADO DE PANTALLAS ---

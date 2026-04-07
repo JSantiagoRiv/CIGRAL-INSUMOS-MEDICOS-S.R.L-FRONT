@@ -365,9 +365,9 @@
             // 
             lstClientes.Font = new Font("Segoe UI", 12F);
             lstClientes.FormattingEnabled = true;
-            lstClientes.Location = new Point(287, -38);
+            lstClientes.Location = new Point(130, -36);
             lstClientes.Name = "lstClientes";
-            lstClientes.Size = new Size(179, 277);
+            lstClientes.Size = new Size(215, 277);
             lstClientes.TabIndex = 16;
             lstClientes.Visible = false;
             lstClientes.Click += lstClientes_Click;

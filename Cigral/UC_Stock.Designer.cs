@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            DataGridViewCellStyle dataGridViewCellStyle4 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
             panel1 = new Panel();
             labelTitulo = new Label();
             groupBox1 = new GroupBox();
@@ -166,7 +166,7 @@
             // 
             // chkVencidos
             // 
-            chkVencidos.Anchor = AnchorStyles.Left;
+            chkVencidos.Anchor = AnchorStyles.Right;
             chkVencidos.AutoSize = true;
             chkVencidos.Font = new Font("Segoe UI", 12F);
             chkVencidos.Location = new Point(3, 14);
@@ -313,14 +313,14 @@
             // 
             dgvStock.BackgroundColor = Color.White;
             dgvStock.BorderStyle = BorderStyle.None;
-            dataGridViewCellStyle4.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle4.BackColor = Color.SteelBlue;
-            dataGridViewCellStyle4.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-            dataGridViewCellStyle4.ForeColor = Color.White;
-            dataGridViewCellStyle4.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle4.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle4.WrapMode = DataGridViewTriState.True;
-            dgvStock.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle4;
+            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = Color.SteelBlue;
+            dataGridViewCellStyle1.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            dataGridViewCellStyle1.ForeColor = Color.White;
+            dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
+            dgvStock.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             dgvStock.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dgvStock.Columns.AddRange(new DataGridViewColumn[] { Id, CodProd, Producto, Lote, Serie, Cantidad, Vencimiento, Estado });
             dgvStock.Dock = DockStyle.Fill;

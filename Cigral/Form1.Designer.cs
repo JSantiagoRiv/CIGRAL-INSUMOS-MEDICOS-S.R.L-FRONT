@@ -33,7 +33,6 @@
             btnStock = new FontAwesome.Sharp.IconButton();
             btnAuditoria = new FontAwesome.Sharp.IconButton();
             btnEgresos = new FontAwesome.Sharp.IconButton();
-            btnInicio = new FontAwesome.Sharp.IconButton();
             label2 = new Label();
             btnHistorialRemitos = new FontAwesome.Sharp.IconButton();
             pictureBox2 = new PictureBox();
@@ -45,23 +44,26 @@
             label1 = new Label();
             panelHeader = new Panel();
             panelContainer = new Panel();
+            tableLayoutPanel1 = new TableLayoutPanel();
             ((System.ComponentModel.ISupportInitialize)pictureBox2).BeginInit();
             panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             panelHeader.SuspendLayout();
+            tableLayoutPanel1.SuspendLayout();
             SuspendLayout();
             // 
             // iconButtonIngreso
             // 
+            iconButtonIngreso.Anchor = AnchorStyles.Left;
             iconButtonIngreso.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             iconButtonIngreso.IconChar = FontAwesome.Sharp.IconChar.BoxOpen;
             iconButtonIngreso.IconColor = Color.Black;
             iconButtonIngreso.IconFont = FontAwesome.Sharp.IconFont.Auto;
             iconButtonIngreso.ImageAlign = ContentAlignment.MiddleLeft;
-            iconButtonIngreso.Location = new Point(0, 0);
+            iconButtonIngreso.Location = new Point(3, 2);
             iconButtonIngreso.Margin = new Padding(3, 2, 3, 2);
             iconButtonIngreso.Name = "iconButtonIngreso";
-            iconButtonIngreso.Size = new Size(207, 92);
+            iconButtonIngreso.Size = new Size(202, 90);
             iconButtonIngreso.TabIndex = 1;
             iconButtonIngreso.Text = "INGRESO DE PRODUCTOS (F1)";
             iconButtonIngreso.TextAlign = ContentAlignment.MiddleLeft;
@@ -71,15 +73,16 @@
             // 
             // btnStock
             // 
+            btnStock.Anchor = AnchorStyles.Left;
             btnStock.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             btnStock.IconChar = FontAwesome.Sharp.IconChar.BoxesStacked;
             btnStock.IconColor = Color.Black;
             btnStock.IconFont = FontAwesome.Sharp.IconFont.Auto;
             btnStock.ImageAlign = ContentAlignment.MiddleLeft;
-            btnStock.Location = new Point(0, 192);
+            btnStock.Location = new Point(3, 190);
             btnStock.Margin = new Padding(3, 2, 3, 2);
             btnStock.Name = "btnStock";
-            btnStock.Size = new Size(207, 92);
+            btnStock.Size = new Size(202, 90);
             btnStock.TabIndex = 3;
             btnStock.Text = "STOCK DISPONIBLE (F3)";
             btnStock.TextAlign = ContentAlignment.MiddleLeft;
@@ -89,15 +92,16 @@
             // 
             // btnAuditoria
             // 
+            btnAuditoria.Anchor = AnchorStyles.Left;
             btnAuditoria.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             btnAuditoria.IconChar = FontAwesome.Sharp.IconChar.Search;
             btnAuditoria.IconColor = Color.Black;
             btnAuditoria.IconFont = FontAwesome.Sharp.IconFont.Auto;
             btnAuditoria.ImageAlign = ContentAlignment.MiddleLeft;
-            btnAuditoria.Location = new Point(0, 288);
+            btnAuditoria.Location = new Point(3, 284);
             btnAuditoria.Margin = new Padding(3, 2, 3, 2);
             btnAuditoria.Name = "btnAuditoria";
-            btnAuditoria.Size = new Size(207, 92);
+            btnAuditoria.Size = new Size(202, 90);
             btnAuditoria.TabIndex = 4;
             btnAuditoria.Text = "AUDITORIA DE PRODUCTOS (F4)";
             btnAuditoria.TextAlign = ContentAlignment.MiddleLeft;
@@ -107,15 +111,16 @@
             // 
             // btnEgresos
             // 
+            btnEgresos.Anchor = AnchorStyles.Left;
             btnEgresos.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             btnEgresos.IconChar = FontAwesome.Sharp.IconChar.BoxesPacking;
             btnEgresos.IconColor = Color.Black;
             btnEgresos.IconFont = FontAwesome.Sharp.IconFont.Auto;
             btnEgresos.ImageAlign = ContentAlignment.MiddleLeft;
-            btnEgresos.Location = new Point(0, 96);
+            btnEgresos.Location = new Point(3, 96);
             btnEgresos.Margin = new Padding(3, 2, 3, 2);
             btnEgresos.Name = "btnEgresos";
-            btnEgresos.Size = new Size(207, 92);
+            btnEgresos.Size = new Size(202, 90);
             btnEgresos.TabIndex = 5;
             btnEgresos.Text = "EGRESO DE PRODUCTOS (F2)";
             btnEgresos.TextAlign = ContentAlignment.MiddleLeft;
@@ -123,30 +128,12 @@
             btnEgresos.UseVisualStyleBackColor = true;
             btnEgresos.Click += btnEgresos_Click;
             // 
-            // btnInicio
-            // 
-            btnInicio.Font = new Font("Segoe UI", 15F, FontStyle.Bold);
-            btnInicio.IconChar = FontAwesome.Sharp.IconChar.House;
-            btnInicio.IconColor = Color.Black;
-            btnInicio.IconFont = FontAwesome.Sharp.IconFont.Auto;
-            btnInicio.ImageAlign = ContentAlignment.MiddleLeft;
-            btnInicio.Location = new Point(1, 576);
-            btnInicio.Margin = new Padding(3, 2, 3, 2);
-            btnInicio.Name = "btnInicio";
-            btnInicio.Size = new Size(207, 92);
-            btnInicio.TabIndex = 6;
-            btnInicio.Text = "   INICIO";
-            btnInicio.TextAlign = ContentAlignment.MiddleLeft;
-            btnInicio.TextImageRelation = TextImageRelation.ImageBeforeText;
-            btnInicio.UseVisualStyleBackColor = true;
-            btnInicio.Click += btnInicio_Click;
-            // 
             // label2
             // 
-            label2.Anchor = AnchorStyles.Bottom;
+            label2.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             label2.AutoSize = true;
             label2.ForeColor = Color.White;
-            label2.Location = new Point(3, 920);
+            label2.Location = new Point(3, 929);
             label2.Name = "label2";
             label2.Size = new Size(72, 15);
             label2.TabIndex = 7;
@@ -154,15 +141,16 @@
             // 
             // btnHistorialRemitos
             // 
+            btnHistorialRemitos.Anchor = AnchorStyles.Left;
             btnHistorialRemitos.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             btnHistorialRemitos.IconChar = FontAwesome.Sharp.IconChar.Info;
             btnHistorialRemitos.IconColor = Color.Black;
             btnHistorialRemitos.IconFont = FontAwesome.Sharp.IconFont.Auto;
             btnHistorialRemitos.ImageAlign = ContentAlignment.MiddleLeft;
-            btnHistorialRemitos.Location = new Point(1, 384);
+            btnHistorialRemitos.Location = new Point(3, 378);
             btnHistorialRemitos.Margin = new Padding(3, 2, 3, 2);
             btnHistorialRemitos.Name = "btnHistorialRemitos";
-            btnHistorialRemitos.Size = new Size(207, 92);
+            btnHistorialRemitos.Size = new Size(202, 90);
             btnHistorialRemitos.TabIndex = 8;
             btnHistorialRemitos.Text = "HISTORIAL DE REMITOS (F5)";
             btnHistorialRemitos.TextAlign = ContentAlignment.MiddleLeft;
@@ -172,25 +160,27 @@
             // 
             // pictureBox2
             // 
+            pictureBox2.Anchor = AnchorStyles.Bottom;
             pictureBox2.Image = (Image)resources.GetObject("pictureBox2.Image");
-            pictureBox2.Location = new Point(3, 768);
+            pictureBox2.Location = new Point(3, 778);
             pictureBox2.Name = "pictureBox2";
-            pictureBox2.Size = new Size(202, 140);
+            pictureBox2.Size = new Size(202, 141);
             pictureBox2.SizeMode = PictureBoxSizeMode.StretchImage;
             pictureBox2.TabIndex = 9;
             pictureBox2.TabStop = false;
             // 
             // btnEntidades
             // 
+            btnEntidades.Anchor = AnchorStyles.Left;
             btnEntidades.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             btnEntidades.IconChar = FontAwesome.Sharp.IconChar.Users;
             btnEntidades.IconColor = Color.Black;
             btnEntidades.IconFont = FontAwesome.Sharp.IconFont.Auto;
             btnEntidades.ImageAlign = ContentAlignment.MiddleLeft;
-            btnEntidades.Location = new Point(1, 480);
+            btnEntidades.Location = new Point(3, 472);
             btnEntidades.Margin = new Padding(3, 2, 3, 2);
             btnEntidades.Name = "btnEntidades";
-            btnEntidades.Size = new Size(207, 92);
+            btnEntidades.Size = new Size(202, 90);
             btnEntidades.TabIndex = 10;
             btnEntidades.Text = "GESTION DE ENTIDADES (F6)";
             btnEntidades.TextAlign = ContentAlignment.MiddleLeft;
@@ -200,15 +190,16 @@
             // 
             // btnGestionProductos
             // 
+            btnGestionProductos.Anchor = AnchorStyles.Left;
             btnGestionProductos.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             btnGestionProductos.IconChar = FontAwesome.Sharp.IconChar.Info;
             btnGestionProductos.IconColor = Color.Black;
             btnGestionProductos.IconFont = FontAwesome.Sharp.IconFont.Auto;
             btnGestionProductos.ImageAlign = ContentAlignment.MiddleLeft;
-            btnGestionProductos.Location = new Point(1, 575);
+            btnGestionProductos.Location = new Point(3, 566);
             btnGestionProductos.Margin = new Padding(3, 2, 3, 2);
             btnGestionProductos.Name = "btnGestionProductos";
-            btnGestionProductos.Size = new Size(207, 92);
+            btnGestionProductos.Size = new Size(202, 90);
             btnGestionProductos.TabIndex = 11;
             btnGestionProductos.Text = "GESTION DE PRODUCTOS (F7)";
             btnGestionProductos.TextAlign = ContentAlignment.MiddleLeft;
@@ -218,15 +209,16 @@
             // 
             // iconButton1
             // 
+            iconButton1.Anchor = AnchorStyles.Left;
             iconButton1.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             iconButton1.IconChar = FontAwesome.Sharp.IconChar.House;
             iconButton1.IconColor = Color.Black;
             iconButton1.IconFont = FontAwesome.Sharp.IconFont.Auto;
             iconButton1.ImageAlign = ContentAlignment.MiddleLeft;
-            iconButton1.Location = new Point(0, 671);
+            iconButton1.Location = new Point(3, 660);
             iconButton1.Margin = new Padding(3, 2, 3, 2);
             iconButton1.Name = "iconButton1";
-            iconButton1.Size = new Size(207, 92);
+            iconButton1.Size = new Size(202, 90);
             iconButton1.TabIndex = 12;
             iconButton1.Text = "INICIO (F11)";
             iconButton1.TextAlign = ContentAlignment.MiddleLeft;
@@ -238,17 +230,7 @@
             // 
             panel1.AutoScroll = true;
             panel1.BackColor = Color.LightSlateGray;
-            panel1.Controls.Add(iconButton1);
-            panel1.Controls.Add(btnGestionProductos);
-            panel1.Controls.Add(btnEntidades);
-            panel1.Controls.Add(pictureBox2);
-            panel1.Controls.Add(btnHistorialRemitos);
-            panel1.Controls.Add(label2);
-            panel1.Controls.Add(btnInicio);
-            panel1.Controls.Add(btnEgresos);
-            panel1.Controls.Add(btnAuditoria);
-            panel1.Controls.Add(btnStock);
-            panel1.Controls.Add(iconButtonIngreso);
+            panel1.Controls.Add(tableLayoutPanel1);
             panel1.Dock = DockStyle.Left;
             panel1.Location = new Point(0, 97);
             panel1.Margin = new Padding(3, 2, 0, 2);
@@ -302,6 +284,38 @@
             panelContainer.Size = new Size(1696, 944);
             panelContainer.TabIndex = 3;
             // 
+            // tableLayoutPanel1
+            // 
+            tableLayoutPanel1.AutoScroll = true;
+            tableLayoutPanel1.ColumnCount = 1;
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            tableLayoutPanel1.Controls.Add(pictureBox2, 0, 8);
+            tableLayoutPanel1.Controls.Add(iconButton1, 0, 7);
+            tableLayoutPanel1.Controls.Add(label2, 0, 9);
+            tableLayoutPanel1.Controls.Add(btnGestionProductos, 0, 6);
+            tableLayoutPanel1.Controls.Add(btnEgresos, 0, 1);
+            tableLayoutPanel1.Controls.Add(btnEntidades, 0, 5);
+            tableLayoutPanel1.Controls.Add(iconButtonIngreso, 0, 0);
+            tableLayoutPanel1.Controls.Add(btnStock, 0, 2);
+            tableLayoutPanel1.Controls.Add(btnHistorialRemitos, 0, 4);
+            tableLayoutPanel1.Controls.Add(btnAuditoria, 0, 3);
+            tableLayoutPanel1.Dock = DockStyle.Fill;
+            tableLayoutPanel1.Location = new Point(0, 0);
+            tableLayoutPanel1.Name = "tableLayoutPanel1";
+            tableLayoutPanel1.RowCount = 10;
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 10.2040806F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 10.2040815F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 10.2040815F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 10.2040815F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 10.2040815F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 10.2040815F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 10.2040815F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 10.2040815F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 18.3673477F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle());
+            tableLayoutPanel1.Size = new Size(208, 944);
+            tableLayoutPanel1.TabIndex = 0;
+            // 
             // FormMain
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -321,9 +335,10 @@
             KeyDown += FormMain_KeyDown;
             ((System.ComponentModel.ISupportInitialize)pictureBox2).EndInit();
             panel1.ResumeLayout(false);
-            panel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
             panelHeader.ResumeLayout(false);
+            tableLayoutPanel1.ResumeLayout(false);
+            tableLayoutPanel1.PerformLayout();
             ResumeLayout(false);
         }
 
@@ -333,7 +348,6 @@
         private FontAwesome.Sharp.IconButton btnStock;
         private FontAwesome.Sharp.IconButton btnAuditoria;
         private FontAwesome.Sharp.IconButton btnEgresos;
-        private FontAwesome.Sharp.IconButton btnInicio;
         private Label label2;
         private FontAwesome.Sharp.IconButton btnHistorialRemitos;
         private PictureBox pictureBox2;
@@ -345,5 +359,6 @@
         private Label label1;
         private Panel panelHeader;
         private Panel panelContainer;
+        private TableLayoutPanel tableLayoutPanel1;
     }
 }

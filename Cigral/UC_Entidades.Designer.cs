@@ -193,15 +193,15 @@
             tableLayoutPanel3.Location = new Point(902, 103);
             tableLayoutPanel3.Name = "tableLayoutPanel3";
             tableLayoutPanel3.RowCount = 9;
-            tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 5.91338F));
-            tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 11.8267622F));
-            tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 11.8267622F));
-            tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 11.8267622F));
-            tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 11.8267622F));
-            tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 11.8267622F));
-            tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 17.7401428F));
-            tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Absolute, 40F));
-            tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 17.2126675F));
+            tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 5.91595554F));
+            tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 11.8319139F));
+            tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 11.8319139F));
+            tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 11.8319139F));
+            tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 11.8319139F));
+            tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 11.8319139F));
+            tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 17.74787F));
+            tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Absolute, 38F));
+            tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 17.1766129F));
             tableLayoutPanel3.Size = new Size(791, 838);
             tableLayoutPanel3.TabIndex = 34;
             // 
@@ -258,7 +258,7 @@
             label6.Name = "label6";
             label6.Size = new Size(134, 94);
             label6.TabIndex = 38;
-            label6.Text = "EMail:";
+            label6.Text = "E-Mail:";
             label6.TextAlign = ContentAlignment.TopCenter;
             // 
             // label4
@@ -333,7 +333,7 @@
             modificarButton.Location = new Point(250, 661);
             modificarButton.Margin = new Padding(250, 3, 110, 3);
             modificarButton.Name = "modificarButton";
-            modificarButton.Size = new Size(431, 34);
+            modificarButton.Size = new Size(431, 32);
             modificarButton.TabIndex = 48;
             modificarButton.Text = "EDITAR";
             modificarButton.UseVisualStyleBackColor = false;
