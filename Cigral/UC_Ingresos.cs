@@ -349,7 +349,8 @@ namespace Cigral
                         NumeroRemito = textRemito.Text,
                         ComprobanteAsociado = txtComprobante.Text.Trim(),
                         Observaciones = "Ingreso desde el sistema",
-                        Detalles = new List<RemitoDetalleRequest>()
+                        Detalles = new List<RemitoDetalleRequest>(),
+                        EsDevolucion = chkDevolucion.Checked,
                     };
 
                     foreach (DataGridViewRow fila in dgvIngreso.Rows)
@@ -413,7 +414,8 @@ namespace Cigral
                             NumSerie = fila.Cells["Serie"].Value?.ToString() ?? "",
                             CodigoLote = loteAEnviar,
                             FechaVencimiento = fechaVencimientoSegura,
-                            Cantidad = cantidadSegura
+                            Cantidad = cantidadSegura,
+                            esDevolucion = chkDevolucion.Checked
                         };
 
                         bool exito = await ApiServices.AumentarStock(requestExistencia);

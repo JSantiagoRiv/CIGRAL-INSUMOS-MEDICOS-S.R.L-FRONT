@@ -328,6 +328,13 @@ namespace Cigral
                 int tipoActual = cmbMov.SelectedValue != null ? (int)cmbMov.SelectedValue : 0;
                 await CargarGrillaAuditoria(tipoActual);
             }
+        private async void chkDevolucion_CheckedChanged(object sender, EventArgs e)
+        {
+            timerBusqueda.Stop();
+
+            _paginaActual = 1;
+            int tipoActual = cmbMov.SelectedValue != null ? (int)cmbMov.SelectedValue : 0;
+            await CargarGrillaAuditoria(tipoActual);
         }
     }
 }
