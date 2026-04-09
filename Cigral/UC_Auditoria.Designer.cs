@@ -34,8 +34,6 @@
             labelTitulo = new Label();
             groupBox1 = new GroupBox();
             tableLayoutPanel1 = new TableLayoutPanel();
-            txtBusquedaNombre = new TextBox();
-            chkDevolucion = new CheckBox();
             label1 = new Label();
             dtpDesde = new DateTimePicker();
             label3 = new Label();
@@ -49,7 +47,6 @@
             txtSerie = new TextBox();
             txtLote = new TextBox();
             chkDevolucion = new CheckBox();
-            btnExportar = new FontAwesome.Sharp.IconButton();
             lblPagina = new Label();
             btnSiguiente = new Button();
             btnAnterior = new Button();
@@ -149,31 +146,6 @@
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
             tableLayoutPanel1.Size = new Size(1690, 106);
             tableLayoutPanel1.TabIndex = 0;
-            // 
-            // txtBusquedaNombre
-            // 
-            txtBusquedaNombre.Anchor = AnchorStyles.Left;
-            txtBusquedaNombre.Font = new Font("Segoe UI", 12F);
-            txtBusquedaNombre.Location = new Point(768, 21);
-            txtBusquedaNombre.Name = "txtBusquedaNombre";
-            txtBusquedaNombre.PlaceholderText = "Ingrese Nombre del Producto";
-            txtBusquedaNombre.Size = new Size(295, 29);
-            txtBusquedaNombre.TabIndex = 15;
-            txtBusquedaNombre.TextChanged += txtBusquedaNombre_TextChanged;
-            txtBusquedaNombre.KeyDown += txtBusquedaNombre_KeyDown;
-            // 
-            // chkDevolucion
-            // 
-            chkDevolucion.Anchor = AnchorStyles.None;
-            chkDevolucion.AutoSize = true;
-            chkDevolucion.Font = new Font("Segoe UI", 12F);
-            chkDevolucion.Location = new Point(1161, 23);
-            chkDevolucion.Name = "chkDevolucion";
-            chkDevolucion.Size = new Size(122, 25);
-            chkDevolucion.TabIndex = 16;
-            chkDevolucion.Text = "Devoluciones";
-            chkDevolucion.UseVisualStyleBackColor = true;
-            chkDevolucion.CheckedChanged += chkDevolucion_CheckedChanged;
             // 
             // label1
             // 
@@ -327,24 +299,7 @@
             chkDevolucion.TabIndex = 16;
             chkDevolucion.Text = "Devoluciones";
             chkDevolucion.UseVisualStyleBackColor = true;
-            // btnExportar
-            // 
-            btnExportar.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            btnExportar.BackColor = Color.Transparent;
-            btnExportar.Cursor = Cursors.Hand;
-            btnExportar.FlatAppearance.BorderSize = 0;
-            btnExportar.FlatStyle = FlatStyle.Flat;
-            btnExportar.IconChar = FontAwesome.Sharp.IconChar.Print;
-            btnExportar.IconColor = Color.Black;
-            btnExportar.IconFont = FontAwesome.Sharp.IconFont.Auto;
-            btnExportar.IconSize = 50;
-            btnExportar.Location = new Point(1629, 23);
-            btnExportar.Name = "btnExportar";
-            btnExportar.Size = new Size(58, 46);
-            btnExportar.TabIndex = 13;
-            toolTip1.SetToolTip(btnExportar, "Exportar e imprimir");
-            btnExportar.UseVisualStyleBackColor = false;
-            btnExportar.Click += btnExportar_Click;
+            chkDevolucion.CheckedChanged += chkDevolucion_CheckedChanged;
             // 
             // lblPagina
             // 
@@ -399,7 +354,7 @@
             dgvAuditoria.Location = new Point(3, 192);
             dgvAuditoria.Name = "dgvAuditoria";
             dgvAuditoria.ReadOnly = true;
-            dgvAuditoria.Size = new Size(1696, 717);
+            dgvAuditoria.Size = new Size(1696, 688);
             dgvAuditoria.TabIndex = 8;
             dgvAuditoria.CellContentClick += dgvAuditoria_CellContentClick;
             // 
@@ -483,16 +438,17 @@
             // 
             // panel3
             // 
-            panel3.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             panel3.Controls.Add(lblPagina);
             panel3.Controls.Add(btnSiguiente);
             panel3.Controls.Add(iconBtnBack);
             panel3.Controls.Add(btnAnterior);
+            panel3.Dock = DockStyle.Bottom;
             panel3.Location = new Point(0, 876);
             panel3.Margin = new Padding(3, 2, 3, 2);
             panel3.Name = "panel3";
             panel3.Size = new Size(1696, 68);
             panel3.TabIndex = 10;
+            panel3.Paint += panel3_Paint;
             // 
             // iconBtnBack
             // 

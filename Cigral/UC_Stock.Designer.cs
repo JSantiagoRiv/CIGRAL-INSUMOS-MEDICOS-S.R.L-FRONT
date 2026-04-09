@@ -365,6 +365,7 @@
             // 
             // dgvStock
             // 
+            dgvStock.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             dgvStock.BackgroundColor = Color.White;
             dgvStock.BorderStyle = BorderStyle.None;
             dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
@@ -377,13 +378,12 @@
             dgvStock.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             dgvStock.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dgvStock.Columns.AddRange(new DataGridViewColumn[] { Id, CodProd, Producto, Lote, Serie, Cantidad, Vencimiento, Estado });
-            dgvStock.Dock = DockStyle.Fill;
             dgvStock.EnableHeadersVisualStyles = false;
             dgvStock.Location = new Point(0, 188);
             dgvStock.Margin = new Padding(3, 2, 3, 2);
             dgvStock.Name = "dgvStock";
             dgvStock.RowHeadersWidth = 51;
-            dgvStock.Size = new Size(1696, 756);
+            dgvStock.Size = new Size(1696, 684);
             dgvStock.TabIndex = 4;
             // 
             // Id

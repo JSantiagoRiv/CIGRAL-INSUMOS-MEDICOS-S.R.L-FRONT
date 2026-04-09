@@ -105,10 +105,10 @@ namespace Cigral
                 string textoBuscado = txtBusquedaNombre.Text.Trim();
                 string loteBuscado = txtLote.Text.Trim();
                 string serieBuscada = txtSerie.Text.Trim();
-               
+
 
                 // Le pasamos el textoBuscado a la API
-               var respuesta = await ApiServices.ObtenerAuditoria(parametroTipo, textoBuscado, loteBuscado, serieBuscada, chkDevolucion.Checked, _paginaActual, _filasPorPagina);
+                var respuesta = await ApiServices.ObtenerAuditoria(parametroTipo, textoBuscado, loteBuscado, serieBuscada, chkDevolucion.Checked, _paginaActual, _filasPorPagina);
 
 
                 // Para que no se rompa al navegar
@@ -336,6 +336,11 @@ namespace Cigral
             _paginaActual = 1;
             int tipoActual = cmbMov.SelectedValue != null ? (int)cmbMov.SelectedValue : 0;
             await CargarGrillaAuditoria(tipoActual);
+        }
+
+        private void panel3_Paint(object sender, PaintEventArgs e)
+        {
+
         }
     }
 }

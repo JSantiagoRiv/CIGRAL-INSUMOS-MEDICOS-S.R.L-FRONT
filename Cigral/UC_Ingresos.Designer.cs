@@ -380,6 +380,7 @@
             // 
             // dgvIngreso
             // 
+            dgvIngreso.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             dgvIngreso.BackgroundColor = Color.White;
             dgvIngreso.BorderStyle = BorderStyle.None;
             dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
@@ -392,7 +393,6 @@
             dgvIngreso.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             dgvIngreso.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dgvIngreso.Columns.AddRange(new DataGridViewColumn[] { id, Producto, Lote, Vencimiento, Serie, Cantidad, InfoAdicional, colEliminar });
-            dgvIngreso.Dock = DockStyle.Fill;
             dgvIngreso.EnableHeadersVisualStyles = false;
             dgvIngreso.Location = new Point(0, 293);
             dgvIngreso.Margin = new Padding(3, 2, 3, 2);

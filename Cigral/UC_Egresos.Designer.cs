@@ -450,7 +450,6 @@
             dgvEgreso.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             dgvEgreso.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dgvEgreso.Columns.AddRange(new DataGridViewColumn[] { Id, Producto, Lote, Vencimiento, Serie, Cantidad, ColInfo, ColAcciones });
-            dgvEgreso.Dock = DockStyle.Fill;
             dgvEgreso.EnableHeadersVisualStyles = false;
             dgvEgreso.Location = new Point(0, 293);
             dgvEgreso.Margin = new Padding(3, 2, 3, 2);
