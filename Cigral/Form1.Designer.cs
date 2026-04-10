@@ -66,7 +66,7 @@
             btnStock.Location = new Point(3, 168);
             btnStock.Margin = new Padding(3, 2, 3, 2);
             btnStock.Name = "btnStock";
-            btnStock.Size = new Size(188, 79);
+            btnStock.Size = new Size(196, 79);
             btnStock.TabIndex = 3;
             btnStock.Text = "STOCK DISPONIBLE (F3)";
             btnStock.TextAlign = ContentAlignment.MiddleLeft;
@@ -85,7 +85,7 @@
             btnAuditoria.Location = new Point(3, 251);
             btnAuditoria.Margin = new Padding(3, 2, 3, 2);
             btnAuditoria.Name = "btnAuditoria";
-            btnAuditoria.Size = new Size(188, 79);
+            btnAuditoria.Size = new Size(196, 79);
             btnAuditoria.TabIndex = 4;
             btnAuditoria.Text = "AUDITORIA DE PRODUCTOS (F4)";
             btnAuditoria.TextAlign = ContentAlignment.MiddleLeft;
@@ -104,7 +104,7 @@
             btnEgresos.Location = new Point(3, 85);
             btnEgresos.Margin = new Padding(3, 2, 3, 2);
             btnEgresos.Name = "btnEgresos";
-            btnEgresos.Size = new Size(188, 79);
+            btnEgresos.Size = new Size(196, 79);
             btnEgresos.TabIndex = 5;
             btnEgresos.Text = "EGRESO DE PRODUCTOS (F2)";
             btnEgresos.TextAlign = ContentAlignment.MiddleLeft;
@@ -135,7 +135,7 @@
             btnHistorialRemitos.Location = new Point(3, 334);
             btnHistorialRemitos.Margin = new Padding(3, 2, 3, 2);
             btnHistorialRemitos.Name = "btnHistorialRemitos";
-            btnHistorialRemitos.Size = new Size(188, 79);
+            btnHistorialRemitos.Size = new Size(196, 79);
             btnHistorialRemitos.TabIndex = 8;
             btnHistorialRemitos.Text = "HISTORIAL DE REMITOS (F5)";
             btnHistorialRemitos.TextAlign = ContentAlignment.MiddleLeft;
@@ -165,7 +165,7 @@
             btnEntidades.Location = new Point(3, 417);
             btnEntidades.Margin = new Padding(3, 2, 3, 2);
             btnEntidades.Name = "btnEntidades";
-            btnEntidades.Size = new Size(188, 79);
+            btnEntidades.Size = new Size(196, 79);
             btnEntidades.TabIndex = 10;
             btnEntidades.Text = "GESTION DE ENTIDADES (F6)";
             btnEntidades.TextAlign = ContentAlignment.MiddleLeft;
@@ -184,7 +184,7 @@
             btnGestionProductos.Location = new Point(3, 500);
             btnGestionProductos.Margin = new Padding(3, 2, 3, 2);
             btnGestionProductos.Name = "btnGestionProductos";
-            btnGestionProductos.Size = new Size(188, 79);
+            btnGestionProductos.Size = new Size(196, 79);
             btnGestionProductos.TabIndex = 11;
             btnGestionProductos.Text = "GESTION DE PRODUCTOS (F7)";
             btnGestionProductos.TextAlign = ContentAlignment.MiddleLeft;
@@ -203,7 +203,7 @@
             iconButton1.Location = new Point(3, 666);
             iconButton1.Margin = new Padding(3, 2, 3, 2);
             iconButton1.Name = "iconButton1";
-            iconButton1.Size = new Size(188, 87);
+            iconButton1.Size = new Size(196, 87);
             iconButton1.TabIndex = 12;
             iconButton1.Text = "INICIO (F11)";
             iconButton1.TextAlign = ContentAlignment.MiddleLeft;
@@ -268,7 +268,7 @@
             iconButtonIngreso.Location = new Point(3, 2);
             iconButtonIngreso.Margin = new Padding(3, 2, 3, 2);
             iconButtonIngreso.Name = "iconButtonIngreso";
-            iconButtonIngreso.Size = new Size(188, 79);
+            iconButtonIngreso.Size = new Size(196, 79);
             iconButtonIngreso.TabIndex = 1;
             iconButtonIngreso.Text = "INGRESO DE PRODUCTOS (F1)";
             iconButtonIngreso.TextAlign = ContentAlignment.MiddleLeft;
@@ -331,7 +331,7 @@
             btnConsignacion.Location = new Point(3, 583);
             btnConsignacion.Margin = new Padding(3, 2, 3, 2);
             btnConsignacion.Name = "btnConsignacion";
-            btnConsignacion.Size = new Size(188, 79);
+            btnConsignacion.Size = new Size(196, 79);
             btnConsignacion.TabIndex = 13;
             btnConsignacion.Text = "PRODUCTOS EN CONSIGNACION (F8)";
             btnConsignacion.TextAlign = ContentAlignment.MiddleLeft;

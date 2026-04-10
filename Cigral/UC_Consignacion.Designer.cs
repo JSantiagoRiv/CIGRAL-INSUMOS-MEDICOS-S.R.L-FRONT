@@ -33,12 +33,6 @@
             groupBox1 = new GroupBox();
             tableLayoutPanel1 = new TableLayoutPanel();
             label3 = new Label();
-            rbIngresos = new RadioButton();
-            rbEgresos = new RadioButton();
-            label1 = new Label();
-            dtpHasta = new DateTimePicker();
-            dtpDesde = new DateTimePicker();
-            label2 = new Label();
             txtNroRemito = new TextBox();
             panel3 = new Panel();
             lblPagina = new Label();
@@ -46,6 +40,8 @@
             btnAnterior = new Button();
             iconBtnBack = new FontAwesome.Sharp.IconButton();
             dataGridView1 = new DataGridView();
+            label1 = new Label();
+            textBox1 = new TextBox();
             panel1.SuspendLayout();
             groupBox1.SuspendLayout();
             tableLayoutPanel1.SuspendLayout();
@@ -98,18 +94,14 @@
             tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle());
             tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle());
             tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle());
-            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle());
-            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle());
-            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle());
-            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle());
-            tableLayoutPanel1.Controls.Add(label3, 6, 0);
-            tableLayoutPanel1.Controls.Add(rbIngresos, 0, 0);
-            tableLayoutPanel1.Controls.Add(rbEgresos, 1, 0);
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
+            tableLayoutPanel1.Controls.Add(label3, 0, 0);
+            tableLayoutPanel1.Controls.Add(txtNroRemito, 1, 0);
             tableLayoutPanel1.Controls.Add(label1, 2, 0);
-            tableLayoutPanel1.Controls.Add(dtpHasta, 5, 0);
-            tableLayoutPanel1.Controls.Add(dtpDesde, 3, 0);
-            tableLayoutPanel1.Controls.Add(label2, 4, 0);
-            tableLayoutPanel1.Controls.Add(txtNroRemito, 7, 0);
+            tableLayoutPanel1.Controls.Add(textBox1, 3, 0);
             tableLayoutPanel1.Dock = DockStyle.Fill;
             tableLayoutPanel1.Location = new Point(3, 24);
             tableLayoutPanel1.Name = "tableLayoutPanel1";
@@ -123,88 +115,20 @@
             label3.Anchor = AnchorStyles.Right;
             label3.AutoSize = true;
             label3.Font = new Font("Segoe UI", 12F);
-            label3.Location = new Point(598, 25);
+            label3.Location = new Point(3, 25);
             label3.Name = "label3";
-            label3.Size = new Size(118, 21);
+            label3.Size = new Size(126, 21);
             label3.TabIndex = 7;
-            label3.Text = "Nro. de Remito:";
-            // 
-            // rbIngresos
-            // 
-            rbIngresos.Anchor = AnchorStyles.None;
-            rbIngresos.AutoSize = true;
-            rbIngresos.Checked = true;
-            rbIngresos.Font = new Font("Segoe UI", 12F);
-            rbIngresos.Location = new Point(3, 23);
-            rbIngresos.Name = "rbIngresos";
-            rbIngresos.Size = new Size(87, 25);
-            rbIngresos.TabIndex = 0;
-            rbIngresos.TabStop = true;
-            rbIngresos.Text = "Ingresos";
-            rbIngresos.UseVisualStyleBackColor = true;
-            // 
-            // rbEgresos
-            // 
-            rbEgresos.Anchor = AnchorStyles.None;
-            rbEgresos.AutoSize = true;
-            rbEgresos.Font = new Font("Segoe UI", 12F);
-            rbEgresos.Location = new Point(96, 23);
-            rbEgresos.Name = "rbEgresos";
-            rbEgresos.Size = new Size(82, 25);
-            rbEgresos.TabIndex = 1;
-            rbEgresos.Text = "Egresos";
-            rbEgresos.UseVisualStyleBackColor = true;
-            // 
-            // label1
-            // 
-            label1.Anchor = AnchorStyles.Right;
-            label1.AutoSize = true;
-            label1.Font = new Font("Segoe UI", 12F);
-            label1.Location = new Point(184, 25);
-            label1.Name = "label1";
-            label1.Size = new Size(56, 21);
-            label1.TabIndex = 3;
-            label1.Text = "Desde:";
-            // 
-            // dtpHasta
-            // 
-            dtpHasta.Anchor = AnchorStyles.Left;
-            dtpHasta.Font = new Font("Segoe UI", 12F);
-            dtpHasta.Format = DateTimePickerFormat.Short;
-            dtpHasta.Location = new Point(451, 21);
-            dtpHasta.Name = "dtpHasta";
-            dtpHasta.Size = new Size(141, 29);
-            dtpHasta.TabIndex = 5;
-            // 
-            // dtpDesde
-            // 
-            dtpDesde.Anchor = AnchorStyles.Left;
-            dtpDesde.Font = new Font("Segoe UI", 12F);
-            dtpDesde.Format = DateTimePickerFormat.Short;
-            dtpDesde.Location = new Point(246, 21);
-            dtpDesde.Name = "dtpDesde";
-            dtpDesde.Size = new Size(141, 29);
-            dtpDesde.TabIndex = 2;
-            // 
-            // label2
-            // 
-            label2.Anchor = AnchorStyles.Right;
-            label2.AutoSize = true;
-            label2.Font = new Font("Segoe UI", 12F);
-            label2.Location = new Point(393, 25);
-            label2.Name = "label2";
-            label2.Size = new Size(52, 21);
-            label2.TabIndex = 4;
-            label2.Text = "Hasta:";
+            label3.Text = "Buscar Producto:";
             // 
             // txtNroRemito
             // 
             txtNroRemito.Anchor = AnchorStyles.Left;
             txtNroRemito.Font = new Font("Segoe UI", 12F);
-            txtNroRemito.Location = new Point(722, 21);
+            txtNroRemito.Location = new Point(135, 21);
             txtNroRemito.Name = "txtNroRemito";
-            txtNroRemito.PlaceholderText = "Ingrese Nro. de Remito";
-            txtNroRemito.Size = new Size(170, 29);
+            txtNroRemito.PlaceholderText = "Ingrese Nombre del Producto...";
+            txtNroRemito.Size = new Size(226, 29);
             txtNroRemito.TabIndex = 6;
             // 
             // panel3
@@ -278,7 +202,28 @@
             dataGridView1.Size = new Size(1696, 722);
             dataGridView1.TabIndex = 11;
             // 
-            // Consignacion
+            // label1
+            // 
+            label1.Anchor = AnchorStyles.Right;
+            label1.AutoSize = true;
+            label1.Font = new Font("Segoe UI", 12F);
+            label1.Location = new Point(367, 25);
+            label1.Name = "label1";
+            label1.Size = new Size(115, 21);
+            label1.TabIndex = 8;
+            label1.Text = "Buscar Entidad:";
+            // 
+            // textBox1
+            // 
+            textBox1.Anchor = AnchorStyles.Left;
+            textBox1.Font = new Font("Segoe UI", 12F);
+            textBox1.Location = new Point(488, 21);
+            textBox1.Name = "textBox1";
+            textBox1.PlaceholderText = "Ingrese Nombre de la Entidad..";
+            textBox1.Size = new Size(226, 29);
+            textBox1.TabIndex = 9;
+            // 
+            // UC_Consignacion
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
@@ -286,7 +231,7 @@
             Controls.Add(panel3);
             Controls.Add(groupBox1);
             Controls.Add(panel1);
-            Name = "Consignacion";
+            Name = "UC_Consignacion";
             Size = new Size(1696, 944);
             panel1.ResumeLayout(false);
             groupBox1.ResumeLayout(false);
@@ -304,12 +249,6 @@
         private GroupBox groupBox1;
         private TableLayoutPanel tableLayoutPanel1;
         private Label label3;
-        private RadioButton rbIngresos;
-        private RadioButton rbEgresos;
-        private Label label1;
-        private DateTimePicker dtpHasta;
-        private DateTimePicker dtpDesde;
-        private Label label2;
         private TextBox txtNroRemito;
         private Panel panel3;
         private Label lblPagina;
@@ -317,5 +256,7 @@
         private Button btnAnterior;
         private FontAwesome.Sharp.IconButton iconBtnBack;
         private DataGridView dataGridView1;
+        private Label label1;
+        private TextBox textBox1;
     }
 }
