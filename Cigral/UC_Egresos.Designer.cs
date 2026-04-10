@@ -438,6 +438,7 @@
             // 
             // dgvEgreso
             // 
+            dgvEgreso.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             dgvEgreso.BackgroundColor = Color.White;
             dgvEgreso.BorderStyle = BorderStyle.None;
             dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;

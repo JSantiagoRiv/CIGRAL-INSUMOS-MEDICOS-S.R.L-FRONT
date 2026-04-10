@@ -394,10 +394,11 @@
             dgvIngreso.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dgvIngreso.Columns.AddRange(new DataGridViewColumn[] { id, Producto, Lote, Vencimiento, Serie, Cantidad, InfoAdicional, colEliminar });
             dgvIngreso.EnableHeadersVisualStyles = false;
-            dgvIngreso.Location = new Point(0, 293);
+            dgvIngreso.Location = new Point(0, 295);
             dgvIngreso.Margin = new Padding(3, 2, 3, 2);
             dgvIngreso.MaximumSize = new Size(1696, 550);
             dgvIngreso.Name = "dgvIngreso";
+            dgvIngreso.RowHeadersVisible = false;
             dgvIngreso.RowHeadersWidth = 51;
             dgvIngreso.Size = new Size(1696, 550);
             dgvIngreso.TabIndex = 3;

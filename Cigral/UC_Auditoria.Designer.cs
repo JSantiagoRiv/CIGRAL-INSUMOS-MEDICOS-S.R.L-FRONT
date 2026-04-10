@@ -354,7 +354,8 @@
             dgvAuditoria.Location = new Point(3, 192);
             dgvAuditoria.Name = "dgvAuditoria";
             dgvAuditoria.ReadOnly = true;
-            dgvAuditoria.Size = new Size(1696, 688);
+            dgvAuditoria.RowHeadersVisible = false;
+            dgvAuditoria.Size = new Size(1696, 679);
             dgvAuditoria.TabIndex = 8;
             dgvAuditoria.CellContentClick += dgvAuditoria_CellContentClick;
             // 

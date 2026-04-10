@@ -382,6 +382,7 @@
             dgvStock.Location = new Point(0, 188);
             dgvStock.Margin = new Padding(3, 2, 3, 2);
             dgvStock.Name = "dgvStock";
+            dgvStock.RowHeadersVisible = false;
             dgvStock.RowHeadersWidth = 51;
             dgvStock.Size = new Size(1696, 684);
             dgvStock.TabIndex = 4;
