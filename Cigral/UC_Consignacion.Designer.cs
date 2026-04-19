@@ -28,25 +28,34 @@
         /// </summary>
         private void InitializeComponent()
         {
+            components = new System.ComponentModel.Container();
             panel1 = new Panel();
             labelTitulo = new Label();
             groupBox1 = new GroupBox();
             tableLayoutPanel1 = new TableLayoutPanel();
             label3 = new Label();
-            txtNroRemito = new TextBox();
+            label1 = new Label();
+            label2 = new Label();
+            label4 = new Label();
+            txtSerie = new TextBox();
+            txtLote = new TextBox();
+            txtEntidad = new TextBox();
+            txtNombre = new TextBox();
             panel3 = new Panel();
+            label5 = new Label();
+            button1 = new Button();
+            button2 = new Button();
             lblPagina = new Label();
             btnSiguiente = new Button();
             btnAnterior = new Button();
             iconBtnBack = new FontAwesome.Sharp.IconButton();
-            dataGridView1 = new DataGridView();
-            label1 = new Label();
-            textBox1 = new TextBox();
+            dgvConsignaciones = new DataGridView();
+            timerBusqueda = new System.Windows.Forms.Timer(components);
             panel1.SuspendLayout();
             groupBox1.SuspendLayout();
             tableLayoutPanel1.SuspendLayout();
             panel3.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)dgvConsignaciones).BeginInit();
             SuspendLayout();
             // 
             // panel1
@@ -70,7 +79,7 @@
             labelTitulo.Name = "labelTitulo";
             labelTitulo.Size = new Size(390, 31);
             labelTitulo.TabIndex = 0;
-            labelTitulo.Text = "PRODUCTOS EN CONSIGNACION";
+            labelTitulo.Text = "BANCO DE STENT";
             labelTitulo.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // groupBox1
@@ -94,15 +103,19 @@
             tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle());
             tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle());
             tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle());
-            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
-            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
-            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
-            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle());
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle());
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle());
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle());
             tableLayoutPanel1.Controls.Add(label3, 0, 0);
-            tableLayoutPanel1.Controls.Add(txtNroRemito, 1, 0);
             tableLayoutPanel1.Controls.Add(label1, 2, 0);
-            tableLayoutPanel1.Controls.Add(textBox1, 3, 0);
-            tableLayoutPanel1.Dock = DockStyle.Fill;
+            tableLayoutPanel1.Controls.Add(label2, 4, 0);
+            tableLayoutPanel1.Controls.Add(label4, 6, 0);
+            tableLayoutPanel1.Controls.Add(txtSerie, 7, 0);
+            tableLayoutPanel1.Controls.Add(txtLote, 5, 0);
+            tableLayoutPanel1.Controls.Add(txtEntidad, 3, 0);
+            tableLayoutPanel1.Controls.Add(txtNombre, 1, 0);
+            tableLayoutPanel1.Font = new Font("Segoe UI", 12F);
             tableLayoutPanel1.Location = new Point(3, 24);
             tableLayoutPanel1.Name = "tableLayoutPanel1";
             tableLayoutPanel1.RowCount = 1;
@@ -121,18 +134,90 @@
             label3.TabIndex = 7;
             label3.Text = "Buscar Producto:";
             // 
-            // txtNroRemito
+            // label1
             // 
-            txtNroRemito.Anchor = AnchorStyles.Left;
-            txtNroRemito.Font = new Font("Segoe UI", 12F);
-            txtNroRemito.Location = new Point(135, 21);
-            txtNroRemito.Name = "txtNroRemito";
-            txtNroRemito.PlaceholderText = "Ingrese Nombre del Producto...";
-            txtNroRemito.Size = new Size(226, 29);
-            txtNroRemito.TabIndex = 6;
+            label1.Anchor = AnchorStyles.Right;
+            label1.AutoSize = true;
+            label1.Font = new Font("Segoe UI", 12F);
+            label1.Location = new Point(331, 25);
+            label1.Name = "label1";
+            label1.Size = new Size(115, 21);
+            label1.TabIndex = 8;
+            label1.Text = "Buscar Entidad:";
+            // 
+            // label2
+            // 
+            label2.Anchor = AnchorStyles.Right;
+            label2.AutoSize = true;
+            label2.Font = new Font("Segoe UI", 12F);
+            label2.Location = new Point(648, 25);
+            label2.Name = "label2";
+            label2.Size = new Size(93, 21);
+            label2.TabIndex = 10;
+            label2.Text = "Buscar Lote:";
+            // 
+            // label4
+            // 
+            label4.Anchor = AnchorStyles.Right;
+            label4.AutoSize = true;
+            label4.Font = new Font("Segoe UI", 12F);
+            label4.Location = new Point(943, 25);
+            label4.Name = "label4";
+            label4.Size = new Size(98, 21);
+            label4.TabIndex = 12;
+            label4.Text = "Buscar Serie:";
+            // 
+            // txtSerie
+            // 
+            txtSerie.Anchor = AnchorStyles.Left;
+            txtSerie.Font = new Font("Segoe UI", 12F);
+            txtSerie.Location = new Point(1047, 21);
+            txtSerie.Name = "txtSerie";
+            txtSerie.PlaceholderText = "Ingrese Número de Serie...";
+            txtSerie.Size = new Size(190, 29);
+            txtSerie.TabIndex = 13;
+            txtSerie.TextChanged += txtSerie_TextChanged;
+            txtSerie.KeyDown += txtSerie_KeyDown;
+            // 
+            // txtLote
+            // 
+            txtLote.Anchor = AnchorStyles.Left;
+            txtLote.Font = new Font("Segoe UI", 12F);
+            txtLote.Location = new Point(747, 21);
+            txtLote.Name = "txtLote";
+            txtLote.PlaceholderText = "Ingrese Número de Lote...";
+            txtLote.Size = new Size(190, 29);
+            txtLote.TabIndex = 16;
+            txtLote.TextChanged += txtLote_TextChanged;
+            txtLote.KeyDown += txtLote_KeyDown;
+            // 
+            // txtEntidad
+            // 
+            txtEntidad.Anchor = AnchorStyles.Left;
+            txtEntidad.Location = new Point(452, 21);
+            txtEntidad.Name = "txtEntidad";
+            txtEntidad.PlaceholderText = "Ingrese Nombre de Entidad";
+            txtEntidad.Size = new Size(190, 29);
+            txtEntidad.TabIndex = 17;
+            txtEntidad.TextChanged += txtEntidad_TextChanged;
+            txtEntidad.KeyDown += txtEntidad_KeyDown;
+            // 
+            // txtNombre
+            // 
+            txtNombre.Anchor = AnchorStyles.Left;
+            txtNombre.Location = new Point(135, 21);
+            txtNombre.Name = "txtNombre";
+            txtNombre.PlaceholderText = "Ingrese Nombre del Producto";
+            txtNombre.Size = new Size(190, 29);
+            txtNombre.TabIndex = 18;
+            txtNombre.TextChanged += txtNombre_TextChanged;
+            txtNombre.KeyDown += txtNombre_KeyDown;
             // 
             // panel3
             // 
+            panel3.Controls.Add(label5);
+            panel3.Controls.Add(button1);
+            panel3.Controls.Add(button2);
             panel3.Controls.Add(lblPagina);
             panel3.Controls.Add(btnSiguiente);
             panel3.Controls.Add(btnAnterior);
@@ -143,6 +228,37 @@
             panel3.Name = "panel3";
             panel3.Size = new Size(1696, 68);
             panel3.TabIndex = 10;
+            // 
+            // label5
+            // 
+            label5.Anchor = AnchorStyles.Right;
+            label5.Font = new Font("Segoe UI", 12F);
+            label5.Location = new Point(1510, 12);
+            label5.Name = "label5";
+            label5.Size = new Size(119, 21);
+            label5.TabIndex = 26;
+            label5.Text = "Página 1/1";
+            label5.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // button1
+            // 
+            button1.Anchor = AnchorStyles.Right;
+            button1.Location = new Point(1635, 10);
+            button1.Name = "button1";
+            button1.Size = new Size(29, 29);
+            button1.TabIndex = 25;
+            button1.Text = ">";
+            button1.UseVisualStyleBackColor = true;
+            // 
+            // button2
+            // 
+            button2.Anchor = AnchorStyles.Right;
+            button2.Location = new Point(1475, 10);
+            button2.Name = "button2";
+            button2.Size = new Size(29, 29);
+            button2.TabIndex = 24;
+            button2.Text = "<";
+            button2.UseVisualStyleBackColor = true;
             // 
             // lblPagina
             // 
@@ -192,42 +308,26 @@
             iconBtnBack.TabIndex = 2;
             iconBtnBack.UseVisualStyleBackColor = false;
             // 
-            // dataGridView1
+            // dgvConsignaciones
             // 
-            dataGridView1.BackgroundColor = Color.White;
-            dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridView1.Dock = DockStyle.Fill;
-            dataGridView1.Location = new Point(0, 154);
-            dataGridView1.Name = "dataGridView1";
-            dataGridView1.Size = new Size(1696, 722);
-            dataGridView1.TabIndex = 11;
+            dgvConsignaciones.BackgroundColor = Color.White;
+            dgvConsignaciones.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgvConsignaciones.Dock = DockStyle.Fill;
+            dgvConsignaciones.Location = new Point(0, 154);
+            dgvConsignaciones.Name = "dgvConsignaciones";
+            dgvConsignaciones.Size = new Size(1696, 722);
+            dgvConsignaciones.TabIndex = 11;
             // 
-            // label1
+            // timerBusqueda
             // 
-            label1.Anchor = AnchorStyles.Right;
-            label1.AutoSize = true;
-            label1.Font = new Font("Segoe UI", 12F);
-            label1.Location = new Point(367, 25);
-            label1.Name = "label1";
-            label1.Size = new Size(115, 21);
-            label1.TabIndex = 8;
-            label1.Text = "Buscar Entidad:";
-            // 
-            // textBox1
-            // 
-            textBox1.Anchor = AnchorStyles.Left;
-            textBox1.Font = new Font("Segoe UI", 12F);
-            textBox1.Location = new Point(488, 21);
-            textBox1.Name = "textBox1";
-            textBox1.PlaceholderText = "Ingrese Nombre de la Entidad..";
-            textBox1.Size = new Size(226, 29);
-            textBox1.TabIndex = 9;
+            timerBusqueda.Interval = 300;
+            timerBusqueda.Tick += timerBusqueda_Tick;
             // 
             // UC_Consignacion
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            Controls.Add(dataGridView1);
+            Controls.Add(dgvConsignaciones);
             Controls.Add(panel3);
             Controls.Add(groupBox1);
             Controls.Add(panel1);
@@ -238,7 +338,7 @@
             tableLayoutPanel1.ResumeLayout(false);
             tableLayoutPanel1.PerformLayout();
             panel3.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
+            ((System.ComponentModel.ISupportInitialize)dgvConsignaciones).EndInit();
             ResumeLayout(false);
         }
 
@@ -255,8 +355,21 @@
         private Button btnSiguiente;
         private Button btnAnterior;
         private FontAwesome.Sharp.IconButton iconBtnBack;
-        private DataGridView dataGridView1;
+        private DataGridView dgvConsignaciones;
         private Label label1;
         private TextBox textBox1;
+        private Label label2;
+        private TextBox textBox2;
+        private Label label4;
+        private TextBox txtSerie;
+        private TextBox textBox3;
+        private TextBox textBox4;
+        private TextBox txtLote;
+        private TextBox txtEntidad;
+        private TextBox txtNombre;
+        private Label label5;
+        private Button button1;
+        private Button button2;
+        private System.Windows.Forms.Timer timerBusqueda;
     }
 }

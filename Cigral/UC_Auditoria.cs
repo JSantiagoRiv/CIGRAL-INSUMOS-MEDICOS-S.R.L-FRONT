@@ -294,13 +294,13 @@ namespace Cigral
 
         }
 
-        private void txtLote_TextChanged(object sender, EventArgs e)
+        private async void txtLote_TextChanged(object sender, EventArgs e)
         {
             timerBusqueda.Stop();
             timerBusqueda.Start();
         }
 
-        private void txtSerie_TextChanged(object sender, EventArgs e)
+        private async void txtSerie_TextChanged(object sender, EventArgs e)
         {
             timerBusqueda.Stop();
             timerBusqueda.Start();

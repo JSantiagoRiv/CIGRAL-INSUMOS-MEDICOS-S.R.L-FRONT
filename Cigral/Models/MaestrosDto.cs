@@ -252,4 +252,16 @@ namespace Cigral.Models
     }
 
 
+    public class ConsignacionDto
+    {
+        public int Id { get; set; }
+        public string ProductoNombre { get; set; }
+        public string CodigoLote { get; set; }
+        public int Cantidad { get; set; }
+        public string EntidadNombre { get; set; } // El proveedor o cliente de la consignación
+        public DateTime FechaIngreso { get; set; }
+        public string Estado { get; set; } // Ej: "Pendiente", "Vendido", "Devuelto"
+    }
+
+
 }

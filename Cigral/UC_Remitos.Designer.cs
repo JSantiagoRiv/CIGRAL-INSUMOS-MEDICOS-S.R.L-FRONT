@@ -252,6 +252,7 @@
             lblPagina.TabIndex = 23;
             lblPagina.Text = "Página 1/1";
             lblPagina.TextAlign = ContentAlignment.MiddleCenter;
+            lblPagina.Click += lblPagina_Click;
             // 
             // btnSiguiente
             // 

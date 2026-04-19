@@ -1046,5 +1046,39 @@ namespace Cigral.Services
         }
 
 
+
+        //===================================================
+        //Nuevo modulo de consignaciones o banco de stent (?
+        //===================================================
+
+        public static async Task<PaginadoResponse<ConsignacionDto>> ObtenerConsignaciones(string buscarNombre = "", string lote = "", string serie = "", string entidad = "", int pageNumber = 1, int pageSize = 25)
+        {
+            using (HttpClient client = GetClient())
+            {
+                try
+                {
+                    // Arrancamos con la base y la paginación
+                    string url = $"{BaseUrl}/Consignaciones?PageNumber={pageNumber}&PageSize={pageSize}";
+
+                    // Sumamos los 4 filtros si el usuario escribió algo
+                    if (!string.IsNullOrWhiteSpace(buscarNombre)) url += $"&NombreProducto={Uri.EscapeDataString(buscarNombre.Trim())}";
+                    if (!string.IsNullOrWhiteSpace(lote)) url += $"&CodigoLote={Uri.EscapeDataString(lote.Trim())}";
+                    if (!string.IsNullOrWhiteSpace(serie)) url += $"&NumeroSerie={Uri.EscapeDataString(serie.Trim())}";
+                    if (!string.IsNullOrWhiteSpace(entidad)) url += $"&Entidad={Uri.EscapeDataString(entidad.Trim())}";
+
+                    var response = await client.GetAsync(url);
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var json = await response.Content.ReadAsStringAsync();
+                        var paquete = JsonConvert.DeserializeObject<PaginadoResponse<ConsignacionDto>>(json);
+                        if (paquete != null && paquete.items != null) return paquete;
+                    }
+                    return new PaginadoResponse<ConsignacionDto> { items = new List<ConsignacionDto>() };
+                }
+                catch { return new PaginadoResponse<ConsignacionDto> { items = new List<ConsignacionDto>() }; }
+            }
+        }
+
     }
 }
