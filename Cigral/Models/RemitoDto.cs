@@ -101,7 +101,4 @@ namespace Cigral.Models
         public string observaciones { get; set; }
         // Los "detalles" los ignoramos acá porque no los necesitamos para la tabla principal
     }
-
-
-
 }

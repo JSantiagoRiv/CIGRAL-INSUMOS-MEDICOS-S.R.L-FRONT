@@ -68,6 +68,9 @@ namespace Cigral
         private async void chkConRemito_CheckedChanged(object sender, EventArgs e)
         {
             // Habilitamos el buscador y el botón +
+            
+            if (chkConRemito.Checked) consignacionCheck.Checked = false;
+
             txtBuscarCliente.Enabled = chkConRemito.Checked;
             btnAgregarCliente.Enabled = chkConRemito.Checked;
             txtBuscarCliente.Focus();
@@ -372,7 +375,7 @@ namespace Cigral
                             {
                                 int indexNuevaFila = dgvEgreso.Rows.Add();
                                 DataGridViewRow fila = dgvEgreso.Rows[indexNuevaFila];
-
+                                fila.Cells["ExistenciaId"].Value = existenciaIndicada.Id;
                                 fila.Cells["id"].Value = existenciaIndicada.ProductoId;
                                 fila.Cells["Producto"].Value = existenciaIndicada.ProductoNombre;
                                 fila.Cells["Lote"].Value = codigoLote;
@@ -434,7 +437,7 @@ namespace Cigral
             {
                 if (fila.IsNewRow) continue;
 
-                string fechaStr = fila.Cells["Vencimiento"].Value?.ToString();
+                /*string fechaStr = fila.Cells["Vencimiento"].Value?.ToString();
                 if (!string.IsNullOrEmpty(fechaStr) && fechaStr != "-")
                 {
                     if (DateTime.TryParseExact(fechaStr, "dd/MM/yyyy", null, System.Globalization.DateTimeStyles.None, out DateTime fechaParseada))
@@ -449,7 +452,7 @@ namespace Cigral
                             return;
                         }
                     }
-                }
+                }*/
             }
 
             var confirmacion = MessageBox.Show("¿Desea confirmar este egreso?", "Confirmar", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
@@ -469,7 +472,54 @@ namespace Cigral
                     fila.DefaultCellStyle.BackColor = Color.White;
                 }
 
-                if (chkConRemito.Checked)
+                if (consignacionCheck.Checked)
+                {
+                    int itemsProcesados = 0;
+                    int itemsConError = 0;
+
+                    List<DataGridViewRow> filasParaBorrar = new List<DataGridViewRow>();
+                    List<string> nombresFallidos = new List<string>();
+
+                    foreach (DataGridViewRow fila in dgvEgreso.Rows)
+                    {
+                        if (fila.IsNewRow) continue;
+
+                        var consignacion = new ConsignacionAddDto
+                        {
+                            existenciaId = Convert.ToInt32(fila.Cells["ExistenciaId"].Value),
+                            clienteId = idClienteSeleccionado,
+                            cantidad = Convert.ToInt32(fila.Cells["Cantidad"].Value)
+                        };
+
+                        var response = await ApiServices.AumentarConsignacion(consignacion);
+                        if (response != null)
+                        {
+                            itemsProcesados++;
+                            filasParaBorrar.Add(fila);
+                        }
+                        else
+                        {
+                            itemsConError++;
+                            fila.DefaultCellStyle.BackColor = Color.FromArgb(255, 192, 192);
+                        }
+
+                        foreach (var filaExito in filasParaBorrar)
+                        {
+                            dgvEgreso.Rows.Remove(filaExito);
+                        }
+
+                        if (itemsConError == 0)
+                        {
+                            MessageBox.Show($"¡Consignaciones creadas/agregadas exitosamente! ({itemsProcesados} items).", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            LimpiarPantalla();
+                        }
+                        else
+                        {
+                            string mensajeAviso = $"Se procesaron {itemsProcesados} consignaciones correctamente.\n\nSin embargo, fallaron {itemsConError} productos:\n";
+                        }
+                    }
+                }
+                else if (chkConRemito.Checked)
                 {
                     var remitoNuevo = new RemitoEgresoDto
                     {
@@ -797,6 +847,7 @@ namespace Cigral
                         col.Visible = false;
                     }
 
+                    if (col.Name == "Id") { col.HeaderText = "id"; col.Visible = false; };
                     if (col.Name == "ProductoNombre") col.HeaderText = "Producto";
                     if (col.Name == "ProductoCodigo") col.HeaderText = "Código";
                     if (col.Name == "DepositoNombre") { col.HeaderText = "Depósito"; col.Width = 80; }
@@ -924,13 +975,14 @@ namespace Cigral
                     DateTime fechaV = Convert.ToDateTime(filaStock.Cells["FechaVencimiento"].Value);
                     fechaVencStr = fechaV.ToString("dd/MM/yyyy");
 
-                    if (fechaV.Date < DateTime.Now.Date)
+                    /*if (fechaV.Date < DateTime.Now.Date)
                     {
                         MessageBox.Show("Este lote ya se encuentra vencido en el estante.\nPor seguridad, no se puede egresar.", "Stock Vencido", MessageBoxButtons.OK, MessageBoxIcon.Stop);
                         return;
                     }
+                    */
                 }
-
+                int idExistencia = Convert.ToInt32(filaStock.Cells["id"].Value);
                 int idProd = Convert.ToInt32(filaStock.Cells["ProductoId"].Value);
                 string nombre = filaStock.Cells["ProductoNombre"].Value?.ToString() ?? "Desconocido";
                 string lote = filaStock.Cells["CodigoLote"].Value?.ToString() ?? "";
@@ -954,11 +1006,11 @@ namespace Cigral
                 {
                     if (filaMain.IsNewRow) continue;
 
-                    int idExistente = Convert.ToInt32(filaMain.Cells["id"].Value);
+                    int idExistente = Convert.ToInt32(filaMain.Cells["ExistenciaId"].Value);
                     string loteExistente = filaMain.Cells["Lote"].Value?.ToString() ?? "";
                     string serieExistente = filaMain.Cells["Serie"].Value?.ToString() ?? "";
 
-                    if (idExistente == idProd)
+                    if (idExistente == idExistencia)
                     {
                         if (!string.IsNullOrEmpty(serie))
                         {
@@ -989,6 +1041,7 @@ namespace Cigral
                 {
                     int indexNuevaFila = dgvEgreso.Rows.Add();
                     DataGridViewRow filaMain = dgvEgreso.Rows[indexNuevaFila];
+                    filaMain.Cells["ExistenciaId"].Value = idExistencia;
                     filaMain.Cells["id"].Value = idProd;
                     filaMain.Cells["Producto"].Value = nombre;
                     filaMain.Cells["Lote"].Value = lote;
@@ -1163,6 +1216,22 @@ namespace Cigral
         private void txtRemito_TextChanged(object sender, EventArgs e)
         {
 
+        }
+
+        private void consignacionCheck_CheckedChanged(object sender, EventArgs e)
+        {
+            
+            if (consignacionCheck.Checked) chkConRemito.Checked = false;
+
+            // Habilitamos el buscador y el botón +
+            txtBuscarCliente.Enabled = consignacionCheck.Checked;
+            btnAgregarCliente.Enabled = consignacionCheck.Checked;
+            txtBuscarCliente.Focus();
+
+            txtRemito.Clear();
+            txtBuscarCliente.Clear(); // Limpiamos el texto
+            idClienteSeleccionado = 0; // Borramos el ID
+            txtComprobante.Clear();
         }
     }
 }

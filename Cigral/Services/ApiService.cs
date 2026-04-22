@@ -10,6 +10,7 @@ using System.Net.Http.Headers;
 using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Controls.Primitives;
 using System.Windows.Forms;
 using static System.Net.WebRequestMethods;
 
@@ -21,12 +22,12 @@ namespace Cigral.Services
     public static class ApiServices
     {
         //Dirección de prueba del servidor local
-        #if DEBUG
+#if DEBUG
         private static readonly string BaseUrl = "https://localhost:7221/api";
-        #else
+#else
         // Dirección principal del servidor. Todas las peticiones empiezan desde aquí.
         private static readonly string BaseUrl = "https://api.cigral.com.ar/api";
-        #endif
+#endif
 
         private static readonly HttpClient _client = new HttpClient();
 
@@ -46,7 +47,7 @@ namespace Cigral.Services
         {
             _client.DefaultRequestHeaders.Clear();
 
-                _client.DefaultRequestHeaders.Add("x-cigral-auth", "f7fa19b4-80ae-47ea-8c8b-0ecbb5995942");
+            _client.DefaultRequestHeaders.Add("x-cigral-auth", "f7fa19b4-80ae-47ea-8c8b-0ecbb5995942");
 
             if (!string.IsNullOrEmpty(TokenActual))
             {
@@ -117,43 +118,43 @@ namespace Cigral.Services
         /// <returns>El ID del remito generado, o 0 si falló.</returns>
         public static async Task<int> GuardarIngreso(RemitoIngresoRequest remito)
         {
-            
-                try
+
+            try
+            {
+                var json = JsonConvert.SerializeObject(remito);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+                var response = await _client.PostAsync($"{BaseUrl}/Remitos/ingreso", content);
+
+                if (response.IsSuccessStatusCode)
                 {
-                    var json = JsonConvert.SerializeObject(remito);
-                    var content = new StringContent(json, Encoding.UTF8, "application/json");
-                    var response = await _client.PostAsync($"{BaseUrl}/Remitos/ingreso", content);
+                    string responseString = await response.Content.ReadAsStringAsync();
 
-                    if (response.IsSuccessStatusCode)
+                    // Opción 1: Retorna el número suelto
+                    if (int.TryParse(responseString, out int idDirecto)) return idDirecto;
+
+                    // Opción 2: Retorna un objeto JSON
+                    try
                     {
-                        string responseString = await response.Content.ReadAsStringAsync();
-
-                        // Opción 1: Retorna el número suelto
-                        if (int.TryParse(responseString, out int idDirecto)) return idDirecto;
-
-                        // Opción 2: Retorna un objeto JSON
-                        try
-                        {
-                            dynamic jsonResponse = JsonConvert.DeserializeObject(responseString);
-                            return (int)jsonResponse.id;
-                        }
-                        catch
-                        {
-                            MessageBox.Show("El ingreso se guardó correctamente, pero no se pudo obtener el ID para imprimir el remito.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                            return 0;
-                        }
+                        dynamic jsonResponse = JsonConvert.DeserializeObject(responseString);
+                        return (int)jsonResponse.id;
                     }
-                    else
+                    catch
                     {
-                        await MostrarErrorBackend(response, "Error al Guardar Ingreso");
+                        MessageBox.Show("El ingreso se guardó correctamente, pero no se pudo obtener el ID para imprimir el remito.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Information);
                         return 0;
                     }
                 }
-                catch (Exception ex)
+                else
                 {
-                    MessageBox.Show($"Error de conexión:\n{ex.Message}", "Fallo", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    await MostrarErrorBackend(response, "Error al Guardar Ingreso");
                     return 0;
                 }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error de conexión:\n{ex.Message}", "Fallo", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return 0;
+            }
         }
 
         /// <summary>
@@ -161,33 +162,33 @@ namespace Cigral.Services
         /// </summary>
         public static async Task<int> CrearRemitoEgreso(RemitoEgresoDto remito)
         {
-                try
-                {
-                    string json = JsonConvert.SerializeObject(remito);
-                    var content = new StringContent(json, Encoding.UTF8, "application/json");
-                    var response = await _client.PostAsync($"{BaseUrl}/Remitos/egreso", content);
+            try
+            {
+                string json = JsonConvert.SerializeObject(remito);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+                var response = await _client.PostAsync($"{BaseUrl}/Remitos/egreso", content);
 
-                    if (response.IsSuccessStatusCode)
+                if (response.IsSuccessStatusCode)
+                {
+                    string res = await response.Content.ReadAsStringAsync();
+                    try
                     {
-                        string res = await response.Content.ReadAsStringAsync();
-                        try
-                        {
-                            var obj = JObject.Parse(res);
-                            return obj["id"]?.Value<int>() ?? 1;
-                        }
-                        catch
-                        {
-                            if (int.TryParse(res, out int idCrudo)) return idCrudo;
-                            return 1; // Retorno de seguridad
-                        }
+                        var obj = JObject.Parse(res);
+                        return obj["id"]?.Value<int>() ?? 1;
                     }
-                    else
+                    catch
                     {
-                        await MostrarErrorBackend(response, "Error al registrar Egreso");
-                        return 0;
+                        if (int.TryParse(res, out int idCrudo)) return idCrudo;
+                        return 1; // Retorno de seguridad
                     }
                 }
-                catch { return 0; }
+                else
+                {
+                    await MostrarErrorBackend(response, "Error al registrar Egreso");
+                    return 0;
+                }
+            }
+            catch { return 0; }
         }
 
         /// <summary>
@@ -195,28 +196,28 @@ namespace Cigral.Services
         /// </summary>
         public static async Task<string> ObtenerSiguienteNumeroRemito(int depositoId, bool esIngreso)
         {
-                try
+            try
+            {
+                string url = $"{BaseUrl}/Remitos/siguiente-nro";
+                var requestData = new { depositoId = depositoId, esIngreso = esIngreso };
+
+                // Truco para enviar un Body en un GET request
+                var request = new HttpRequestMessage(HttpMethod.Get, url)
                 {
-                    string url = $"{BaseUrl}/Remitos/siguiente-nro";
-                    var requestData = new { depositoId = depositoId, esIngreso = esIngreso };
+                    Content = new StringContent(JsonConvert.SerializeObject(requestData), Encoding.UTF8, "application/json")
+                };
 
-                    // Truco para enviar un Body en un GET request
-                    var request = new HttpRequestMessage(HttpMethod.Get, url)
-                    {
-                        Content = new StringContent(JsonConvert.SerializeObject(requestData), Encoding.UTF8, "application/json")
-                    };
+                var response = await _client.SendAsync(request);
 
-                    var response = await _client.SendAsync(request);
-
-                    if (response.IsSuccessStatusCode)
-                    {
-                        var json = await response.Content.ReadAsStringAsync();
-                        dynamic resultado = JsonConvert.DeserializeObject(json);
-                        return resultado.siguienteNumeroRemito;
-                    }
-                    return "";
+                if (response.IsSuccessStatusCode)
+                {
+                    var json = await response.Content.ReadAsStringAsync();
+                    dynamic resultado = JsonConvert.DeserializeObject(json);
+                    return resultado.siguienteNumeroRemito;
                 }
-                catch { return ""; }
+                return "";
+            }
+            catch { return ""; }
         }
 
         /// <summary>
@@ -224,29 +225,29 @@ namespace Cigral.Services
         /// </summary>
         public static async Task DescargarAbrirPdfRemito(int idRemito, bool esIngreso = false)
         {
-                try
-                {
-                    string tipoEndpoint = esIngreso ? "ingreso" : "egreso";
-                    var response = await _client.GetAsync($"{BaseUrl}/Remitos/{tipoEndpoint}/{idRemito}/pdf");
+            try
+            {
+                string tipoEndpoint = esIngreso ? "ingreso" : "egreso";
+                var response = await _client.GetAsync($"{BaseUrl}/Remitos/{tipoEndpoint}/{idRemito}/pdf");
 
-                    if (response.IsSuccessStatusCode)
-                    {
-                        var bytes = await response.Content.ReadAsByteArrayAsync();
-                        string nombreArchivo = $"Remito_{tipoEndpoint.ToUpper()}_{idRemito}_{DateTime.Now.Ticks}.pdf";
-                        string path = System.IO.Path.Combine(System.IO.Path.GetTempPath(), nombreArchivo);
-
-                        System.IO.File.WriteAllBytes(path, bytes);
-                        System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(path) { UseShellExecute = true });
-                    }
-                    else
-                    {
-                        MessageBox.Show($"El remito se creó, pero no se pudo descargar el PDF del {tipoEndpoint}.", "Aviso PDF", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    }
-                }
-                catch (Exception ex)
+                if (response.IsSuccessStatusCode)
                 {
-                    MessageBox.Show("Error al intentar abrir el PDF: " + ex.Message, "Error PDF", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    var bytes = await response.Content.ReadAsByteArrayAsync();
+                    string nombreArchivo = $"Remito_{tipoEndpoint.ToUpper()}_{idRemito}_{DateTime.Now.Ticks}.pdf";
+                    string path = System.IO.Path.Combine(System.IO.Path.GetTempPath(), nombreArchivo);
+
+                    System.IO.File.WriteAllBytes(path, bytes);
+                    System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(path) { UseShellExecute = true });
                 }
+                else
+                {
+                    MessageBox.Show($"El remito se creó, pero no se pudo descargar el PDF del {tipoEndpoint}.", "Aviso PDF", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error al intentar abrir el PDF: " + ex.Message, "Error PDF", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         /// <summary>
@@ -254,16 +255,16 @@ namespace Cigral.Services
         /// </summary>
         public static async Task<byte[]> ObtenerRemitoPdf(int idRemito)
         {
-                try
+            try
+            {
+                var response = await _client.GetAsync($"{BaseUrl}/Remitos/ingreso/{idRemito}/pdf");
+                if (response.IsSuccessStatusCode)
                 {
-                    var response = await _client.GetAsync($"{BaseUrl}/Remitos/ingreso/{idRemito}/pdf");
-                    if (response.IsSuccessStatusCode)
-                    {
-                        return await response.Content.ReadAsByteArrayAsync();
-                    }
-                    return null;
+                    return await response.Content.ReadAsByteArrayAsync();
                 }
-                catch { return null; }
+                return null;
+            }
+            catch { return null; }
         }
 
         /// <summary>
@@ -274,42 +275,42 @@ namespace Cigral.Services
         /// </summary>
         public static async Task<PaginadoResponse<RemitoHistorialDto>> ObtenerHistorialRemitos(bool esIngreso, DateTime? fechaDesde = null, DateTime? fechaHasta = null, string nroRemito = "", int pageNumber = 1, int pageSize = 25)
         {
-                try
+            try
+            {
+                string tipoEndpoint = esIngreso ? "ingreso" : "egreso";
+
+                // 1. Armamos la URL dinámica con los parámetros de página
+                string url = $"{BaseUrl}/Remitos/{tipoEndpoint}?PageNumber={pageNumber}&PageSize={pageSize}";
+
+                if (fechaDesde.HasValue) url += $"&FechaDesde={fechaDesde.Value.ToString("yyyy-MM-dd")}";
+                if (fechaHasta.HasValue) url += $"&FechaHasta={fechaHasta.Value.ToString("yyyy-MM-dd")}";
+                if (!string.IsNullOrWhiteSpace(nroRemito)) url += $"&NumeroRemito={nroRemito.Trim()}";
+
+                var response = await _client.GetAsync(url);
+                string json = await response.Content.ReadAsStringAsync();
+
+                if (response.IsSuccessStatusCode)
                 {
-                    string tipoEndpoint = esIngreso ? "ingreso" : "egreso";
+                    // 2. Usamos el súper-molde genérico
+                    var resultado = JsonConvert.DeserializeObject<PaginadoResponse<RemitoHistorialDto>>(json);
 
-                    // 1. Armamos la URL dinámica con los parámetros de página
-                    string url = $"{BaseUrl}/Remitos/{tipoEndpoint}?PageNumber={pageNumber}&PageSize={pageSize}";
-
-                    if (fechaDesde.HasValue) url += $"&FechaDesde={fechaDesde.Value.ToString("yyyy-MM-dd")}";
-                    if (fechaHasta.HasValue) url += $"&FechaHasta={fechaHasta.Value.ToString("yyyy-MM-dd")}";
-                    if (!string.IsNullOrWhiteSpace(nroRemito)) url += $"&NumeroRemito={nroRemito.Trim()}";
-
-                    var response = await _client.GetAsync(url);
-                    string json = await response.Content.ReadAsStringAsync();
-
-                    if (response.IsSuccessStatusCode)
-                    {
-                        // 2. Usamos el súper-molde genérico
-                        var resultado = JsonConvert.DeserializeObject<PaginadoResponse<RemitoHistorialDto>>(json);
-
-                        if (resultado == null || resultado.items == null)
-                            return new PaginadoResponse<RemitoHistorialDto> { items = new List<RemitoHistorialDto>() };
-
-                        return resultado;
-                    }
-                    else
-                    {
-                        await MostrarErrorBackend(response, "Error al traer historial de remitos");
+                    if (resultado == null || resultado.items == null)
                         return new PaginadoResponse<RemitoHistorialDto> { items = new List<RemitoHistorialDto>() };
-                    }
+
+                    return resultado;
                 }
-                catch (Exception ex)
+                else
                 {
-                    MessageBox.Show($"Error interno al buscar remitos:\n{ex.Message}", "Error de Conexión", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    await MostrarErrorBackend(response, "Error al traer historial de remitos");
                     return new PaginadoResponse<RemitoHistorialDto> { items = new List<RemitoHistorialDto>() };
                 }
             }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error interno al buscar remitos:\n{ex.Message}", "Error de Conexión", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return new PaginadoResponse<RemitoHistorialDto> { items = new List<RemitoHistorialDto>() };
+            }
+        }
 
         // =========================================================================================
         // MÓDULO 3: STOCK Y EXISTENCIAS (MOVIMIENTOS MANUALES)
@@ -320,24 +321,24 @@ namespace Cigral.Services
         /// </summary>
         public static async Task<bool> AumentarStock(AumentarExistenciaRequest request)
         {
-                try
-                {
-                    var json = JsonConvert.SerializeObject(request);
-                    var content = new StringContent(json, Encoding.UTF8, "application/json");
-                    var response = await _client.PostAsync($"{BaseUrl}/Existencias/aumentar", content);
+            try
+            {
+                var json = JsonConvert.SerializeObject(request);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+                var response = await _client.PostAsync($"{BaseUrl}/Existencias/aumentar", content);
 
-                    if (response.IsSuccessStatusCode) return true;
-                    else
-                    {
-                        await MostrarErrorBackend(response, "Error al aumentar stock");
-                        return false;
-                    }
-                }
-                catch (Exception ex)
+                if (response.IsSuccessStatusCode) return true;
+                else
                 {
-                    MessageBox.Show($"Fallo de conexión:\n{ex.Message}", "Fallo Crítico", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    await MostrarErrorBackend(response, "Error al aumentar stock");
                     return false;
                 }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Fallo de conexión:\n{ex.Message}", "Fallo Crítico", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
+            }
         }
 
         /// <summary>
@@ -346,25 +347,25 @@ namespace Cigral.Services
         // Le agregamos el parámetro 'nombreProducto'
         public static async Task<bool> DisminuirStock(DisminuirStockDto item, string nombreProducto = "Producto")
         {
-                try
-                {
-                    string json = JsonConvert.SerializeObject(item);
-                    var content = new StringContent(json, Encoding.UTF8, "application/json");
-                    var response = await _client.PostAsync($"{BaseUrl}/Existencias/disminuir", content);
+            try
+            {
+                string json = JsonConvert.SerializeObject(item);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+                var response = await _client.PostAsync($"{BaseUrl}/Existencias/disminuir", content);
 
-                    if (response.IsSuccessStatusCode) return true;
-                    else
-                    {
-                        //Le manda al título de la ventana de error
-                        await MostrarErrorBackend(response, $"Error al descontar: {nombreProducto}");
-                        return false;
-                    }
-                }
-                catch (Exception ex)
+                if (response.IsSuccessStatusCode) return true;
+                else
                 {
-                    MessageBox.Show($"Error interno de conexión:\n{ex.Message}", "Fallo de Red", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    //Le manda al título de la ventana de error
+                    await MostrarErrorBackend(response, $"Error al descontar: {nombreProducto}");
                     return false;
                 }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error interno de conexión:\n{ex.Message}", "Fallo de Red", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
+            }
         }
 
         /// <summary>
@@ -382,39 +383,39 @@ namespace Cigral.Services
             string? numeroSerie = "",
             bool esDevolucion = false)
         {
-                try
-                {
-                    string url = $"{BaseUrl}/Existencias?PageNumber={pageNumber}&PageSize=25";
+            try
+            {
+                string url = $"{BaseUrl}/Existencias?PageNumber={pageNumber}&PageSize=25";
 
-                    if (!string.IsNullOrEmpty(buscar)) url += $"&NombreProducto={buscar}";
-                    url += $"&ordenarPor={ordenarPor}&esDescendente={esDescendente.ToString().ToLower()}";
-                    if (ocultarCero) url += "&OcultarCero=true";
-                    if (soloVencidos) url += "$&SoloConVencimiento=true";
-                    if (diasParaVencer != 0) url += $"&DiasParaVencer={diasParaVencer}";
+                if (!string.IsNullOrEmpty(buscar)) url += $"&NombreProducto={buscar}";
+                url += $"&ordenarPor={ordenarPor}&esDescendente={esDescendente.ToString().ToLower()}";
+                if (ocultarCero) url += "&OcultarCero=true";
+                if (soloVencidos) url += "$&SoloConVencimiento=true";
+                if (diasParaVencer != 0) url += $"&DiasParaVencer={diasParaVencer}";
 
-                    if (!string.IsNullOrWhiteSpace(lote))
+                if (!string.IsNullOrWhiteSpace(lote))
                     url += $"&CodigoLote={Uri.EscapeDataString(lote.Trim())}";
 
-                     if (!string.IsNullOrWhiteSpace(numeroSerie))
+                if (!string.IsNullOrWhiteSpace(numeroSerie))
                     url += $"&NumSerie={Uri.EscapeDataString(numeroSerie.Trim())}";
 
 
                 if (!string.IsNullOrEmpty(numeroSerie)) url += $"&NumSerie={numeroSerie}";
-                    if (!string.IsNullOrEmpty(lote)) url += $"&CodigoLote={lote}";
-                    if (productoId != null) url += $"&ProductoId={productoId}";
-                    if (esDevolucion) url += $"&EsDevolucion=true";
+                if (!string.IsNullOrEmpty(lote)) url += $"&CodigoLote={lote}";
+                if (productoId != null) url += $"&ProductoId={productoId}";
+                if (esDevolucion) url += $"&EsDevolucion=true";
 
                 var response = await _client.GetAsync(url);
 
-                    if (response.IsSuccessStatusCode)
-                    {
-                        var json = await response.Content.ReadAsStringAsync();
-                        var paquete = JsonConvert.DeserializeObject<PaginadoResponse<ExistenciaDto>>(json);
-                        if (paquete != null && paquete.items != null) return paquete;
-                    }
-                    return new PaginadoResponse<ExistenciaDto>();
+                if (response.IsSuccessStatusCode)
+                {
+                    var json = await response.Content.ReadAsStringAsync();
+                    var paquete = JsonConvert.DeserializeObject<PaginadoResponse<ExistenciaDto>>(json);
+                    if (paquete != null && paquete.items != null) return paquete;
                 }
-                catch { return new PaginadoResponse<ExistenciaDto>(); }
+                return new PaginadoResponse<ExistenciaDto>();
+            }
+            catch { return new PaginadoResponse<ExistenciaDto>(); }
         }
 
         /// <summary>
@@ -422,26 +423,26 @@ namespace Cigral.Services
         /// </summary>
         public static async Task<ExistenciaDto> BuscarProductoParaEgreso(int productoId)
         {
-                try
+            try
+            {
+                string url = $"{BaseUrl}/Existencias?ProductoId={productoId}&OrdenarPor=2&EsDescendente=false&PageNumber=1&PageSize=10";
+                var response = await _client.GetAsync(url);
+
+                if (response.IsSuccessStatusCode)
                 {
-                    string url = $"{BaseUrl}/Existencias?ProductoId={productoId}&OrdenarPor=2&EsDescendente=false&PageNumber=1&PageSize=10";
-                    var response = await _client.GetAsync(url);
+                    string json = await response.Content.ReadAsStringAsync();
+                    var jsonParseado = JObject.Parse(json);
+                    var listaExistencias = jsonParseado["items"].ToObject<List<ExistenciaDto>>();
 
-                    if (response.IsSuccessStatusCode)
+                    // Devolvemos el primero que tenga stock positivo
+                    if (listaExistencias != null && listaExistencias.Count > 0)
                     {
-                        string json = await response.Content.ReadAsStringAsync();
-                        var jsonParseado = JObject.Parse(json);
-                        var listaExistencias = jsonParseado["items"].ToObject<List<ExistenciaDto>>();
-
-                        // Devolvemos el primero que tenga stock positivo
-                        if (listaExistencias != null && listaExistencias.Count > 0)
-                        {
-                            return listaExistencias.FirstOrDefault(x => x.Cantidad > 0);
-                        }
+                        return listaExistencias.FirstOrDefault(x => x.Cantidad > 0);
                     }
-                    return null;
                 }
-                catch { return null; }
+                return null;
+            }
+            catch { return null; }
         }
 
         /// <summary>
@@ -449,31 +450,31 @@ namespace Cigral.Services
         /// </summary>
         public static async Task<List<VencimientoDto>> ObtenerVencimientos(int? diasDesde = null, int? diasHasta = null, bool incluirVencidos = false)
         {
-                try
+            try
+            {
+                string url = $"{BaseUrl}/Existencias/proximos-vencer?";
+                var parametros = new List<string>();
+
+                if (diasDesde.HasValue) parametros.Add($"diasDesde={diasDesde.Value}");
+                if (diasHasta.HasValue) parametros.Add($"diasHasta={diasHasta.Value}");
+                parametros.Add($"incluirVencidos={incluirVencidos.ToString().ToLower()}");
+
+                url += string.Join("&", parametros);
+
+                var response = await _client.GetAsync(url);
+
+                if (response.IsSuccessStatusCode)
                 {
-                    string url = $"{BaseUrl}/Existencias/proximos-vencer?";
-                    var parametros = new List<string>();
-
-                    if (diasDesde.HasValue) parametros.Add($"diasDesde={diasDesde.Value}");
-                    if (diasHasta.HasValue) parametros.Add($"diasHasta={diasHasta.Value}");
-                    parametros.Add($"incluirVencidos={incluirVencidos.ToString().ToLower()}");
-
-                    url += string.Join("&", parametros);
-
-                    var response = await _client.GetAsync(url);
-
-                    if (response.IsSuccessStatusCode)
-                    {
-                        string json = await response.Content.ReadAsStringAsync();
-                        return JsonConvert.DeserializeObject<List<VencimientoDto>>(json);
-                    }
-                    return new List<VencimientoDto>();
+                    string json = await response.Content.ReadAsStringAsync();
+                    return JsonConvert.DeserializeObject<List<VencimientoDto>>(json);
                 }
-                catch (Exception ex)
-                {
-                    MessageBox.Show($"Error al traer datos del dashboard:\n{ex.Message}", "Error Interno", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return new List<VencimientoDto>();
-                }
+                return new List<VencimientoDto>();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error al traer datos del dashboard:\n{ex.Message}", "Error Interno", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return new List<VencimientoDto>();
+            }
         }
 
         // =========================================================================================
@@ -523,29 +524,29 @@ namespace Cigral.Services
         /// </summary>
         public static async Task<int> CrearProductoNuevo(ProductoCreateRequest producto)
         {
-                try
-                {
-                    var json = JsonConvert.SerializeObject(producto);
-                    var content = new StringContent(json, Encoding.UTF8, "application/json");
-                    var response = await _client.PostAsync($"{BaseUrl}/Productos", content);
+            try
+            {
+                var json = JsonConvert.SerializeObject(producto);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+                var response = await _client.PostAsync($"{BaseUrl}/Productos", content);
 
-                    if (response.IsSuccessStatusCode)
-                    {
-                        var jsonResponse = await response.Content.ReadAsStringAsync();
-                        var productoCreado = JsonConvert.DeserializeObject<ProductoCreateResponse>(jsonResponse);
-                        return productoCreado.Id;
-                    }
-                    else
-                    {
-                        await MostrarErrorBackend(response, $"Error al crear '{producto.Nombre}'");
-                        return 0;
-                    }
-                }
-                catch (Exception ex)
+                if (response.IsSuccessStatusCode)
                 {
-                    MessageBox.Show($"Fallo de conexión al crear producto:\n{ex.Message}", "Fallo Crítico", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    var jsonResponse = await response.Content.ReadAsStringAsync();
+                    var productoCreado = JsonConvert.DeserializeObject<ProductoCreateResponse>(jsonResponse);
+                    return productoCreado.Id;
+                }
+                else
+                {
+                    await MostrarErrorBackend(response, $"Error al crear '{producto.Nombre}'");
                     return 0;
                 }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Fallo de conexión al crear producto:\n{ex.Message}", "Fallo Crítico", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return 0;
+            }
         }
 
         /// <summary>
@@ -553,82 +554,82 @@ namespace Cigral.Services
         /// </summary>
         public static async Task<PaginadoResponse<ProductoResponseDto>> ObtenerProductosCatalogo(string filtroNombre, string filtroGlobal = "", int pageNumber = 1, int pageSize = 25)
         {
-                try
+            try
+            {
+                string url = $"{BaseUrl}/Productos?PageNumber={pageNumber}&PageSize={pageSize}";
+
+                if (!string.IsNullOrWhiteSpace(filtroNombre)) url += $"&Nombre={Uri.EscapeDataString(filtroNombre.Trim())}";
+                if (!string.IsNullOrWhiteSpace(filtroGlobal)) url += $"&BusquedaGlobal={Uri.EscapeDataString(filtroGlobal.Trim())}";
+
+                var response = await _client.GetAsync(url);
+                string json = await response.Content.ReadAsStringAsync();
+
+                if (response.IsSuccessStatusCode)
                 {
-                    string url = $"{BaseUrl}/Productos?PageNumber={pageNumber}&PageSize={pageSize}";
-
-                    if(!string.IsNullOrWhiteSpace(filtroNombre)) url += $"&Nombre={Uri.EscapeDataString(filtroNombre.Trim())}";
-                    if(!string.IsNullOrWhiteSpace(filtroGlobal)) url += $"&BusquedaGlobal={Uri.EscapeDataString(filtroGlobal.Trim())}";
-
-                    var response = await _client.GetAsync(url);
-                    string json = await response.Content.ReadAsStringAsync();
-
-                    if (response.IsSuccessStatusCode)
-                    {
-                        var resultado = JsonConvert.DeserializeObject<PaginadoResponse<ProductoResponseDto>>(json);
-                        if (resultado == null || resultado.items == null) return new PaginadoResponse<ProductoResponseDto>();
-                        return resultado;
-                    }
-                    else
-                    {
-                        MessageBox.Show($"El servidor rebotó la búsqueda en el catálogo.\nStatus: {response.StatusCode}\nDetalle:\n{json}", "Error del Backend", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                        return new PaginadoResponse<ProductoResponseDto>();
-                    }
+                    var resultado = JsonConvert.DeserializeObject<PaginadoResponse<ProductoResponseDto>>(json);
+                    if (resultado == null || resultado.items == null) return new PaginadoResponse<ProductoResponseDto>();
+                    return resultado;
                 }
-                catch (Exception ex)
+                else
                 {
-                    MessageBox.Show($"Error interno al buscar en el catálogo:\n{ex.Message}", "Error de Conexión", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show($"El servidor rebotó la búsqueda en el catálogo.\nStatus: {response.StatusCode}\nDetalle:\n{json}", "Error del Backend", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return new PaginadoResponse<ProductoResponseDto>();
                 }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error interno al buscar en el catálogo:\n{ex.Message}", "Error de Conexión", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return new PaginadoResponse<ProductoResponseDto>();
+            }
         }
 
         public static async Task<bool> UpdateProductoGTIN(int productoId, string nuevoGTIN)
         {
-                try
+            try
+            {
+                string json = JsonConvert.SerializeObject(nuevoGTIN);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+                var response = await _client.PutAsync($"{BaseUrl}/Productos/actualizar-gtin/{productoId}", content);
+                if (response.IsSuccessStatusCode) return true;
+                else
                 {
-                    string json = JsonConvert.SerializeObject(nuevoGTIN);
-                    var content = new StringContent(json, Encoding.UTF8, "application/json");
-                    var response = await _client.PutAsync($"{BaseUrl}/Productos/actualizar-gtin/{productoId}", content);
-                    if (response.IsSuccessStatusCode) return true;
-                    else
-                    {
-                        await MostrarErrorBackend(response, $"Error al actualizar GTIN del producto ID {productoId}");
-                        return false;
-                    }
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show($"Fallo de conexión al actualizar GTIN:\n{ex.Message}", "Fallo Crítico", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    await MostrarErrorBackend(response, $"Error al actualizar GTIN del producto ID {productoId}");
                     return false;
                 }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Fallo de conexión al actualizar GTIN:\n{ex.Message}", "Fallo Crítico", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
+            }
         }
 
         public static async Task<int> UpdateProducto(ProductoUpdateDto producto, int id)
         {
-                try
+            try
+            {
+                string json = JsonConvert.SerializeObject(producto);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                var response = await _client.PutAsync($"{BaseUrl}/Productos/{id}", content);
+
+                if (response.IsSuccessStatusCode)
                 {
-                    string json = JsonConvert.SerializeObject(producto);
-                    var content = new StringContent(json, Encoding.UTF8, "application/json");
-
-                    var response = await _client.PutAsync($"{BaseUrl}/Productos/{id}", content);
-
-                    if (response.IsSuccessStatusCode)
-                    {
-                        var jsonResponse = await response.Content.ReadAsStringAsync();
-                        var productoResponse = JsonConvert.DeserializeObject<ProductoResponseDto>(jsonResponse);
-                        return productoResponse.id;
-                    }
-                    else
-                    {
-                        await MostrarErrorBackend(response, $"Error al actualizar algun campo de '{producto.nombre}'");
-                        return 0;
-                    }
+                    var jsonResponse = await response.Content.ReadAsStringAsync();
+                    var productoResponse = JsonConvert.DeserializeObject<ProductoResponseDto>(jsonResponse);
+                    return productoResponse.id;
                 }
-                catch (Exception ex)
+                else
                 {
-                    MessageBox.Show($"Fallo de conexión al modificar el producto:\n{ex.Message}", "Fallo Crítico", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    await MostrarErrorBackend(response, $"Error al actualizar algun campo de '{producto.nombre}'");
                     return 0;
                 }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Fallo de conexión al modificar el producto:\n{ex.Message}", "Fallo Crítico", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return 0;
+            }
         }
 
         /// <summary>
@@ -636,18 +637,18 @@ namespace Cigral.Services
         /// </summary>
         public static async Task<bool> GarantizarMarcaExiste(string nombreMarca)
         {
-                var marcaNueva = new { nombre = nombreMarca };
-                var json = JsonConvert.SerializeObject(marcaNueva);
-                var content = new StringContent(json, Encoding.UTF8, "application/json");
+            var marcaNueva = new { nombre = nombreMarca };
+            var json = JsonConvert.SerializeObject(marcaNueva);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-                var response = await _client.PostAsync($"{BaseUrl}/Marcas", content);
+            var response = await _client.PostAsync($"{BaseUrl}/Marcas", content);
 
-                // OK (200), Creado (201), Conflicto/Ya Existe (409/400)
-                if (response.IsSuccessStatusCode || response.StatusCode == System.Net.HttpStatusCode.Conflict || response.StatusCode == System.Net.HttpStatusCode.BadRequest)
-                {
-                    return true;
-                }
-                return false;
+            // OK (200), Creado (201), Conflicto/Ya Existe (409/400)
+            if (response.IsSuccessStatusCode || response.StatusCode == System.Net.HttpStatusCode.Conflict || response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+            {
+                return true;
+            }
+            return false;
         }
 
         /// <summary>
@@ -655,18 +656,18 @@ namespace Cigral.Services
         /// </summary>
         public static async Task<List<DepositoDto>> ObtenerDepositos()
         {
-                try
+            try
+            {
+                var response = await _client.GetAsync($"{BaseUrl}/Depositos");
+                if (response.IsSuccessStatusCode)
                 {
-                    var response = await _client.GetAsync($"{BaseUrl}/Depositos");
-                    if (response.IsSuccessStatusCode)
-                    {
-                        var json = await response.Content.ReadAsStringAsync();
-                        var resultado = JsonConvert.DeserializeObject<DepositosResponse>(json);
-                        return resultado?.Items ?? new List<DepositoDto>();
-                    }
-                    return new List<DepositoDto>();
+                    var json = await response.Content.ReadAsStringAsync();
+                    var resultado = JsonConvert.DeserializeObject<DepositosResponse>(json);
+                    return resultado?.Items ?? new List<DepositoDto>();
                 }
-                catch { return new List<DepositoDto>(); }
+                return new List<DepositoDto>();
+            }
+            catch { return new List<DepositoDto>(); }
         }
 
         /// <summary>
@@ -674,24 +675,24 @@ namespace Cigral.Services
         /// </summary>
         public static async Task<List<ProveedorDto>> ObtenerProveedores(string busqueda)
         {
-                try
+            try
+            {
+                string url = $"{BaseUrl}/Proveedores?pageSize=25&PageNumber=1";
+                if (string.IsNullOrWhiteSpace(busqueda) == false)
                 {
-                    string url = $"{BaseUrl}/Proveedores?pageSize=25&PageNumber=1";
-                    if (string.IsNullOrWhiteSpace(busqueda) == false)
-                    {
-                        url += $"&RazonSocial={Uri.EscapeDataString(busqueda.Trim())}";
-                    }
-                    var response = await _client.GetAsync(url);
-                    
-                    if (response.IsSuccessStatusCode)
-                    {
-                        var json = await response.Content.ReadAsStringAsync();
-                        var paquete = JsonConvert.DeserializeObject<PaginadoResponse<ProveedorDto>>(json);
-                        if (paquete != null && paquete.items != null) return paquete.items;
-                    }
-                    return new List<ProveedorDto>();
+                    url += $"&RazonSocial={Uri.EscapeDataString(busqueda.Trim())}";
                 }
-                catch { return new List<ProveedorDto>(); }
+                var response = await _client.GetAsync(url);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var json = await response.Content.ReadAsStringAsync();
+                    var paquete = JsonConvert.DeserializeObject<PaginadoResponse<ProveedorDto>>(json);
+                    if (paquete != null && paquete.items != null) return paquete.items;
+                }
+                return new List<ProveedorDto>();
+            }
+            catch { return new List<ProveedorDto>(); }
         }
 
         /// <summary>
@@ -699,37 +700,37 @@ namespace Cigral.Services
         /// </summary>
         public static async Task<int> CrearProveedorExpress(ProveedorDto nuevoProveedor)
         {
-                try
-                {
-                    string json = JsonConvert.SerializeObject(nuevoProveedor);
-                    var content = new StringContent(json, Encoding.UTF8, "application/json");
-                    var response = await _client.PostAsync($"{BaseUrl}/Proveedores", content);
+            try
+            {
+                string json = JsonConvert.SerializeObject(nuevoProveedor);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+                var response = await _client.PostAsync($"{BaseUrl}/Proveedores", content);
 
-                    string res = await response.Content.ReadAsStringAsync();
-                    if (response.IsSuccessStatusCode)
+                string res = await response.Content.ReadAsStringAsync();
+                if (response.IsSuccessStatusCode)
+                {
+                    try
                     {
-                        try
-                        {
-                            var obj = JObject.Parse(res);
-                            return obj["id"]?.Value<int>() ?? 0;
-                        }
-                        catch
-                        {
-                            if (int.TryParse(res, out int idCrudo)) return idCrudo;
-                            return 0;
-                        }
+                        var obj = JObject.Parse(res);
+                        return obj["id"]?.Value<int>() ?? 0;
                     }
-                    else
+                    catch
                     {
-                        await MostrarErrorBackend(response, "Error al crear Proveedor");
+                        if (int.TryParse(res, out int idCrudo)) return idCrudo;
                         return 0;
                     }
                 }
-                catch (Exception ex)
+                else
                 {
-                    MessageBox.Show($"Error interno de conexión:\n{ex.Message}", "Error Interno", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    await MostrarErrorBackend(response, "Error al crear Proveedor");
                     return 0;
                 }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error interno de conexión:\n{ex.Message}", "Error Interno", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return 0;
+            }
         }
 
         /// <summary>
@@ -737,43 +738,43 @@ namespace Cigral.Services
         /// </summary>
         public static async Task<List<ClienteDto>> ObtenerClientes(string busqueda = "")
         {
-                try
+            try
+            {
+                // 1. Armamos la URL base. Le pedimos 50 resultados para la lista.
+                // (Asegurate de que sea /Cliente o /Clientes según tu API)
+                string url = $"{BaseUrl}/Clientes?PageNumber=1&PageSize=50";
+
+                // 2. Si el usuario tipeó algo, le agregamos el parámetro "RazonSocial" a la URL
+                if (!string.IsNullOrWhiteSpace(busqueda))
                 {
-                    // 1. Armamos la URL base. Le pedimos 50 resultados para la lista.
-                    // (Asegurate de que sea /Cliente o /Clientes según tu API)
-                    string url = $"{BaseUrl}/Clientes?PageNumber=1&PageSize=50";
+                    url += $"&RazonSocial={Uri.EscapeDataString(busqueda.Trim())}";
+                }
 
-                    // 2. Si el usuario tipeó algo, le agregamos el parámetro "RazonSocial" a la URL
-                    if (!string.IsNullOrWhiteSpace(busqueda))
+                var response = await _client.GetAsync(url);
+                string json = await response.Content.ReadAsStringAsync();
+
+                if (response.IsSuccessStatusCode)
+                {
+                    // 3. Como Swagger nos mostró que devuelve { "items": [...], "totalCount": ... }
+                    // Usamos 'dynamic' para ir directo a buscar la propiedad "items" sin tener que crear clases nuevas.
+                    dynamic resultado = Newtonsoft.Json.JsonConvert.DeserializeObject(json);
+
+                    if (resultado != null && resultado.items != null)
                     {
-                        url += $"&RazonSocial={Uri.EscapeDataString(busqueda.Trim())}";
-                    }
-
-                    var response = await _client.GetAsync(url);
-                    string json = await response.Content.ReadAsStringAsync();
-
-                    if (response.IsSuccessStatusCode)
-                    {
-                        // 3. Como Swagger nos mostró que devuelve { "items": [...], "totalCount": ... }
-                        // Usamos 'dynamic' para ir directo a buscar la propiedad "items" sin tener que crear clases nuevas.
-                        dynamic resultado = Newtonsoft.Json.JsonConvert.DeserializeObject(json);
-
-                        if (resultado != null && resultado.items != null)
-                        {
-                            // Transformamos esos "items" en tu lista de ClienteDto
-                            return resultado.items.ToObject<List<ClienteDto>>();
-                        }
-
-                        return new List<ClienteDto>();
+                        // Transformamos esos "items" en tu lista de ClienteDto
+                        return resultado.items.ToObject<List<ClienteDto>>();
                     }
 
                     return new List<ClienteDto>();
                 }
-                catch (Exception)
-                {
-                    // Si falla la red, devolvemos vacío para no romper la pantalla
-                    return new List<ClienteDto>();
-                }
+
+                return new List<ClienteDto>();
+            }
+            catch (Exception)
+            {
+                // Si falla la red, devolvemos vacío para no romper la pantalla
+                return new List<ClienteDto>();
+            }
         }
 
         /// <summary>
@@ -781,37 +782,37 @@ namespace Cigral.Services
         /// </summary>
         public static async Task<int> CrearClienteExpress(ClienteDto nuevoCliente)
         {
-                try
-                {
-                    string json = JsonConvert.SerializeObject(nuevoCliente);
-                    var content = new StringContent(json, Encoding.UTF8, "application/json");
-                    var response = await _client.PostAsync($"{BaseUrl}/Clientes", content);
+            try
+            {
+                string json = JsonConvert.SerializeObject(nuevoCliente);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+                var response = await _client.PostAsync($"{BaseUrl}/Clientes", content);
 
-                    string res = await response.Content.ReadAsStringAsync();
-                    if (response.IsSuccessStatusCode)
+                string res = await response.Content.ReadAsStringAsync();
+                if (response.IsSuccessStatusCode)
+                {
+                    try
                     {
-                        try
-                        {
-                            var obj = JObject.Parse(res);
-                            return obj["id"]?.Value<int>() ?? 0;
-                        }
-                        catch
-                        {
-                            if (int.TryParse(res, out int idCrudo)) return idCrudo;
-                            return 0;
-                        }
+                        var obj = JObject.Parse(res);
+                        return obj["id"]?.Value<int>() ?? 0;
                     }
-                    else
+                    catch
                     {
-                        await MostrarErrorBackend(response, "Rechazo al crear Cliente");
+                        if (int.TryParse(res, out int idCrudo)) return idCrudo;
                         return 0;
                     }
                 }
-                catch (Exception ex)
+                else
                 {
-                    MessageBox.Show($"Error interno de conexión:\n{ex.Message}", "Error Interno", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    await MostrarErrorBackend(response, "Rechazo al crear Cliente");
                     return 0;
                 }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error interno de conexión:\n{ex.Message}", "Error Interno", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return 0;
+            }
         }
 
         // =========================================================================================
@@ -826,52 +827,52 @@ namespace Cigral.Services
         /// </summary>
         public static async Task<PaginadoResponse<AuditoriaItemDto>> ObtenerAuditoria(int? tipoMovimiento = null, string nombreProducto = "", string lote = "", string serie = "", bool esDevolucion = false, int pageNumber = 1, int pageSize = 25)
         {
-                try
+            try
+            {
+                // 1. Armamos la URL con las variables de paginación dinámicas en vez de fijas
+                string url = $"{BaseUrl}/Auditoria?PageNumber={pageNumber}&PageSize={pageSize}";
+
+                if (tipoMovimiento.HasValue && tipoMovimiento.Value > 0) url += $"&Tipo={tipoMovimiento.Value}";
+
+                if (!string.IsNullOrWhiteSpace(nombreProducto))
+                    url += $"&NombreProducto={Uri.EscapeDataString(nombreProducto.Trim())}";
+                if (esDevolucion) url += $"&EsDevolucion=true";
+
+                if (!string.IsNullOrWhiteSpace(lote))
+                    url += $"&CodigoLote={lote.Trim()}";
+
+                if (!string.IsNullOrWhiteSpace(serie))
+                    url += $"&NumeroSerie={Uri.EscapeDataString(serie.Trim())}";
+
+
+                var response = await _client.GetAsync(url);
+                string json = await response.Content.ReadAsStringAsync();
+
+                if (response.IsSuccessStatusCode)
                 {
-                    // 1. Armamos la URL con las variables de paginación dinámicas en vez de fijas
-                    string url = $"{BaseUrl}/Auditoria?PageNumber={pageNumber}&PageSize={pageSize}";
+                    // 2. Usa el súper-molde genérico que armamos antes
+                    var resultado = JsonConvert.DeserializeObject<PaginadoResponse<AuditoriaItemDto>>(json);
 
-                    if (tipoMovimiento.HasValue && tipoMovimiento.Value > 0) url += $"&Tipo={tipoMovimiento.Value}";
-
-                    if (!string.IsNullOrWhiteSpace(nombreProducto))
-                        url += $"&NombreProducto={Uri.EscapeDataString(nombreProducto.Trim())}";
-                    if (esDevolucion) url += $"&EsDevolucion=true";
-
-                    if (!string.IsNullOrWhiteSpace(lote))
-                        url += $"&CodigoLote={lote.Trim()}";
-
-                    if (!string.IsNullOrWhiteSpace(serie))
-                        url += $"&NumeroSerie={Uri.EscapeDataString(serie.Trim())}";
-
-                
-                    var response = await _client.GetAsync(url);
-                    string json = await response.Content.ReadAsStringAsync();
-
-                    if (response.IsSuccessStatusCode)
+                    // Si viene vacío, devuelve el molde con una lista vacía para que no rompa
+                    if (resultado == null || resultado.items == null)
                     {
-                        // 2. Usa el súper-molde genérico que armamos antes
-                        var resultado = JsonConvert.DeserializeObject<PaginadoResponse<AuditoriaItemDto>>(json);
-
-                        // Si viene vacío, devuelve el molde con una lista vacía para que no rompa
-                        if (resultado == null || resultado.items == null)
-                        {
-                            return new PaginadoResponse<AuditoriaItemDto> { items = new List<AuditoriaItemDto>() };
-                        }
-
-                        // 3. Devuelv el PAQUETE COMPLETO (lista + totalPages + etc)
-                        return resultado;
-                    }
-                    else
-                    {
-                        MessageBox.Show($"El servidor rebotó la consulta de auditoría.\nStatus: {response.StatusCode}\nDetalle:\n{json}", "Error del Backend", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         return new PaginadoResponse<AuditoriaItemDto> { items = new List<AuditoriaItemDto>() };
                     }
+
+                    // 3. Devuelv el PAQUETE COMPLETO (lista + totalPages + etc)
+                    return resultado;
                 }
-                catch (Exception ex)
+                else
                 {
-                    MessageBox.Show($"Error interno al leer los datos de auditoría:\n{ex.Message}", "Error de Conversión", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show($"El servidor rebotó la consulta de auditoría.\nStatus: {response.StatusCode}\nDetalle:\n{json}", "Error del Backend", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return new PaginadoResponse<AuditoriaItemDto> { items = new List<AuditoriaItemDto>() };
                 }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error interno al leer los datos de auditoría:\n{ex.Message}", "Error de Conversión", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return new PaginadoResponse<AuditoriaItemDto> { items = new List<AuditoriaItemDto>() };
+            }
         }
 
         /// <summary>
@@ -886,7 +887,7 @@ namespace Cigral.Services
             {
                 string errorJson = await response.Content.ReadAsStringAsync();
 
-                // Errores de Validación (Listas/Grillas) - Ej: Stock Insuficiente en varias filas
+                // 1. Errores de Validación (Listas/Grillas) - Ej: Stock Insuficiente en varias filas (422)
                 if (response.StatusCode == System.Net.HttpStatusCode.UnprocessableEntity && errorJson.Contains("\"errores\":"))
                 {
                     var valError = JsonConvert.DeserializeObject<Cigral.Models.ValidationErrorResponse>(errorJson);
@@ -905,9 +906,7 @@ namespace Cigral.Services
                     }
                 }
 
-
-                // Errores de Formato del Framework(HTTP 400 BadRequest)
-                // Ocurre cuando se mandan tipos de datos incorrectos (ej: un string vacío en vez de null para una fecha)
+                // 2. Errores de Formato del Framework (HTTP 400 BadRequest nativo)
                 if (response.StatusCode == System.Net.HttpStatusCode.BadRequest && errorJson.Contains("\"errors\":"))
                 {
                     var badRequestObj = JObject.Parse(errorJson);
@@ -917,7 +916,6 @@ namespace Cigral.Services
                     {
                         string mensajeLimpio = "Por favor, verificá el formato de los datos ingresados:\n\n";
 
-                        // Recorre todas las propiedades que fallaron (FechaVencimiento, etc)
                         foreach (var propiedad in diccionarioErrores.Children<JProperty>())
                         {
                             foreach (var error in propiedad.Value)
@@ -927,14 +925,46 @@ namespace Cigral.Services
                         }
 
                         MessageBox.Show(mensajeLimpio, "Datos Inválidos", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                        return filasConError; // Retorna vacío porque no tenemos el número de fila acá
+                        return filasConError;
                     }
                 }
 
+                // ==========================================
+                // NUEVO BLOQUE: Errores 404 Not Found
+                // ==========================================
+                if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+                {
+                    var notFoundObj = JsonConvert.DeserializeObject<Cigral.Models.DomainErrorResponse>(errorJson);
 
+                    if (notFoundObj != null)
+                    {
+                        string entidadPerdida = "";
 
+                        // Extraemos el nombre de la entidad del diccionario 'details'
+                        if (notFoundObj.details != null && notFoundObj.details.TryGetValue("entityName", out var entityObj))
+                        {
+                            entidadPerdida = entityObj.ToString();
+                        }
 
-                // Errores de Dominio Estándar 
+                        // Respuestas personalizadas por entidad
+                        if (entidadPerdida == "Cliente")
+                        {
+                            MessageBox.Show("El cliente seleccionado ya no existe o fue eliminado.", "Cliente Inválido", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        }
+                        else if (entidadPerdida == "Existencia")
+                        {
+                            MessageBox.Show("El lote/producto seleccionado ya no existe en el sistema.", "Stock Inválido", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        }
+                        else
+                        {
+                            // Fallback con el mensaje que vino del servidor
+                            MessageBox.Show(notFoundObj.message ?? "El recurso solicitado no fue encontrado.", "No Encontrado", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        }
+                        return filasConError;
+                    }
+                }
+
+                // 4. Errores de Dominio Estándar (Los 400 y 409 que provienen de tu DomainException)
                 var errorObj = JsonConvert.DeserializeObject<Cigral.Models.DomainErrorResponse>(errorJson);
 
                 if (errorObj != null && !string.IsNullOrEmpty(errorObj.code) && !string.IsNullOrEmpty(errorObj.message))
@@ -944,7 +974,7 @@ namespace Cigral.Services
                 }
                 else
                 {
-                    // 3. Fallo (Base de datos caída, etc)
+                    // 5. Fallo (Base de datos caída, etc - 500 Internal Server Error)
                     MessageBox.Show($"Error no controlado en el servidor.\nStatus: {response.StatusCode}\nDetalle: {errorJson}",
                                     "Fallo del Servidor", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
@@ -963,66 +993,66 @@ namespace Cigral.Services
         // Le agregamos "= null" para que los parámetros sean opcionales al llamarla
         public static async Task<List<EntidadDto>> ObtenerEntidades(string razonSocial = null, string cuit = null)
         {
-                try
+            try
+            {
+                // 1. Iniciamos con la URL base y el paginado
+                string url = $"{BaseUrl}/Clientes/entidades?pageSize=25";
+
+                // 2. Agregamos Razón Social solo si no está vacía y la codificamos
+                if (!string.IsNullOrWhiteSpace(razonSocial))
                 {
-                    // 1. Iniciamos con la URL base y el paginado
-                    string url = $"{BaseUrl}/Clientes/entidades?pageSize=25";
-
-                    // 2. Agregamos Razón Social solo si no está vacía y la codificamos
-                    if (!string.IsNullOrWhiteSpace(razonSocial))
-                    {
-                        url += $"&RazonSocial={Uri.EscapeDataString(razonSocial)}";
-                    }
-
-                    // 3. Agregamos Cuit solo si no está vacío y lo codificamos
-                    if (!string.IsNullOrWhiteSpace(cuit))
-                    {
-                        url += $"&Cuit={Uri.EscapeDataString(cuit)}";
-                    }
-
-                    // 4. Hacemos la petición con la URL ya ensamblada y segura
-                    var response = await _client.GetAsync(url);
-
-                    if (response.IsSuccessStatusCode)
-                    {
-                        var json = await response.Content.ReadAsStringAsync();
-                        var paquete = JsonConvert.DeserializeObject<PaginadoResponse<EntidadDto>>(json);
-                        if (paquete != null && paquete.items != null) return paquete.items;
-                    }
-                    return new List<EntidadDto>();
+                    url += $"&RazonSocial={Uri.EscapeDataString(razonSocial)}";
                 }
-                catch
+
+                // 3. Agregamos Cuit solo si no está vacío y lo codificamos
+                if (!string.IsNullOrWhiteSpace(cuit))
                 {
-                    return new List<EntidadDto>();
+                    url += $"&Cuit={Uri.EscapeDataString(cuit)}";
                 }
+
+                // 4. Hacemos la petición con la URL ya ensamblada y segura
+                var response = await _client.GetAsync(url);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var json = await response.Content.ReadAsStringAsync();
+                    var paquete = JsonConvert.DeserializeObject<PaginadoResponse<EntidadDto>>(json);
+                    if (paquete != null && paquete.items != null) return paquete.items;
+                }
+                return new List<EntidadDto>();
+            }
+            catch
+            {
+                return new List<EntidadDto>();
+            }
         }
 
         public static async Task<int> UpdateEntidad(EntidadDto entidad)
         {
-                try
-                {
-                    string json = JsonConvert.SerializeObject(entidad);
-                    var content = new StringContent(json, Encoding.UTF8, "application/json");
-                    
-                    var response = entidad.TipoEntidad=="Cliente" ? await _client.PutAsync($"{BaseUrl}/Clientes/{entidad.IdOriginal}", content) : await _client.PutAsync($"{BaseUrl}/Proveedores/{entidad.IdOriginal}", content);
+            try
+            {
+                string json = JsonConvert.SerializeObject(entidad);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-                    if (response.IsSuccessStatusCode)
-                    {
-                        var jsonResponse = await response.Content.ReadAsStringAsync();
-                        var entidadResponse = JsonConvert.DeserializeObject<EntidadResponse>(jsonResponse);
-                        return entidadResponse.Id;
-                    }
-                    else
-                    {
-                        await MostrarErrorBackend(response, $"Error al actualizar algun campo de '{entidad.RazonSocial}'");
-                        return 0;
-                    }
-                }
-                catch (Exception ex)
+                var response = entidad.TipoEntidad == "Cliente" ? await _client.PutAsync($"{BaseUrl}/Clientes/{entidad.IdOriginal}", content) : await _client.PutAsync($"{BaseUrl}/Proveedores/{entidad.IdOriginal}", content);
+
+                if (response.IsSuccessStatusCode)
                 {
-                    MessageBox.Show($"Fallo de conexión al modificar la entidad:\n{ex.Message}", "Fallo Crítico", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    var jsonResponse = await response.Content.ReadAsStringAsync();
+                    var entidadResponse = JsonConvert.DeserializeObject<EntidadResponse>(jsonResponse);
+                    return entidadResponse.Id;
+                }
+                else
+                {
+                    await MostrarErrorBackend(response, $"Error al actualizar algun campo de '{entidad.RazonSocial}'");
                     return 0;
                 }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Fallo de conexión al modificar la entidad:\n{ex.Message}", "Fallo Crítico", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return 0;
+            }
         }
 
         /// <summary>
@@ -1030,19 +1060,19 @@ namespace Cigral.Services
         /// </summary>
         public static async Task<ProductoResponseDto> ObtenerProductoPorId(int id)
         {
-           
-                try
+
+            try
+            {
+                // Asegurate de que la ruta sea correcta según tu backend (ej. /Productos/{id})
+                var response = await _client.GetAsync($"{BaseUrl}/Productos/{id}");
+                if (response.IsSuccessStatusCode)
                 {
-                    // Asegurate de que la ruta sea correcta según tu backend (ej. /Productos/{id})
-                    var response = await _client.GetAsync($"{BaseUrl}/Productos/{id}");
-                    if (response.IsSuccessStatusCode)
-                    {
-                        var json = await response.Content.ReadAsStringAsync();
-                        return Newtonsoft.Json.JsonConvert.DeserializeObject<ProductoResponseDto>(json);
-                    }
-                    return null;
+                    var json = await response.Content.ReadAsStringAsync();
+                    return Newtonsoft.Json.JsonConvert.DeserializeObject<ProductoResponseDto>(json);
                 }
-                catch { return null; }
+                return null;
+            }
+            catch { return null; }
         }
 
 
@@ -1051,34 +1081,138 @@ namespace Cigral.Services
         //Nuevo modulo de consignaciones o banco de stent (?
         //===================================================
 
-        public static async Task<PaginadoResponse<ConsignacionDto>> ObtenerConsignaciones(string buscarNombre = "", string lote = "", string serie = "", string entidad = "", int pageNumber = 1, int pageSize = 25)
+        public static async Task<PaginadoResponse<GetConsignacionResponseDto>> ObtenerConsignaciones(string buscarNombre = "", string lote = "", string serie = "", string entidad = "", int pageNumber = 1, int pageSize = 25)
         {
-            using (HttpClient client = GetClient())
+            try
             {
-                try
+                // Arrancamos con la base y la paginación
+                string url = $"{BaseUrl}/Consignaciones?PageNumber={pageNumber}&PageSize={pageSize}";
+
+                // Sumamos los 4 filtros si el usuario escribió algo
+                if (!string.IsNullOrWhiteSpace(buscarNombre)) url += $"&ProductoNombre={Uri.EscapeDataString(buscarNombre.Trim())}";
+                if (!string.IsNullOrWhiteSpace(lote)) url += $"&CodigoLote={Uri.EscapeDataString(lote.Trim())}";
+                if (!string.IsNullOrWhiteSpace(serie)) url += $"&NumSerie={Uri.EscapeDataString(serie.Trim())}";
+                if (!string.IsNullOrWhiteSpace(entidad)) url += $"&ClienteNombre={Uri.EscapeDataString(entidad.Trim())}";
+
+                var response = await _client.GetAsync(url);
+
+                if (response.IsSuccessStatusCode)
                 {
-                    // Arrancamos con la base y la paginación
-                    string url = $"{BaseUrl}/Consignaciones?PageNumber={pageNumber}&PageSize={pageSize}";
-
-                    // Sumamos los 4 filtros si el usuario escribió algo
-                    if (!string.IsNullOrWhiteSpace(buscarNombre)) url += $"&NombreProducto={Uri.EscapeDataString(buscarNombre.Trim())}";
-                    if (!string.IsNullOrWhiteSpace(lote)) url += $"&CodigoLote={Uri.EscapeDataString(lote.Trim())}";
-                    if (!string.IsNullOrWhiteSpace(serie)) url += $"&NumeroSerie={Uri.EscapeDataString(serie.Trim())}";
-                    if (!string.IsNullOrWhiteSpace(entidad)) url += $"&Entidad={Uri.EscapeDataString(entidad.Trim())}";
-
-                    var response = await client.GetAsync(url);
-
-                    if (response.IsSuccessStatusCode)
-                    {
-                        var json = await response.Content.ReadAsStringAsync();
-                        var paquete = JsonConvert.DeserializeObject<PaginadoResponse<ConsignacionDto>>(json);
-                        if (paquete != null && paquete.items != null) return paquete;
-                    }
-                    return new PaginadoResponse<ConsignacionDto> { items = new List<ConsignacionDto>() };
+                    var json = await response.Content.ReadAsStringAsync();
+                    var paquete = JsonConvert.DeserializeObject<PaginadoResponse<GetConsignacionResponseDto>>(json);
+                    if (paquete != null && paquete.items != null) return paquete;
                 }
-                catch { return new PaginadoResponse<ConsignacionDto> { items = new List<ConsignacionDto>() }; }
+                return new PaginadoResponse<GetConsignacionResponseDto> { items = new List<GetConsignacionResponseDto>() };
+            }
+            catch { return new PaginadoResponse<GetConsignacionResponseDto> { items = new List<GetConsignacionResponseDto>() }; }
+        }
+
+        public static async Task<ConsignacionResponseDto> AumentarConsignacion(ConsignacionAddDto consignacion)
+        {
+            try
+            {
+                string json = JsonConvert.SerializeObject(consignacion);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+                var response = await _client.PostAsync($"{BaseUrl}/Consignaciones/aumentar", content);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var jsonResponse = await response.Content.ReadAsStringAsync();
+                    var respuesta = JsonConvert.DeserializeObject<ConsignacionResponseDto>(jsonResponse);
+                    return respuesta;
+                }
+                // AQUÍ EVALUAMOS EL NOT FOUND (404)
+                else if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+                {
+                    var errorJson = await response.Content.ReadAsStringAsync();
+                    // Opcional: Deserializar el JSON para mostrar el mensaje exacto del backend
+                    // var errorObj = JsonConvert.DeserializeObject<ErrorResponseDto>(errorJson);
+
+                    MessageBox.Show("El cliente o la existencia no fueron encontrados en el sistema.", "No Encontrado", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return null;
+                }
+                else
+                {
+                    // Para el resto de los errores (como el 400 del Stock Insuficiente)
+                    await MostrarErrorBackend(response, $"Error al aumentar la consignación del producto ID {consignacion.existenciaId}");
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Fallo de conexión al aumentar consignación:\n{ex.Message}", "Fallo Crítico", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return null;
             }
         }
 
+        public static async Task<ConsignacionResponseDto> DisminuirConsignacion(ConsignacionDisminuirDto consignacionADisminuir, int consignacionId)
+        {
+            try
+            {
+                string json = JsonConvert.SerializeObject(consignacionADisminuir);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+                var response = await _client.PutAsync($"{BaseUrl}/Consignaciones/{consignacionId}/disminuir", content);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var jsonResponse = await response.Content.ReadAsStringAsync();
+                    var respuesta = JsonConvert.DeserializeObject<ConsignacionResponseDto>(jsonResponse);
+                    return respuesta;
+                }
+                // AQUÍ EVALUAMOS EL NOT FOUND (404)
+                else if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+                {
+                    var errorJson = await response.Content.ReadAsStringAsync();
+                    // Opcional: Deserializar el JSON para mostrar el mensaje exacto del backend
+                    // var errorObj = JsonConvert.DeserializeObject<ErrorResponseDto>(errorJson);
+
+                    MessageBox.Show("La consignacion no fue encontrada en el sistema.", "No Encontrado", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return null;
+                }
+                else
+                {
+                    // Para el resto de los errores (como el 400 del Stock Insuficiente)
+                    await MostrarErrorBackend(response, $"Error al disminuir la consignación");
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Fallo de conexión al disminuir consignación:\n{ex.Message}", "Fallo Crítico", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return null;
+            }
+        }
+
+        public static async Task<ExistenciaDto> GetExistenciaPorId(int idExistencia)
+        {
+            try
+            {
+                var response = await _client.GetAsync($"{BaseUrl}/Existencias/{idExistencia}");
+                if (response.IsSuccessStatusCode)
+                {
+                    var json = await response.Content.ReadAsStringAsync();
+                    return JsonConvert.DeserializeObject<ExistenciaDto>(json);
+                }
+                return default(ExistenciaDto);
+            }
+            catch { return default(ExistenciaDto); }
+        }
+
+        public static async Task<int> GetStockDisponible(int existenciaId)
+        {
+            try
+            {
+                var response = await _client.GetAsync($"{BaseUrl}/Existencias/{existenciaId}/stock-disponible");
+                if (response.IsSuccessStatusCode)
+                {
+                    var json = await response.Content.ReadAsStringAsync();
+                    var stockDisponible = JsonConvert.DeserializeObject<StockDisponibleResponse>(json);
+                    return stockDisponible?.cantidad ?? 0;
+                }
+                return 0;
+            }
+            catch { return 0; }
+
+        }
     }
 }

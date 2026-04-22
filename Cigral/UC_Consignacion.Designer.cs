@@ -50,12 +50,23 @@
             btnAnterior = new Button();
             iconBtnBack = new FontAwesome.Sharp.IconButton();
             dgvConsignaciones = new DataGridView();
+            consignacionId = new DataGridViewTextBoxColumn();
+            existenciaId = new DataGridViewTextBoxColumn();
+            Producto = new DataGridViewTextBoxColumn();
+            Cliente = new DataGridViewTextBoxColumn();
+            Lote = new DataGridViewTextBoxColumn();
+            Serie = new DataGridViewTextBoxColumn();
+            Deposito = new DataGridViewTextBoxColumn();
+            Cantidad = new DataGridViewTextBoxColumn();
+            menuConsignaciones = new ContextMenuStrip(components);
+            disminuirConsignacionToolStripMenuItem = new ToolStripMenuItem();
             timerBusqueda = new System.Windows.Forms.Timer(components);
             panel1.SuspendLayout();
             groupBox1.SuspendLayout();
             tableLayoutPanel1.SuspendLayout();
             panel3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dgvConsignaciones).BeginInit();
+            menuConsignaciones.SuspendLayout();
             SuspendLayout();
             // 
             // panel1
@@ -95,6 +106,7 @@
             groupBox1.TabIndex = 8;
             groupBox1.TabStop = false;
             groupBox1.Text = "Filtros de Busqueda";
+            groupBox1.Enter += groupBox1_Enter;
             // 
             // tableLayoutPanel1
             // 
@@ -312,11 +324,102 @@
             // 
             dgvConsignaciones.BackgroundColor = Color.White;
             dgvConsignaciones.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgvConsignaciones.Columns.AddRange(new DataGridViewColumn[] { consignacionId, existenciaId, Producto, Cliente, Lote, Serie, Deposito, Cantidad });
+            dgvConsignaciones.ContextMenuStrip = menuConsignaciones;
             dgvConsignaciones.Dock = DockStyle.Fill;
             dgvConsignaciones.Location = new Point(0, 154);
+            dgvConsignaciones.MultiSelect = false;
             dgvConsignaciones.Name = "dgvConsignaciones";
+            dgvConsignaciones.ReadOnly = true;
+            dgvConsignaciones.RowHeadersVisible = false;
+            dgvConsignaciones.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dgvConsignaciones.Size = new Size(1696, 722);
             dgvConsignaciones.TabIndex = 11;
+            dgvConsignaciones.CellContentClick += dgvConsignaciones_CellContentClick;
+            // 
+            // consignacionId
+            // 
+            consignacionId.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            consignacionId.DataPropertyName = "id";
+            consignacionId.HeaderText = "consignacionId";
+            consignacionId.Name = "consignacionId";
+            consignacionId.ReadOnly = true;
+            consignacionId.Visible = false;
+            // 
+            // existenciaId
+            // 
+            existenciaId.DataPropertyName = "existenciaId";
+            existenciaId.HeaderText = "existenciaId";
+            existenciaId.Name = "existenciaId";
+            existenciaId.ReadOnly = true;
+            existenciaId.Visible = false;
+            // 
+            // Producto
+            // 
+            Producto.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            Producto.DataPropertyName = "productoNombre";
+            Producto.FillWeight = 40F;
+            Producto.HeaderText = "Producto";
+            Producto.Name = "Producto";
+            Producto.ReadOnly = true;
+            // 
+            // Cliente
+            // 
+            Cliente.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            Cliente.DataPropertyName = "clienteRazonSocial";
+            Cliente.FillWeight = 20F;
+            Cliente.HeaderText = "Cliente";
+            Cliente.Name = "Cliente";
+            Cliente.ReadOnly = true;
+            // 
+            // Lote
+            // 
+            Lote.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            Lote.DataPropertyName = "codigoLote";
+            Lote.FillWeight = 10F;
+            Lote.HeaderText = "Lote";
+            Lote.Name = "Lote";
+            Lote.ReadOnly = true;
+            // 
+            // Serie
+            // 
+            Serie.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            Serie.DataPropertyName = "numSerie";
+            Serie.FillWeight = 10F;
+            Serie.HeaderText = "Serie";
+            Serie.Name = "Serie";
+            Serie.ReadOnly = true;
+            // 
+            // Deposito
+            // 
+            Deposito.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            Deposito.DataPropertyName = "depositoNombre";
+            Deposito.FillWeight = 20F;
+            Deposito.HeaderText = "Deposito";
+            Deposito.Name = "Deposito";
+            Deposito.ReadOnly = true;
+            // 
+            // Cantidad
+            // 
+            Cantidad.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            Cantidad.DataPropertyName = "cantidad";
+            Cantidad.FillWeight = 5F;
+            Cantidad.HeaderText = "Cantidad";
+            Cantidad.Name = "Cantidad";
+            Cantidad.ReadOnly = true;
+            // 
+            // menuConsignaciones
+            // 
+            menuConsignaciones.Items.AddRange(new ToolStripItem[] { disminuirConsignacionToolStripMenuItem });
+            menuConsignaciones.Name = "menuConsignaciones";
+            menuConsignaciones.Size = new Size(200, 48);
+            // 
+            // disminuirConsignacionToolStripMenuItem
+            // 
+            disminuirConsignacionToolStripMenuItem.Name = "disminuirConsignacionToolStripMenuItem";
+            disminuirConsignacionToolStripMenuItem.Size = new Size(199, 22);
+            disminuirConsignacionToolStripMenuItem.Text = "Modificar consignacion";
+            disminuirConsignacionToolStripMenuItem.Click += disminuirConsignacionToolStripMenuItem_Click;
             // 
             // timerBusqueda
             // 
@@ -333,12 +436,14 @@
             Controls.Add(panel1);
             Name = "UC_Consignacion";
             Size = new Size(1696, 944);
+            Load += UC_Consignacion_Load;
             panel1.ResumeLayout(false);
             groupBox1.ResumeLayout(false);
             tableLayoutPanel1.ResumeLayout(false);
             tableLayoutPanel1.PerformLayout();
             panel3.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)dgvConsignaciones).EndInit();
+            menuConsignaciones.ResumeLayout(false);
             ResumeLayout(false);
         }
 
@@ -371,5 +476,15 @@
         private Button button1;
         private Button button2;
         private System.Windows.Forms.Timer timerBusqueda;
+        private DataGridViewTextBoxColumn consignacionId;
+        private DataGridViewTextBoxColumn existenciaId;
+        private DataGridViewTextBoxColumn Producto;
+        private DataGridViewTextBoxColumn Cliente;
+        private DataGridViewTextBoxColumn Lote;
+        private DataGridViewTextBoxColumn Serie;
+        private DataGridViewTextBoxColumn Deposito;
+        private DataGridViewTextBoxColumn Cantidad;
+        private ContextMenuStrip menuConsignaciones;
+        private ToolStripMenuItem disminuirConsignacionToolStripMenuItem;
     }
 }

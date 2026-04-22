@@ -47,6 +47,7 @@
             label3 = new Label();
             groupBox1 = new GroupBox();
             tableLayoutPanel1 = new TableLayoutPanel();
+            consignacionCheck = new CheckBox();
             txtComprobante = new TextBox();
             label7 = new Label();
             txtBuscarCliente = new TextBox();
@@ -63,7 +64,9 @@
             label1 = new Label();
             panel1 = new Panel();
             dgvEgreso = new DataGridView();
+            timerBusquedaCliente = new System.Windows.Forms.Timer(components);
             Id = new DataGridViewTextBoxColumn();
+            ExistenciaId = new DataGridViewTextBoxColumn();
             Producto = new DataGridViewTextBoxColumn();
             Lote = new DataGridViewTextBoxColumn();
             Vencimiento = new DataGridViewTextBoxColumn();
@@ -71,7 +74,6 @@
             Cantidad = new DataGridViewTextBoxColumn();
             ColInfo = new DataGridViewTextBoxColumn();
             ColAcciones = new DataGridViewButtonColumn();
-            timerBusquedaCliente = new System.Windows.Forms.Timer(components);
             panel3.SuspendLayout();
             groupBox1.SuspendLayout();
             tableLayoutPanel1.SuspendLayout();
@@ -224,25 +226,27 @@
             // 
             // tableLayoutPanel1
             // 
-            tableLayoutPanel1.ColumnCount = 6;
+            tableLayoutPanel1.ColumnCount = 7;
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle());
             tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle());
             tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle());
             tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle());
             tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle());
             tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
             tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle());
+            tableLayoutPanel1.Controls.Add(consignacionCheck, 4, 0);
             tableLayoutPanel1.Controls.Add(label2, 0, 0);
-            tableLayoutPanel1.Controls.Add(dateTimePicker1, 5, 1);
-            tableLayoutPanel1.Controls.Add(label3, 4, 1);
+            tableLayoutPanel1.Controls.Add(dateTimePicker1, 6, 1);
+            tableLayoutPanel1.Controls.Add(label3, 5, 1);
             tableLayoutPanel1.Controls.Add(txtComprobante, 3, 1);
             tableLayoutPanel1.Controls.Add(label7, 2, 1);
             tableLayoutPanel1.Controls.Add(txtBuscarCliente, 1, 0);
             tableLayoutPanel1.Controls.Add(btnAgregarCliente, 2, 0);
             tableLayoutPanel1.Controls.Add(chkConRemito, 3, 0);
-            tableLayoutPanel1.Controls.Add(cmbDeposito, 5, 0);
+            tableLayoutPanel1.Controls.Add(cmbDeposito, 6, 0);
             tableLayoutPanel1.Controls.Add(txtRemito, 1, 1);
             tableLayoutPanel1.Controls.Add(label5, 0, 1);
-            tableLayoutPanel1.Controls.Add(label6, 4, 0);
+            tableLayoutPanel1.Controls.Add(label6, 5, 0);
             tableLayoutPanel1.Dock = DockStyle.Fill;
             tableLayoutPanel1.Location = new Point(3, 24);
             tableLayoutPanel1.Name = "tableLayoutPanel1";
@@ -252,6 +256,19 @@
             tableLayoutPanel1.Size = new Size(1690, 72);
             tableLayoutPanel1.TabIndex = 0;
             tableLayoutPanel1.Paint += tableLayoutPanel1_Paint;
+            // 
+            // consignacionCheck
+            // 
+            consignacionCheck.Anchor = AnchorStyles.Left;
+            consignacionCheck.AutoSize = true;
+            consignacionCheck.Font = new Font("Segoe UI", 12F);
+            consignacionCheck.Location = new Point(724, 5);
+            consignacionCheck.Name = "consignacionCheck";
+            consignacionCheck.Size = new Size(123, 25);
+            consignacionCheck.TabIndex = 16;
+            consignacionCheck.Text = "Consignacion";
+            consignacionCheck.UseVisualStyleBackColor = true;
+            consignacionCheck.CheckedChanged += consignacionCheck_CheckedChanged;
             // 
             // txtComprobante
             // 
@@ -450,7 +467,7 @@
             dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
             dgvEgreso.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             dgvEgreso.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvEgreso.Columns.AddRange(new DataGridViewColumn[] { Id, Producto, Lote, Vencimiento, Serie, Cantidad, ColInfo, ColAcciones });
+            dgvEgreso.Columns.AddRange(new DataGridViewColumn[] { Id, ExistenciaId, Producto, Lote, Vencimiento, Serie, Cantidad, ColInfo, ColAcciones });
             dgvEgreso.EnableHeadersVisualStyles = false;
             dgvEgreso.Location = new Point(0, 293);
             dgvEgreso.Margin = new Padding(3, 2, 3, 2);
@@ -462,6 +479,11 @@
             dgvEgreso.TabIndex = 12;
             dgvEgreso.CellContentClick += dgvEgreso_CellContentClick;
             // 
+            // timerBusquedaCliente
+            // 
+            timerBusquedaCliente.Interval = 250;
+            timerBusquedaCliente.Tick += timerBusquedaCliente_Tick;
+            // 
             // Id
             // 
             dataGridViewCellStyle2.SelectionBackColor = Color.White;
@@ -472,6 +494,13 @@
             Id.Name = "Id";
             Id.Visible = false;
             Id.Width = 125;
+            // 
+            // ExistenciaId
+            // 
+            ExistenciaId.HeaderText = "ExistenciaId";
+            ExistenciaId.Name = "ExistenciaId";
+            ExistenciaId.ReadOnly = true;
+            ExistenciaId.Visible = false;
             // 
             // Producto
             // 
@@ -549,11 +578,6 @@
             ColAcciones.UseColumnTextForButtonValue = true;
             ColAcciones.Width = 125;
             // 
-            // timerBusquedaCliente
-            // 
-            timerBusquedaCliente.Interval = 250;
-            timerBusquedaCliente.Tick += timerBusquedaCliente_Tick;
-            // 
             // UC_Egresos
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -602,7 +626,15 @@
         private FontAwesome.Sharp.IconButton btnAgregarCliente;
         private LinkLabel linkLabel1;
         private Label label1;
+        private TextBox txtComprobante;
+        private Label label7;
+        private TextBox txtBuscarCliente;
+        private ListBox lstClientes;
+        private System.Windows.Forms.Timer timerBusquedaCliente;
+        private TableLayoutPanel tableLayoutPanel1;
+        private CheckBox consignacionCheck;
         private DataGridViewTextBoxColumn Id;
+        private DataGridViewTextBoxColumn ExistenciaId;
         private DataGridViewTextBoxColumn Producto;
         private DataGridViewTextBoxColumn Lote;
         private DataGridViewTextBoxColumn Vencimiento;
@@ -610,11 +642,5 @@
         private DataGridViewTextBoxColumn Cantidad;
         private DataGridViewTextBoxColumn ColInfo;
         private DataGridViewButtonColumn ColAcciones;
-        private TextBox txtComprobante;
-        private Label label7;
-        private TextBox txtBuscarCliente;
-        private ListBox lstClientes;
-        private System.Windows.Forms.Timer timerBusquedaCliente;
-        private TableLayoutPanel tableLayoutPanel1;
     }
 }

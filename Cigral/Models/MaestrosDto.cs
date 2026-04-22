@@ -204,10 +204,13 @@ namespace Cigral.Models
 
     public class DomainErrorResponse
     {
+
         public string error { get; set; }
-        public string code { get; set; }
-        public int codeValue { get; set; }
         public string message { get; set; }
+        public int statusCode { get; set; }
+        public string code { get; set; }
+        public int? codeValue { get; set; }
+        public Dictionary<string, object> details { get; set; }
     }
 
     // El molde de lo que viene adentro de "items"
@@ -261,6 +264,47 @@ namespace Cigral.Models
         public string EntidadNombre { get; set; } // El proveedor o cliente de la consignación
         public DateTime FechaIngreso { get; set; }
         public string Estado { get; set; } // Ej: "Pendiente", "Vendido", "Devuelto"
+    }
+
+    public class ConsignacionAddDto
+    {
+        public int existenciaId { get; set; }
+        public int clienteId { get; set; }
+        public int cantidad { get; set; }
+    }
+
+    public class ConsignacionResponseDto
+    {
+        public int id { get; set; }
+        public int existenciaId { get; set; }
+        public int clienteId { get; set; }
+        public int cantidad { get; set; }
+
+        public DateTime fechaModificacion { get; set; }
+    }
+
+    public class GetConsignacionResponseDto
+    {
+        public int id { get; set; }
+        public int existenciaId { get; set; }
+        public string productoNombre { get; set; }
+        public string codigoLote { get; set; }
+        public string numSerie { get; set; }
+        public string depositoNombre { get; set; }
+        public int clienteId { get; set; }
+        public string clienteRazonSocial { get; set; }
+        public int cantidad { get; set; }
+        public DateTime fechaModificacion { get; set; }
+    }
+
+    public class ConsignacionDisminuirDto
+    {
+        public int cantidad { get; set; }
+    }
+
+    public class StockDisponibleResponse
+    {
+        public int cantidad { get; set; }
     }
 
 
