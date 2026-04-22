@@ -64,7 +64,6 @@
             label1 = new Label();
             panel1 = new Panel();
             dgvEgreso = new DataGridView();
-            timerBusquedaCliente = new System.Windows.Forms.Timer(components);
             Id = new DataGridViewTextBoxColumn();
             ExistenciaId = new DataGridViewTextBoxColumn();
             Producto = new DataGridViewTextBoxColumn();
@@ -74,6 +73,7 @@
             Cantidad = new DataGridViewTextBoxColumn();
             ColInfo = new DataGridViewTextBoxColumn();
             ColAcciones = new DataGridViewButtonColumn();
+            timerBusquedaCliente = new System.Windows.Forms.Timer(components);
             panel3.SuspendLayout();
             groupBox1.SuspendLayout();
             tableLayoutPanel1.SuspendLayout();
@@ -264,9 +264,9 @@
             consignacionCheck.Font = new Font("Segoe UI", 12F);
             consignacionCheck.Location = new Point(724, 5);
             consignacionCheck.Name = "consignacionCheck";
-            consignacionCheck.Size = new Size(123, 25);
+            consignacionCheck.Size = new Size(268, 25);
             consignacionCheck.TabIndex = 16;
-            consignacionCheck.Text = "Consignacion";
+            consignacionCheck.Text = "Enviar Productos al Banco de Stent";
             consignacionCheck.UseVisualStyleBackColor = true;
             consignacionCheck.CheckedChanged += consignacionCheck_CheckedChanged;
             // 
@@ -479,11 +479,6 @@
             dgvEgreso.TabIndex = 12;
             dgvEgreso.CellContentClick += dgvEgreso_CellContentClick;
             // 
-            // timerBusquedaCliente
-            // 
-            timerBusquedaCliente.Interval = 250;
-            timerBusquedaCliente.Tick += timerBusquedaCliente_Tick;
-            // 
             // Id
             // 
             dataGridViewCellStyle2.SelectionBackColor = Color.White;
@@ -577,6 +572,11 @@
             ColAcciones.Text = "ELIMINAR";
             ColAcciones.UseColumnTextForButtonValue = true;
             ColAcciones.Width = 125;
+            // 
+            // timerBusquedaCliente
+            // 
+            timerBusquedaCliente.Interval = 250;
+            timerBusquedaCliente.Tick += timerBusquedaCliente_Tick;
             // 
             // UC_Egresos
             // 
