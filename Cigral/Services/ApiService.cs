@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Security.Policy;
@@ -1213,6 +1214,29 @@ namespace Cigral.Services
             }
             catch { return 0; }
 
+        }
+
+        public static async Task ImprimirConsignacionesPdf(PrintConsignacionesRequest request)
+        {
+            try
+            {
+                string json = JsonConvert.SerializeObject(request);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+                var response = await _client.PostAsync($"{BaseUrl}/Consignaciones/imprimir", content);
+                if (response.IsSuccessStatusCode)
+                {
+                    var bytes = await response.Content.ReadAsByteArrayAsync();
+                    string nombreArchivo = $"Reporte_Consignaciones_{DateTime.Now.Ticks}.pdf";
+                    string path = System.IO.Path.Combine(System.IO.Path.GetTempPath(), nombreArchivo);
+
+                    System.IO.File.WriteAllBytes(path, bytes);
+                    System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(path) { UseShellExecute = true });
+                }
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show("Error al intentar abrir el PDF: " + ex.Message, "Error PDF", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
     }
 }

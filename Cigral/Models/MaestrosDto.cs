@@ -307,5 +307,8 @@ namespace Cigral.Models
         public int cantidad { get; set; }
     }
 
+    public class PrintConsignacionesRequest {
+        public List<int>? ConsignacionIds { get; set; }
+    }
 
 }

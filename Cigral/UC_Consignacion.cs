@@ -222,9 +222,6 @@ namespace Cigral
                                 MessageBox.Show("Error al disminuir la consignación.");
                             }
                         
-                        
-                            
-                        
                     }
                 }
             }

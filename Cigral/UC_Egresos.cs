@@ -474,6 +474,7 @@ namespace Cigral
 
                 if (consignacionCheck.Checked)
                 {
+                    var idsConsignaciones = new List<int>();
                     int itemsProcesados = 0;
                     int itemsConError = 0;
 
@@ -495,6 +496,7 @@ namespace Cigral
                         if (response != null)
                         {
                             itemsProcesados++;
+                            idsConsignaciones.Add(response.id);
                             filasParaBorrar.Add(fila);
                         }
                         else
@@ -502,22 +504,33 @@ namespace Cigral
                             itemsConError++;
                             fila.DefaultCellStyle.BackColor = Color.FromArgb(255, 192, 192);
                         }
-
-                        foreach (var filaExito in filasParaBorrar)
-                        {
-                            dgvEgreso.Rows.Remove(filaExito);
-                        }
-
-                        if (itemsConError == 0)
-                        {
-                            MessageBox.Show($"¡Consignaciones creadas/agregadas exitosamente! ({itemsProcesados} items).", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                            LimpiarPantalla();
-                        }
-                        else
-                        {
-                            string mensajeAviso = $"Se procesaron {itemsProcesados} consignaciones correctamente.\n\nSin embargo, fallaron {itemsConError} productos:\n";
-                        }
                     }
+
+                    foreach (var filaExito in filasParaBorrar)
+                    {
+                        dgvEgreso.Rows.Remove(filaExito);
+                    }
+
+                    if (itemsConError == 0)
+                    {
+                        MessageBox.Show($"¡Consignaciones creadas/agregadas exitosamente! ({itemsProcesados} items).", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        LimpiarPantalla();
+                    }
+                    else
+                    {
+                        string mensajeAviso = $"Se procesaron {itemsProcesados} consignaciones correctamente.\n\nSin embargo, fallaron {itemsConError} productos:\n";
+                    }
+
+                    if(itemsProcesados > 0)
+                    {
+                        MessageBox.Show($"Se imprimirá el pdf con las consignaciones correctamente procesadas.", "Impresión", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        await ApiServices.ImprimirConsignacionesPdf(new PrintConsignacionesRequest()
+                        {
+                            ConsignacionIds = idsConsignaciones
+                        });
+                    }
+                        
+                    
                 }
                 else if (chkConRemito.Checked)
                 {
