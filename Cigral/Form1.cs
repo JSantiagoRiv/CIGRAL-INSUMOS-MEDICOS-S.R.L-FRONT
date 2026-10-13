@@ -27,7 +27,7 @@ namespace Cigral
         {
             // Arranca la aplicación simulando un clic en el botón de Inicio 
             // para que cargue el Dashboard por defecto.
-           
+
         }
 
         // --- NAVEGACIÓN Y RENDERIZADO DE PANTALLAS ---
@@ -193,6 +193,31 @@ namespace Cigral
         {
             resaltarBoton(sender);
             MostrarPantalla(new UC_Dashboard());
+        }
+
+
+
+        private void btnConsignacion_Click(object sender, EventArgs e)
+        {
+            resaltarBoton(sender);
+            MostrarPantalla(new UC_Consignacion());
+        }
+
+
+
+        private void label2_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void panel1_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        private void tableLayoutPanel2_Paint(object sender, PaintEventArgs e)
+        {
+
         }
     }
 }

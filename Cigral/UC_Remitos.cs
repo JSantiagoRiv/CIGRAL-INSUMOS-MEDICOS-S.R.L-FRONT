@@ -64,7 +64,7 @@ namespace Cigral
             if (_estaBuscando) return;
             _estaBuscando = true; // Pone el semáforo en rojo
 
-            
+
             Cursor = Cursors.WaitCursor;
 
             try
@@ -112,7 +112,7 @@ namespace Cigral
                 if (!this.IsDisposed)
                 {
                     _estaBuscando = false; // Semáforo verde
-                   
+
                     Cursor = Cursors.Default;
                 }
             }
@@ -277,6 +277,11 @@ namespace Cigral
         {
             _paginaActual++;
             EjecutarBusqueda();
+        }
+
+        private void lblPagina_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
