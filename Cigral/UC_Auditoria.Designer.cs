@@ -33,14 +33,20 @@
             panel1 = new Panel();
             labelTitulo = new Label();
             groupBox1 = new GroupBox();
-            txtBusquedaNombre = new TextBox();
-            lblBusquedaNombre = new Label();
-            dtpHasta = new DateTimePicker();
-            btnExportar = new FontAwesome.Sharp.IconButton();
-            cmbMov = new ComboBox();
-            label3 = new Label();
+            tableLayoutPanel1 = new TableLayoutPanel();
             label1 = new Label();
             dtpDesde = new DateTimePicker();
+            label3 = new Label();
+            dtpHasta = new DateTimePicker();
+            btnExportar = new FontAwesome.Sharp.IconButton();
+            lblBusquedaNombre = new Label();
+            txtBusquedaNombre = new TextBox();
+            cmbMov = new ComboBox();
+            label2 = new Label();
+            label4 = new Label();
+            txtSerie = new TextBox();
+            txtLote = new TextBox();
+            chkDevolucion = new CheckBox();
             lblPagina = new Label();
             btnSiguiente = new Button();
             btnAnterior = new Button();
@@ -64,6 +70,7 @@
             timerBusqueda = new System.Windows.Forms.Timer(components);
             panel1.SuspendLayout();
             groupBox1.SuspendLayout();
+            tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dgvAuditoria).BeginInit();
             panel3.SuspendLayout();
             SuspendLayout();
@@ -94,53 +101,92 @@
             // 
             // groupBox1
             // 
-            groupBox1.Controls.Add(txtBusquedaNombre);
-            groupBox1.Controls.Add(lblBusquedaNombre);
-            groupBox1.Controls.Add(dtpHasta);
-            groupBox1.Controls.Add(btnExportar);
-            groupBox1.Controls.Add(cmbMov);
-            groupBox1.Controls.Add(label3);
-            groupBox1.Controls.Add(label1);
-            groupBox1.Controls.Add(dtpDesde);
+            groupBox1.Controls.Add(tableLayoutPanel1);
             groupBox1.Dock = DockStyle.Top;
             groupBox1.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
             groupBox1.Location = new Point(0, 56);
             groupBox1.Margin = new Padding(3, 2, 3, 2);
             groupBox1.Name = "groupBox1";
             groupBox1.Padding = new Padding(3, 2, 3, 2);
-            groupBox1.Size = new Size(1696, 98);
+            groupBox1.Size = new Size(1696, 136);
             groupBox1.TabIndex = 7;
             groupBox1.TabStop = false;
             groupBox1.Text = "Consultar Auditoria";
             // 
-            // txtBusquedaNombre
+            // tableLayoutPanel1
             // 
-            txtBusquedaNombre.Font = new Font("Segoe UI", 12F);
-            txtBusquedaNombre.Location = new Point(774, 37);
-            txtBusquedaNombre.Name = "txtBusquedaNombre";
-            txtBusquedaNombre.PlaceholderText = "Ingrese Nombre del Producto";
-            txtBusquedaNombre.Size = new Size(234, 29);
-            txtBusquedaNombre.TabIndex = 15;
-            txtBusquedaNombre.TextChanged += txtBusquedaNombre_TextChanged;
-            txtBusquedaNombre.KeyDown += txtBusquedaNombre_KeyDown;
+            tableLayoutPanel1.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            tableLayoutPanel1.ColumnCount = 9;
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle());
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle());
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle());
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle());
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle());
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle());
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle());
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle());
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            tableLayoutPanel1.Controls.Add(label1, 0, 0);
+            tableLayoutPanel1.Controls.Add(dtpDesde, 1, 0);
+            tableLayoutPanel1.Controls.Add(label3, 0, 1);
+            tableLayoutPanel1.Controls.Add(dtpHasta, 1, 1);
+            tableLayoutPanel1.Controls.Add(btnExportar, 8, 1);
+            tableLayoutPanel1.Controls.Add(lblBusquedaNombre, 2, 1);
+            tableLayoutPanel1.Controls.Add(txtBusquedaNombre, 3, 1);
+            tableLayoutPanel1.Controls.Add(cmbMov, 3, 0);
+            tableLayoutPanel1.Controls.Add(label2, 4, 1);
+            tableLayoutPanel1.Controls.Add(label4, 6, 1);
+            tableLayoutPanel1.Controls.Add(txtSerie, 7, 1);
+            tableLayoutPanel1.Controls.Add(txtLote, 5, 1);
+            tableLayoutPanel1.Controls.Add(chkDevolucion, 5, 0);
+            tableLayoutPanel1.Location = new Point(3, 27);
+            tableLayoutPanel1.Name = "tableLayoutPanel1";
+            tableLayoutPanel1.RowCount = 2;
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
+            tableLayoutPanel1.Size = new Size(1690, 106);
+            tableLayoutPanel1.TabIndex = 0;
             // 
-            // lblBusquedaNombre
+            // label1
             // 
-            lblBusquedaNombre.AutoSize = true;
-            lblBusquedaNombre.Font = new Font("Segoe UI", 12F);
-            lblBusquedaNombre.Location = new Point(647, 40);
-            lblBusquedaNombre.Name = "lblBusquedaNombre";
-            lblBusquedaNombre.Size = new Size(121, 21);
-            lblBusquedaNombre.TabIndex = 14;
-            lblBusquedaNombre.Text = "Buscar Nombre:";
+            label1.Anchor = AnchorStyles.Right;
+            label1.AutoSize = true;
+            label1.Font = new Font("Segoe UI", 12F);
+            label1.Location = new Point(3, 16);
+            label1.Name = "label1";
+            label1.Size = new Size(56, 21);
+            label1.TabIndex = 8;
+            label1.Text = "Desde:";
+            // 
+            // dtpDesde
+            // 
+            dtpDesde.Anchor = AnchorStyles.Left;
+            dtpDesde.Font = new Font("Segoe UI", 12F);
+            dtpDesde.Format = DateTimePickerFormat.Short;
+            dtpDesde.Location = new Point(65, 12);
+            dtpDesde.Name = "dtpDesde";
+            dtpDesde.Size = new Size(145, 29);
+            dtpDesde.TabIndex = 7;
+            // 
+            // label3
+            // 
+            label3.Anchor = AnchorStyles.Right;
+            label3.AutoSize = true;
+            label3.Font = new Font("Segoe UI", 12F);
+            label3.Location = new Point(7, 69);
+            label3.Name = "label3";
+            label3.Size = new Size(52, 21);
+            label3.TabIndex = 9;
+            label3.Text = "Hasta:";
             // 
             // dtpHasta
             // 
+            dtpHasta.Anchor = AnchorStyles.Left;
             dtpHasta.Font = new Font("Segoe UI", 12F);
             dtpHasta.Format = DateTimePickerFormat.Short;
-            dtpHasta.Location = new Point(280, 37);
+            dtpHasta.Location = new Point(65, 65);
             dtpHasta.Name = "dtpHasta";
-            dtpHasta.Size = new Size(125, 29);
+            dtpHasta.Size = new Size(145, 29);
             dtpHasta.TabIndex = 12;
             // 
             // btnExportar
@@ -154,7 +200,7 @@
             btnExportar.IconColor = Color.Black;
             btnExportar.IconFont = FontAwesome.Sharp.IconFont.Auto;
             btnExportar.IconSize = 50;
-            btnExportar.Location = new Point(1606, 37);
+            btnExportar.Location = new Point(1629, 57);
             btnExportar.Name = "btnExportar";
             btnExportar.Size = new Size(58, 46);
             btnExportar.TabIndex = 13;
@@ -162,59 +208,113 @@
             btnExportar.UseVisualStyleBackColor = false;
             btnExportar.Click += btnExportar_Click;
             // 
+            // lblBusquedaNombre
+            // 
+            lblBusquedaNombre.Anchor = AnchorStyles.Right;
+            lblBusquedaNombre.AutoSize = true;
+            lblBusquedaNombre.Font = new Font("Segoe UI", 12F);
+            lblBusquedaNombre.Location = new Point(216, 69);
+            lblBusquedaNombre.Name = "lblBusquedaNombre";
+            lblBusquedaNombre.Size = new Size(121, 21);
+            lblBusquedaNombre.TabIndex = 14;
+            lblBusquedaNombre.Text = "Buscar Nombre:";
+            // 
+            // txtBusquedaNombre
+            // 
+            txtBusquedaNombre.Anchor = AnchorStyles.None;
+            txtBusquedaNombre.Font = new Font("Segoe UI", 12F);
+            txtBusquedaNombre.Location = new Point(343, 65);
+            txtBusquedaNombre.Name = "txtBusquedaNombre";
+            txtBusquedaNombre.PlaceholderText = "Ingrese Nombre del Producto";
+            txtBusquedaNombre.Size = new Size(224, 29);
+            txtBusquedaNombre.TabIndex = 15;
+            txtBusquedaNombre.TextChanged += txtBusquedaNombre_TextChanged;
+            txtBusquedaNombre.KeyDown += txtBusquedaNombre_KeyDown;
+            // 
             // cmbMov
             // 
+            cmbMov.Anchor = AnchorStyles.Left;
             cmbMov.DropDownStyle = ComboBoxStyle.DropDownList;
             cmbMov.Font = new Font("Segoe UI", 12F);
             cmbMov.FormattingEnabled = true;
-            cmbMov.Location = new Point(439, 37);
+            cmbMov.Location = new Point(343, 12);
             cmbMov.Name = "cmbMov";
-            cmbMov.Size = new Size(176, 29);
+            cmbMov.Size = new Size(215, 29);
             cmbMov.TabIndex = 11;
             // 
-            // label3
+            // label2
             // 
-            label3.AutoSize = true;
-            label3.Font = new Font("Segoe UI", 12F);
-            label3.Location = new Point(222, 43);
-            label3.Name = "label3";
-            label3.Size = new Size(52, 21);
-            label3.TabIndex = 9;
-            label3.Text = "Hasta:";
+            label2.Anchor = AnchorStyles.Right;
+            label2.AutoSize = true;
+            label2.Font = new Font("Segoe UI", 12F);
+            label2.Location = new Point(573, 69);
+            label2.Name = "label2";
+            label2.Size = new Size(93, 21);
+            label2.TabIndex = 17;
+            label2.Text = "Buscar Lote:";
             // 
-            // label1
+            // label4
             // 
-            label1.AutoSize = true;
-            label1.Font = new Font("Segoe UI", 12F);
-            label1.Location = new Point(18, 43);
-            label1.Name = "label1";
-            label1.Size = new Size(56, 21);
-            label1.TabIndex = 8;
-            label1.Text = "Desde:";
+            label4.Anchor = AnchorStyles.Right;
+            label4.AutoSize = true;
+            label4.Font = new Font("Segoe UI", 12F);
+            label4.Location = new Point(859, 69);
+            label4.Name = "label4";
+            label4.Size = new Size(98, 21);
+            label4.TabIndex = 18;
+            label4.Text = "Buscar Serie:";
             // 
-            // dtpDesde
+            // txtSerie
             // 
-            dtpDesde.Font = new Font("Segoe UI", 12F);
-            dtpDesde.Format = DateTimePickerFormat.Short;
-            dtpDesde.Location = new Point(80, 37);
-            dtpDesde.Name = "dtpDesde";
-            dtpDesde.Size = new Size(125, 29);
-            dtpDesde.TabIndex = 7;
+            txtSerie.Anchor = AnchorStyles.Left;
+            txtSerie.Font = new Font("Segoe UI", 12F);
+            txtSerie.Location = new Point(963, 65);
+            txtSerie.Name = "txtSerie";
+            txtSerie.PlaceholderText = "Ingrese Número de Serie";
+            txtSerie.Size = new Size(182, 29);
+            txtSerie.TabIndex = 20;
+            txtSerie.TextChanged += txtSerie_TextChanged;
+            txtSerie.KeyDown += txtSerie_KeyDown;
+            // 
+            // txtLote
+            // 
+            txtLote.Anchor = AnchorStyles.Left;
+            txtLote.Font = new Font("Segoe UI", 12F);
+            txtLote.Location = new Point(672, 65);
+            txtLote.Name = "txtLote";
+            txtLote.PlaceholderText = "Ingrese Número de Lote";
+            txtLote.Size = new Size(181, 29);
+            txtLote.TabIndex = 21;
+            txtLote.TextChanged += txtLote_TextChanged;
+            txtLote.KeyDown += txtLote_KeyDown;
+            // 
+            // chkDevolucion
+            // 
+            chkDevolucion.Anchor = AnchorStyles.None;
+            chkDevolucion.AutoSize = true;
+            chkDevolucion.Font = new Font("Segoe UI", 12F);
+            chkDevolucion.Location = new Point(701, 14);
+            chkDevolucion.Name = "chkDevolucion";
+            chkDevolucion.Size = new Size(122, 25);
+            chkDevolucion.TabIndex = 16;
+            chkDevolucion.Text = "Devoluciones";
+            chkDevolucion.UseVisualStyleBackColor = true;
+            chkDevolucion.CheckedChanged += chkDevolucion_CheckedChanged;
             // 
             // lblPagina
             // 
-            lblPagina.Anchor = AnchorStyles.None;
+            lblPagina.Anchor = AnchorStyles.Right;
             lblPagina.Font = new Font("Segoe UI", 12F);
-            lblPagina.Location = new Point(1510, 12);
+            lblPagina.Location = new Point(1494, 12);
             lblPagina.Name = "lblPagina";
-            lblPagina.Size = new Size(119, 21);
+            lblPagina.Size = new Size(135, 21);
             lblPagina.TabIndex = 15;
             lblPagina.Text = "Pagina 1/1";
             lblPagina.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // btnSiguiente
             // 
-            btnSiguiente.Anchor = AnchorStyles.None;
+            btnSiguiente.Anchor = AnchorStyles.Right;
             btnSiguiente.Location = new Point(1635, 10);
             btnSiguiente.Name = "btnSiguiente";
             btnSiguiente.Size = new Size(29, 29);
@@ -225,8 +325,8 @@
             // 
             // btnAnterior
             // 
-            btnAnterior.Anchor = AnchorStyles.None;
-            btnAnterior.Location = new Point(1475, 10);
+            btnAnterior.Anchor = AnchorStyles.Right;
+            btnAnterior.Location = new Point(1461, 10);
             btnAnterior.Name = "btnAnterior";
             btnAnterior.Size = new Size(29, 29);
             btnAnterior.TabIndex = 13;
@@ -251,11 +351,13 @@
             dgvAuditoria.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dgvAuditoria.Columns.AddRange(new DataGridViewColumn[] { tipo, fechaMov, producto, deposito, lote, serie, cantidad, stockAnterior, stockPosterior, remitoIng, remitoEgr, usuario, detalle });
             dgvAuditoria.EnableHeadersVisualStyles = false;
-            dgvAuditoria.Location = new Point(0, 154);
+            dgvAuditoria.Location = new Point(3, 192);
             dgvAuditoria.Name = "dgvAuditoria";
             dgvAuditoria.ReadOnly = true;
-            dgvAuditoria.Size = new Size(1696, 727);
+            dgvAuditoria.RowHeadersVisible = false;
+            dgvAuditoria.Size = new Size(1696, 679);
             dgvAuditoria.TabIndex = 8;
+            dgvAuditoria.CellContentClick += dgvAuditoria_CellContentClick;
             // 
             // tipo
             // 
@@ -337,16 +439,17 @@
             // 
             // panel3
             // 
-            panel3.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             panel3.Controls.Add(lblPagina);
             panel3.Controls.Add(btnSiguiente);
             panel3.Controls.Add(iconBtnBack);
             panel3.Controls.Add(btnAnterior);
+            panel3.Dock = DockStyle.Bottom;
             panel3.Location = new Point(0, 876);
             panel3.Margin = new Padding(3, 2, 3, 2);
             panel3.Name = "panel3";
             panel3.Size = new Size(1696, 68);
             panel3.TabIndex = 10;
+            panel3.Paint += panel3_Paint;
             // 
             // iconBtnBack
             // 
@@ -386,7 +489,8 @@
             Load += UC_Auditoria_Load_1;
             panel1.ResumeLayout(false);
             groupBox1.ResumeLayout(false);
-            groupBox1.PerformLayout();
+            tableLayoutPanel1.ResumeLayout(false);
+            tableLayoutPanel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)dgvAuditoria).EndInit();
             panel3.ResumeLayout(false);
             ResumeLayout(false);
@@ -405,7 +509,6 @@
         private DataGridView dgvAuditoria;
         private Panel panel3;
         private FontAwesome.Sharp.IconButton iconBtnBack;
-        private FontAwesome.Sharp.IconButton btnExportar;
         private ToolTip toolTip1;
         private DataGridViewTextBoxColumn tipo;
         private DataGridViewTextBoxColumn fechaMov;
@@ -429,5 +532,11 @@
         private Label lblBusquedaNombre;
         private TextBox txtBusquedaNombre;
         private System.Windows.Forms.Timer timerBusqueda;
+        private CheckBox chkDevolucion;
+        private FontAwesome.Sharp.IconButton btnExportar;
+        private TableLayoutPanel tableLayoutPanel1;
+        private Label label4;
+        private TextBox txtLote;
+        private TextBox txtSerie;
     }
 }

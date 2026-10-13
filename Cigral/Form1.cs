@@ -27,7 +27,7 @@ namespace Cigral
         {
             // Arranca la aplicación simulando un clic en el botón de Inicio 
             // para que cargue el Dashboard por defecto.
-            btnInicio.PerformClick();
+
         }
 
         // --- NAVEGACIÓN Y RENDERIZADO DE PANTALLAS ---
@@ -133,10 +133,10 @@ namespace Cigral
 
             if (e.KeyCode == Keys.F11)  //Incio
             {
-                btnInicio.PerformClick();
+                iconButton1.PerformClick();
             }
 
-            
+
         }
 
         // --- EVENTOS CLICK DE LOS BOTONES DEL MENÚ ---
@@ -187,6 +187,37 @@ namespace Cigral
         {
             resaltarBoton(sender);
             MostrarPantalla(new UC_Productos());
+        }
+
+        private void iconButton1_Click(object sender, EventArgs e)
+        {
+            resaltarBoton(sender);
+            MostrarPantalla(new UC_Dashboard());
+        }
+
+
+
+        private void btnConsignacion_Click(object sender, EventArgs e)
+        {
+            resaltarBoton(sender);
+            MostrarPantalla(new UC_Consignacion());
+        }
+
+
+
+        private void label2_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void panel1_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        private void tableLayoutPanel2_Paint(object sender, PaintEventArgs e)
+        {
+
         }
     }
 }

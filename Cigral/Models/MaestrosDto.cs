@@ -110,6 +110,7 @@ namespace Cigral.Models
         public string CodigoLote { get; set; }                   //El ? permite mandar null para que no haya conflicto con la DB.
         public DateTime? FechaVencimiento { get; set; }    //El ? permite mandar null si el producto no vence.
         public int Cantidad { get; set; }                  //Cantidad de stock que vamos a sumar.
+        public bool esDevolucion { get; set; } = false;             //Para marcar si es una devolución (en ese caso, el sv lo va a tratar como un ingreso pero con una observación extra).
     }
 
 
@@ -130,7 +131,7 @@ namespace Cigral.Models
         public string NumSerie { get; set; }
         public DateTime? FechaVencimiento { get; set; }   //Puede ser null si no tiene vencimiento
         public int Cantidad { get; set; }
-        public string ProductoCodigoGenerico { get; set; }
+        public string productoCodigoInterno { get; set; }
     }
 
     public class DisminuirStockDto
@@ -141,6 +142,7 @@ namespace Cigral.Models
         public string codigoLote { get; set; }
         public DateTime? fechaVencimiento { get; set; }
         public int cantidad { get; set; }
+        public string informacionAdicional { get; set; }
     }
 
     public class ClienteDto
@@ -202,10 +204,13 @@ namespace Cigral.Models
 
     public class DomainErrorResponse
     {
+
         public string error { get; set; }
-        public string code { get; set; }
-        public int codeValue { get; set; }
         public string message { get; set; }
+        public int statusCode { get; set; }
+        public string code { get; set; }
+        public int? codeValue { get; set; }
+        public Dictionary<string, object> details { get; set; }
     }
 
     // El molde de lo que viene adentro de "items"
@@ -249,5 +254,61 @@ namespace Cigral.Models
         public string mensaje { get; set; }
     }
 
+
+    public class ConsignacionDto
+    {
+        public int Id { get; set; }
+        public string ProductoNombre { get; set; }
+        public string CodigoLote { get; set; }
+        public int Cantidad { get; set; }
+        public string EntidadNombre { get; set; } // El proveedor o cliente de la consignación
+        public DateTime FechaIngreso { get; set; }
+        public string Estado { get; set; } // Ej: "Pendiente", "Vendido", "Devuelto"
+    }
+
+    public class ConsignacionAddDto
+    {
+        public int existenciaId { get; set; }
+        public int clienteId { get; set; }
+        public int cantidad { get; set; }
+    }
+
+    public class ConsignacionResponseDto
+    {
+        public int id { get; set; }
+        public int existenciaId { get; set; }
+        public int clienteId { get; set; }
+        public int cantidad { get; set; }
+
+        public DateTime fechaModificacion { get; set; }
+    }
+
+    public class GetConsignacionResponseDto
+    {
+        public int id { get; set; }
+        public int existenciaId { get; set; }
+        public string productoNombre { get; set; }
+        public string codigoLote { get; set; }
+        public string numSerie { get; set; }
+        public string depositoNombre { get; set; }
+        public int clienteId { get; set; }
+        public string clienteRazonSocial { get; set; }
+        public int cantidad { get; set; }
+        public DateTime fechaModificacion { get; set; }
+    }
+
+    public class ConsignacionDisminuirDto
+    {
+        public int cantidad { get; set; }
+    }
+
+    public class StockDisponibleResponse
+    {
+        public int cantidad { get; set; }
+    }
+
+    public class PrintConsignacionesRequest {
+        public List<int>? ConsignacionIds { get; set; }
+    }
 
 }

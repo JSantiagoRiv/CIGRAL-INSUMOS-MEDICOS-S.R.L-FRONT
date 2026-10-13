@@ -15,11 +15,23 @@ namespace Cigral
     /// </summary>
     public partial class UC_Ingresos : UserControl
     {
+
+        private int idClienteSeleccionado = 0;
+        private bool eligiendoDeLista = false;
         public UC_Ingresos()
         {
             InitializeComponent();
             // Le pedimos que apenas termine de dibujarse la pantalla, ejecute el evento Load
             this.Load += UC_Ingresos_Load;
+
+            // Evento salvavidas: Se dispara un milisegundo antes de que FormMain borre esta pantalla
+            this.ParentChanged += (s, e) =>
+            {
+                if (this.Parent == null)
+                {
+                    GuardarEnCache();
+                }
+            };
         }
 
         /// <summary>
@@ -27,26 +39,152 @@ namespace Cigral
         /// </summary>
         private async void UC_Ingresos_Load(object sender, EventArgs e)
         {
+            // 1. BLOQUEAMOS LA COLUMNA DE NOMBRE PARA QUE NADIE ESCRIBA
+            if (dgvIngreso.Columns.Contains("Producto"))
+            {
+                dgvIngreso.Columns["Producto"].ReadOnly = true;
+            }
+
             // Cargamos listas desde la API
             await CargarProveedores();
 
             var depositos = await ApiServices.ObtenerDepositos();
             cmbDeposito.DataSource = depositos;
-            cmbDeposito.DisplayMember = "Nombre"; // Lo que lee el usuario
-            cmbDeposito.ValueMember = "Id";       // El dato real que viaja a la BD
+            cmbDeposito.DisplayMember = "Nombre";
+            cmbDeposito.ValueMember = "Id";
 
-            // Usamos ActiveControl en lugar de .Focus() porque en los UserControls 
-            // a veces el Focus() falla si la pantalla todavía se está dibujando.
-            this.ActiveControl = textScanner;
+            // 2. LÓGICA DE REVIVIR CACHÉ
+            if (CacheOperaciones.CacheIngresos.Count > 0)
+            {
+                PantallaCarga pc = new PantallaCarga();
+                pc.Show(this);
+                this.Enabled = false;
+
+                try
+                {
+                    // A) Obtenemos IDs únicos para no hacer 50 peticiones repetidas al backend
+                    var idsUnicos = CacheOperaciones.CacheIngresos.Select(x => x.ProductoId).Distinct().ToList();
+                    var dicNombres = new Dictionary<int, string>();
+
+                    // B) Buscamos los nombres frescos y actualizados
+                    foreach (int id in idsUnicos)
+                    {
+                        var prodFresco = await ApiServices.ObtenerProductoPorId(id);
+                        dicNombres[id] = prodFresco?.nombre ?? "Producto Inaccesible";
+                    }
+
+                    // C) Volcamos todo a la grilla
+                    foreach (var item in CacheOperaciones.CacheIngresos)
+                    {
+                        int index = dgvIngreso.Rows.Add();
+                        DataGridViewRow fila = dgvIngreso.Rows[index];
+
+                        fila.Cells["id"].Value = item.ProductoId;
+                        fila.Cells["Producto"].Value = dicNombres.ContainsKey(item.ProductoId) ? dicNombres[item.ProductoId] : "Error";
+                        fila.Cells["Lote"].Value = item.Lote;
+                        fila.Cells["Vencimiento"].Value = item.Vencimiento;
+                        fila.Cells["Serie"].Value = item.Serie;
+                        fila.Cells["Cantidad"].Value = item.Cantidad;
+                        fila.Cells["InfoAdicional"].Value = item.InfoAdicional;
+                        fila.Tag = item.GtinOculto; // Volvemos a ocultar el GTIN en el Tag
+                    }
+
+                    // D) Vaciamos la caché una vez cargada para evitar duplicados a futuro
+                    CacheOperaciones.CacheIngresos.Clear();
+                }
+                finally
+                {
+                    pc.Close();
+                    this.Enabled = true;
+                }
+            }
+
+            textScanner.Focus();
         }
+
+
+        private void GuardarEnCache()
+        {
+            CacheOperaciones.CacheIngresos.Clear();
+            foreach (DataGridViewRow fila in dgvIngreso.Rows)
+            {
+                if (fila.IsNewRow) continue;
+
+                int id = 0;
+                if (fila.Cells["id"].Value != null) int.TryParse(fila.Cells["id"].Value.ToString(), out id);
+                if (id == 0) continue;
+
+                CacheOperaciones.CacheIngresos.Add(new FilaIngresoCache
+                {
+                    ProductoId = id,
+                    Lote = fila.Cells["Lote"].Value?.ToString() ?? "",
+                    Vencimiento = fila.Cells["Vencimiento"].Value?.ToString() ?? "",
+                    Serie = fila.Cells["Serie"].Value?.ToString() ?? "",
+                    Cantidad = Convert.ToInt32(fila.Cells["Cantidad"].Value ?? 1),
+                    InfoAdicional = fila.Cells["InfoAdicional"].Value?.ToString() ?? "",
+                    GtinOculto = fila.Tag?.ToString() ?? ""
+                });
+            }
+        }
+
+
+
 
         private async Task CargarProveedores()
         {
-            var lista = await ApiServices.ObtenerProveedores();
-            comboProv.DataSource = lista;
-            comboProv.DisplayMember = "RazonSocial";
-            comboProv.ValueMember = "Id";
-            comboProv.SelectedIndex = -1; // Arranca vacío
+            this.ActiveControl = textScanner;
+
+            try
+            {
+                var depositos = await ApiServices.ObtenerDepositos();
+                cmbDeposito.DataSource = depositos;
+                cmbDeposito.DisplayMember = "Nombre";
+                cmbDeposito.ValueMember = "Id";
+                cmbDeposito.SelectedIndex = -1;
+
+                // --- NUEVA LÓGICA DE DEPÓSITO POR DEFECTO ---
+
+                // 1. Recuperamos el último ID guardado en las configuraciones
+                int idGuardado = Properties.Settings.Default.UltimoDepositoId;
+
+                if (idGuardado > 0)
+                {
+                    // Si hay un depósito guardado, lo seleccionamos
+                    cmbDeposito.SelectedValue = idGuardado;
+                }
+                else
+                {
+                    // Si es la primera vez (vale 0), lo dejamos vacío o seleccionamos el primero
+                    cmbDeposito.SelectedIndex = -1;
+                }
+
+                // 2. Nos suscribimos al evento para detectar cuando el usuario lo cambie manualmente.
+                // Usamos SelectionChangeCommitted en vez de SelectedIndexChanged para que 
+                // no se dispare accidentalmente mientras la lista se está rellenando por código.
+                cmbDeposito.SelectionChangeCommitted += CmbDeposito_SelectionChangeCommitted;
+
+                // --------------------------------------------
+
+                this.ActiveControl = textScanner;
+
+                // Ya no cargamos todos los clientes de golpe acá, porque tenemos el buscador en vivo
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error al cargar depósitos: " + ex.Message);
+            }
+        }
+
+        private void CmbDeposito_SelectionChangeCommitted(object sender, EventArgs e)
+        {
+            if (cmbDeposito.SelectedValue != null && int.TryParse(cmbDeposito.SelectedValue.ToString(), out int idSeleccionado))
+            {
+                // Actualizamos la variable global
+                Properties.Settings.Default.UltimoDepositoId = idSeleccionado;
+
+                // Guardamos físicamente el cambio para que sobreviva al cerrar la aplicación
+                Properties.Settings.Default.Save();
+            }
         }
 
         // --- LÓGICA DE GUARDADO ---
@@ -68,7 +206,7 @@ namespace Cigral
 
             if (chkConRemito.Checked)
             {
-                if (comboProv.SelectedValue == null)
+                if (idClienteSeleccionado == 0)
                 {
                     MessageBox.Show("Debe seleccionar un Proveedor para continuar.", "Falta Proveedor", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
@@ -79,6 +217,7 @@ namespace Cigral
                     MessageBox.Show("Ha marcado la opción de remito. Debe ingresar el Número de Remito para continuar.", "Falta Remito", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
+
 
                 // Control de Series Duplicadas dentro del mismo escaneo
                 HashSet<string> series = new HashSet<string>();
@@ -132,13 +271,13 @@ namespace Cigral
                 }
 
                 // (Opcional) Validar LOTE 
-                 string loteStr = fila.Cells["Lote"].Value?.ToString() ?? "";
+                string loteStr = fila.Cells["Lote"].Value?.ToString() ?? "";
                 if (string.IsNullOrWhiteSpace(loteStr))
                 {
                     MessageBox.Show($"Falta ingresar el Lote para '{nombreProducto}'.", "Dato Incompleto", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    return; 
-                } 
-                
+                    return;
+                }
+
             }
 
             // 2. PREGUNTAMOS SI ESTÁ SEGURO
@@ -206,11 +345,12 @@ namespace Cigral
                     var requestRemito = new RemitoIngresoRequest
                     {
                         DepositoId = depositoSeleccionado,
-                        EntidadId = (int)comboProv.SelectedValue,
+                        EntidadId = (int)idClienteSeleccionado,
                         NumeroRemito = textRemito.Text,
                         ComprobanteAsociado = txtComprobante.Text.Trim(),
                         Observaciones = "Ingreso desde el sistema",
-                        Detalles = new List<RemitoDetalleRequest>()
+                        Detalles = new List<RemitoDetalleRequest>(),
+                        EsDevolucion = chkDevolucion.Checked,
                     };
 
                     foreach (DataGridViewRow fila in dgvIngreso.Rows)
@@ -274,7 +414,8 @@ namespace Cigral
                             NumSerie = fila.Cells["Serie"].Value?.ToString() ?? "",
                             CodigoLote = loteAEnviar,
                             FechaVencimiento = fechaVencimientoSegura,
-                            Cantidad = cantidadSegura
+                            Cantidad = cantidadSegura,
+                            esDevolucion = chkDevolucion.Checked
                         };
 
                         bool exito = await ApiServices.AumentarStock(requestExistencia);
@@ -355,7 +496,7 @@ namespace Cigral
             dgvIngreso.Rows.Clear();
             textRemito.Clear();
             chkConRemito.Checked = false;
-            comboProv.SelectedIndex = -1;
+            idClienteSeleccionado = 0;
             textScanner.Focus();
         }
 
@@ -366,16 +507,36 @@ namespace Cigral
         /// </summary>
         private async void textScanner_KeyDown(object sender, KeyEventArgs e)
         {
+            LimpiarResaltadoGrilla();
+
             if (e.KeyCode == Keys.Enter)
             {
-                e.SuppressKeyPress = true; // Evita el sonido de de Windows
+                e.SuppressKeyPress = true;
 
                 string codigoCrudo = textScanner.Text.Trim();
-                textScanner.Clear(); // Limpia rápido para el próximo escaneo
+                textScanner.Clear();
 
                 if (string.IsNullOrEmpty(codigoCrudo)) return;
 
-                // 1. LLAMA AL PARSER
+                // --- NUEVA LÓGICA: CÓDIGOS DIVIDIDOS ---
+                // Si mide exactamente 16 y arranca con 01 (Indicador GS1 para GTIN)
+                if (codigoCrudo.Length == 16 && codigoCrudo.StartsWith("01"))
+                {
+                    string codigoConcatenado = PedirCodigoComplementario(codigoCrudo);
+
+                    if (string.IsNullOrEmpty(codigoConcatenado))
+                    {
+                        // El usuario canceló la operación en el modal
+                        textScanner.Focus();
+                        return;
+                    }
+
+                    // Reemplazamos el código original corto, por la versión gigante concatenada
+                    codigoCrudo = codigoConcatenado;
+                }
+                // ---------------------------------------
+
+                // 1. LLAMA AL PARSER (Ahora recibirá el código completo)
                 var productoParseado = await ApiServices.ParsearCodigoBarras(codigoCrudo);
 
                 if (productoParseado == null)
@@ -383,21 +544,22 @@ namespace Cigral
                     MessageBox.Show("Hubo un error al intentar decodificar el código de barras.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
-                    
-                   
+
+
                 // 2. VALIDAR SERIE DUPLICADA EN LA GRILLA
                 foreach (DataGridViewRow fila in dgvIngreso.Rows)
                 {
                     if (fila.IsNewRow) continue;
 
-                    string serieExistente = fila.Cells["Serie"].Value?.ToString();
+                    //string serieExistente = fila.Cells["Serie"].Value?.ToString();
 
-                    if (!string.IsNullOrEmpty(productoParseado.NumeroSerie) && serieExistente == productoParseado.NumeroSerie)
+                    /*if (!string.IsNullOrEmpty(productoParseado.NumeroSerie) && serieExistente == productoParseado.NumeroSerie)
                     {
                         MessageBox.Show($"El número de serie {productoParseado.NumeroSerie} ya fue escaneado.", "Serie duplicada", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         textScanner.Focus();
                         return;
                     }
+                    */
                 }
 
                 if (productoParseado != null)
@@ -405,23 +567,40 @@ namespace Cigral
                     // 3. BUSCA SI YA ESTÁ EN LA GRILLA (Para sumar cantidad)
                     bool productoYaEnGrilla = false;
 
+                    // Preparamos los datos del producto recién escaneado
+                    string loteBuscado = productoParseado.Lote ?? "";
+                    string vencimientoBuscado = productoParseado.FechaVencimiento.HasValue ? productoParseado.FechaVencimiento.Value.ToString("dd/MM/yyyy") : "";
+                    string serieBuscada = productoParseado.NumeroSerie ?? "";
+
                     foreach (DataGridViewRow filaExistente in dgvIngreso.Rows)
                     {
                         if (filaExistente.IsNewRow) continue;
 
+                        // Extraemos los datos de la grilla
                         string gtinFila = filaExistente.Tag?.ToString() ?? "";
+                        string loteFila = filaExistente.Cells["Lote"].Value?.ToString() ?? "";
+                        string vencimientoFila = filaExistente.Cells["Vencimiento"].Value?.ToString() ?? "";
+                        string serieFila = filaExistente.Cells["Serie"].Value?.ToString() ?? "";
 
-                        if (gtinFila == productoParseado.Gtin)
+                        if (gtinFila == productoParseado.Gtin &&
+                            loteFila == loteBuscado &&
+                            vencimientoFila == vencimientoBuscado &&
+                            serieFila == serieBuscada)
                         {
                             int cantidadActual = Convert.ToInt32(filaExistente.Cells["Cantidad"].Value);
                             int cantidadNueva = productoParseado.Cantidad > 0 ? productoParseado.Cantidad : 1;
 
                             filaExistente.Cells["Cantidad"].Value = cantidadActual + cantidadNueva;
+
+                            ResaltarFila(filaExistente);
+
                             productoYaEnGrilla = true;
-                            break;
+                            break; // Sale del foreach
                         }
                     }
 
+                    // ¡ESTA ES LA PARTE CRÍTICA!
+                    // Si ya lo encontró y lo sumó, cortamos la ejecución acá para que no cree una fila nueva.
                     if (productoYaEnGrilla)
                     {
                         textScanner.Focus();
@@ -431,6 +610,8 @@ namespace Cigral
                     // 4. SI NO ESTABA, CREA LA FILA NUEVA
                     int indexNuevaFila = dgvIngreso.Rows.Add();
                     DataGridViewRow fila = dgvIngreso.Rows[indexNuevaFila];
+
+                    ResaltarFila(fila);
 
                     fila.Tag = productoParseado.Gtin; // Guarda el GTIN oculto en el Tag de la fila
 
@@ -447,19 +628,19 @@ namespace Cigral
                     // 5. EVALUA SI ES CONOCIDO O DESCONOCIDO
                     if (productoParseado.ExisteProducto)
                     {
-                        // PRODUCTO EXISTENTE: Lo muesra directo
+                        // PRODUCTO EXISTENTE Y CON GTIN: Lo muestra directo
                         fila.Cells["id"].Value = productoParseado.ProductoId;
                         fila.Cells["Producto"].Value = productoParseado.NombreProducto;
                         textScanner.Focus();
                     }
                     else
                     {
-                        // PRODUCTO NUEVO: Frena y le pide al usuario que lo bautice
-                        string nombreProducto = PedirNombreProducto(productoParseado.Gtin);
+                        // PRODUCTO DESCONOCIDO: Preguntamos si lo asocia a uno existente o crea uno nuevo
+                        var resultado = await AsociarOCrearProductoGTIN(productoParseado.Gtin);
 
-                        if (string.IsNullOrWhiteSpace(nombreProducto))
+                        if (resultado.Id == 0 && string.IsNullOrEmpty(resultado.Nombre))
                         {
-                            // Si cancela, borramos la fila
+                            // El usuario canceló la ventana (la cerró con la X)
                             dgvIngreso.Rows.Remove(fila);
                             textScanner.Focus();
                             return;
@@ -467,32 +648,54 @@ namespace Cigral
 
                         Cursor = Cursors.WaitCursor;
 
-                        // Crea el producto rápido en BD asociado a marca S/M
-                        await ApiServices.GarantizarMarcaExiste("S/M");
-                        var requestNuevoProd = new ProductoCreateRequest
+                        if (resultado.EsAsociacion)
                         {
-                            Nombre = nombreProducto,
-                            Descripcion = nombreProducto,
-                            Gtin = productoParseado.Gtin,
-                            EsUnitario = false,
-                            Precio = 0,
-                            Marca = "S/M"
-                        };
+                            // CAMINO A: El usuario eligió un producto de la grilla para ASOCIARLO
+                            bool exito = await ApiServices.UpdateProductoGTIN(resultado.Id, productoParseado.Gtin);
 
-                        int nuevoId = await ApiServices.CrearProductoNuevo(requestNuevoProd);
-                        Cursor = Cursors.Default;
+                            if (!exito)
+                            {
+                                dgvIngreso.Rows.Remove(fila);
+                                Cursor = Cursors.Default;
+                                textScanner.Focus();
+                                return;
+                            }
 
-                        if (nuevoId > 0)
-                        {
-                            fila.Cells["id"].Value = nuevoId;
-                            fila.Cells["Producto"].Value = nombreProducto;
+                            // Si la API lo actualizó bien, lo cargamos a la tabla visual
+                            fila.Cells["id"].Value = resultado.Id;
+                            fila.Cells["Producto"].Value = resultado.Nombre;
                         }
                         else
                         {
-                            MessageBox.Show("No se pudo crear el producto.");
-                            dgvIngreso.Rows.Remove(fila);
+                            // CAMINO B: El usuario apretó "+" y escribió el nombre para CREARLO
+                            await ApiServices.GarantizarMarcaExiste("S/M");
+                            var requestNuevoProd = new ProductoCreateRequest
+                            {
+                                Nombre = resultado.Nombre,
+                                Descripcion = resultado.Nombre,
+                                Gtin = productoParseado.Gtin, // Le pasamos el GTIN escaneado directamente
+                                EsUnitario = false,
+                                Precio = 0,
+                                Marca = resultado.Marca,
+                                CodigoGenerico = "GEN-" + DateTime.Now.ToString("yyMMddHHmmss"),
+                                ProductoSinCodigo = false
+                            };
+
+                            int nuevoId = await ApiServices.CrearProductoNuevo(requestNuevoProd);
+
+                            if (nuevoId > 0)
+                            {
+                                fila.Cells["id"].Value = nuevoId;
+                                fila.Cells["Producto"].Value = resultado.Nombre;
+                            }
+                            else
+                            {
+                                MessageBox.Show("No se pudo crear el producto en la base de datos.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                dgvIngreso.Rows.Remove(fila);
+                            }
                         }
 
+                        Cursor = Cursors.Default;
                         textScanner.Focus();
                     }
                 }
@@ -501,6 +704,23 @@ namespace Cigral
                     MessageBox.Show("Hubo un error al intentar decodificar el código de barras.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
+        }
+
+
+        //Funciones auxiliares para pintar y resaltar filas
+        private void LimpiarResaltadoGrilla()
+        {
+            // Recorre todas las filas y les devuelve el color por defecto
+            foreach (DataGridViewRow row in dgvIngreso.Rows)
+            {
+                row.DefaultCellStyle.BackColor = Color.Empty;
+            }
+        }
+
+        private void ResaltarFila(DataGridViewRow fila)
+        {
+            // Un verde muy suave y agradable a la vista (R: 230, G: 255, B: 230)
+            fila.DefaultCellStyle.BackColor = Color.FromArgb(200, 255, 200);
         }
 
         /// <summary>
@@ -552,28 +772,21 @@ namespace Cigral
         /// </summary>
         private async void chkConRemito_CheckedChanged(object sender, EventArgs e)
         {
-            comboProv.Enabled = chkConRemito.Checked;
+            txtBuscarCliente.Enabled = chkConRemito.Checked;
+            lstClientes.Enabled = chkConRemito.Checked;
             btnAgregarProveedor.Enabled = chkConRemito.Checked;
             txtComprobante.Enabled = chkConRemito.Checked;
+            textRemito.Enabled = chkConRemito.Checked;
 
-            if (chkConRemito.Checked)
-            {
-                textRemito.ReadOnly = true; // Solo lectura para evitar que el operario escriba encima del automático
-                await ActualizarNumeroRemito();
-            }
-            else
-            {
-                textRemito.ReadOnly = false;
-                textRemito.Clear();
-                comboProv.SelectedIndex = -1;
-                txtComprobante.Clear();
-            }
+            textRemito.Clear();
+            idClienteSeleccionado = 0;
+            txtComprobante.Clear();
         }
 
         /// <summary>
         /// Pide a la API el número correlativo que le toca al remito de este depósito.
         /// </summary>
-        private async Task ActualizarNumeroRemito()
+        /*private async Task ActualizarNumeroRemito()
         {
             if (chkConRemito.Checked && cmbDeposito.SelectedValue != null)
             {
@@ -585,7 +798,7 @@ namespace Cigral
                     textRemito.Text = proximoRemito;
                 }
             }
-        }
+        }*/
 
         // --- MANEJO DE ARCHIVOS PDF ---
 
@@ -620,32 +833,216 @@ namespace Cigral
         // --- HELPER DE INTERFAZ: PROMPTS Y MODALES CREADOS POR CÓDIGO ---
 
         /// <summary>
-        /// Levanta una ventanita rápida para pedirle al operario el nombre de un producto escaneado que no existe en BD.
+        /// Abre un modal para buscar un producto existente y asociarle el GTIN, 
+        /// o permite crear uno completamente nuevo si no existe en la lista.
         /// </summary>
-        private string PedirNombreProducto(string gtin)
+        private async Task<(int Id, string Nombre, string Marca, bool EsAsociacion)> AsociarOCrearProductoGTIN(string gtin)
+        {
+            int idResult = 0;
+            string nombreResult = "";
+            string marcaResult = "";
+            bool esAsociacionResult = false;
+
+            Form buscador = new Form()
+            {
+                Width = 600,
+                Height = 450,
+                FormBorderStyle = FormBorderStyle.FixedDialog,
+                Text = $"GTIN {gtin} desconocido - Asociar o Crear",
+                StartPosition = FormStartPosition.CenterScreen,
+                MaximizeBox = false
+            };
+
+            TextBox txtBuscar = new TextBox() { Left = 20, Top = 20, Width = 470 };
+            Button btnNuevo = new Button() { Text = "+ Nuevo", Left = 500, Top = 18, Width = 60, BackColor = Color.LightGreen, Cursor = Cursors.Hand };
+
+            DataGridView dgv = new DataGridView()
+            {
+                Left = 20,
+                Top = 60,
+                Width = 540,
+                Height = 320,
+                AllowUserToAddRows = false,
+                ReadOnly = true,
+                SelectionMode = DataGridViewSelectionMode.FullRowSelect,
+                AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill,
+                BackgroundColor = Color.White,
+                RowHeadersVisible = false,
+                BorderStyle = BorderStyle.FixedSingle,
+                GridColor = Color.LightGray
+            };
+
+            dgv.DataBindingComplete += (senderGrid, ev) =>
+            {
+                if (dgv.Columns.Contains("ID")) dgv.Columns["ID"].Visible = false;
+            };
+
+            buscador.Controls.Add(txtBuscar); buscador.Controls.Add(btnNuevo); buscador.Controls.Add(dgv);
+
+            Func<Task> realizarBusqueda = async () =>
+            {
+                if (buscador.IsDisposed) return;
+                buscador.Cursor = Cursors.WaitCursor;
+                dgv.DataSource = null;
+
+                // 1. Hacemos la llamada a la API
+                var lista = await ApiServices.ObtenerProductosCatalogo(txtBuscar.Text.Trim());
+
+                if (buscador.IsDisposed) return;
+
+                // --- EL ESCUDO CONTRA MAL INTERNET ---
+                // 2. Verificamos si la respuesta o la lista de ítems vino vacía/nula
+                if (lista == null || lista.items == null)
+                {
+                    // Devolvemos el cursor a la normalidad y cortamos la ejecución de la función.
+                    // Así evitamos que llegue al .Select() y rompa el programa.
+                    buscador.Cursor = Cursors.Default;
+                    return;
+                }
+                // -------------------------------------
+
+                // 3. Ahora es 100% seguro hacer el Select, porque sabemos que items existe
+                var vistaResultados = lista.items.Select(x => new
+                {
+                    ID = x.id,
+                    Producto = x.nombre,
+                    Codigo = string.IsNullOrEmpty(x.gtin) ? x.codigoGenerico : x.gtin
+                }).ToList();
+
+                dgv.DataSource = vistaResultados;
+                buscador.Cursor = Cursors.Default;
+            };
+
+            bool ignorarBusquedaAutomatica = false;
+
+            System.Windows.Forms.Timer timerBusqueda = new System.Windows.Forms.Timer();
+            timerBusqueda.Interval = 200;
+            timerBusqueda.Tick += async (s, ev) => { timerBusqueda.Stop(); await realizarBusqueda(); };
+
+            // Modificamos el TextChanged para que respete la bandera
+            txtBuscar.TextChanged += (s, ev) =>
+            {
+                if (ignorarBusquedaAutomatica) return; // <-- El escudo
+
+                timerBusqueda.Stop();
+                timerBusqueda.Start();
+            };
+
+            dgv.CellClick += (s, ev) =>
+            {
+                if (ev.RowIndex >= 0)
+                {
+                    // Activamos la bandera, cambiamos el texto, y la desactivamos
+                    ignorarBusquedaAutomatica = true;
+
+                    txtBuscar.Text = dgv.Rows[ev.RowIndex].Cells["Producto"].Value.ToString();
+
+                    // Opcional: Ponemos el cursor al final del texto para que el usuario siga escribiendo
+                    txtBuscar.SelectionStart = txtBuscar.Text.Length;
+
+                    ignorarBusquedaAutomatica = false;
+                }
+            };
+
+            txtBuscar.KeyDown += async (s, ev) =>
+            {
+                if (ev.KeyCode == Keys.Enter) { ev.SuppressKeyPress = true; timerBusqueda.Stop(); await realizarBusqueda(); }
+            };
+
+            // OPCIÓN A: El usuario hizo doble clic en un producto existente (ASOCIAR)
+            dgv.CellMouseDoubleClick += (s, ev) =>
+            {
+                if (ev.RowIndex >= 0)
+                {
+                    idResult = Convert.ToInt32(dgv.Rows[ev.RowIndex].Cells["ID"].Value);
+                    nombreResult = dgv.Rows[ev.RowIndex].Cells["Producto"].Value.ToString();
+                    esAsociacionResult = true; // Marcamos que ES una asociación
+                    buscador.DialogResult = DialogResult.OK;
+                    buscador.Close();
+                }
+            };
+
+            // OPCIÓN B: El usuario hizo clic en el botón "+" (CREAR NUEVO)
+            btnNuevo.Click += (s, ev) =>
+            {
+                // Capturamos lo que sea que haya quedado en el buscador (editado o no)
+                string nombreSugerido = txtBuscar.Text.Trim();
+
+                // Le pasamos ese nombre sugerido a tu función
+                var (nombreNuevo, marcaNueva, confirmado) = PedirNombreProducto(gtin, nombreSugerido);
+
+                if (confirmado)
+                {
+                    idResult = 0;
+                    nombreResult = nombreNuevo;
+                    marcaResult = marcaNueva;
+                    esAsociacionResult = false;
+                    buscador.DialogResult = DialogResult.OK;
+                    buscador.Close();
+                }
+            };
+
+            buscador.Shown += async (s, ev) => await realizarBusqueda();
+
+            if (buscador.ShowDialog() == DialogResult.OK)
+            {
+                return (idResult, nombreResult, marcaResult, esAsociacionResult);
+            }
+
+            return (0, "", "", false); // Canceló la ventana
+        }
+
+        private (string?, string?, bool) PedirNombreProducto(string gtin, string nombreSugerido = "")
         {
             Form prompt = new Form()
             {
                 Width = 350,
-                Height = 170,
+                Height = 200, // Aumentamos el alto de 170 a 200 para dar espacio
                 FormBorderStyle = FormBorderStyle.FixedDialog,
-                Text = "Producto no registrado",
+                Text = "Crear Producto Nuevo",
                 StartPosition = FormStartPosition.CenterScreen,
                 MaximizeBox = false,
                 MinimizeBox = false
             };
 
-            Label lblInfo = new Label() { Left = 20, Top = 20, AutoSize = true, Text = $"GTIN: {gtin}" };
-            Label lblNombre = new Label() { Left = 20, Top = 55, AutoSize = true, Text = "Nombre:" };
-            TextBox txtNombre = new TextBox() { Left = 90, Top = 52, Width = 220 };
-            Button btnGuardar = new Button() { Text = "Guardar", Left = 210, Width = 100, Top = 85, DialogResult = DialogResult.OK };
+            Label lblInfo = new Label() { Left = 20, Top = 15, AutoSize = true, Text = $"Se asignará el GTIN: {gtin}" };
 
-            prompt.Controls.Add(lblInfo); prompt.Controls.Add(lblNombre);
-            prompt.Controls.Add(txtNombre); prompt.Controls.Add(btnGuardar);
+            Label lblNombre = new Label() { Left = 20, Top = 45, AutoSize = true, Text = "Nombre:" };
+            TextBox txtNombre = new TextBox() { Left = 90, Top = 42, Width = 220 };
+            txtNombre.Text = nombreSugerido;
+
+            Label lblMarca = new Label() { Left = 20, Top = 75, AutoSize = true, Text = "Marca:" };
+            TextBox txtMarca = new TextBox() { Left = 90, Top = 72, Width = 220 };
+
+            Button btnGuardar = new Button() { Text = "Continuar", Left = 210, Width = 100, Top = 115, DialogResult = DialogResult.OK };
+
+            // Mayúscula automática en la primera letra
+            txtNombre.TextChanged += (s, e) =>
+            {
+                if (txtNombre.Text.Length == 1) { txtNombre.Text = txtNombre.Text.ToUpper(); txtNombre.SelectionStart = 1; }
+            };
+
+            txtMarca.TextChanged += (s, e) =>
+            {
+                if (txtMarca.Text.Length == 1) { txtMarca.Text = txtMarca.Text.ToUpper(); txtMarca.SelectionStart = 1; }
+            };
+
+
+            prompt.Controls.Add(lblInfo);
+            prompt.Controls.Add(lblNombre);
+            prompt.Controls.Add(txtNombre);
+            prompt.Controls.Add(lblMarca);
+            prompt.Controls.Add(txtMarca);
+            prompt.Controls.Add(btnGuardar);
+
             prompt.AcceptButton = btnGuardar;
 
-            if (prompt.ShowDialog() == DialogResult.OK) return txtNombre.Text.Trim();
-            return null;
+            if (prompt.ShowDialog() == DialogResult.OK && !string.IsNullOrWhiteSpace(txtNombre.Text) && !string.IsNullOrWhiteSpace(txtMarca.Text))
+            {
+                return (txtNombre.Text.Trim(), txtMarca.Text.Trim(), true);
+            }
+
+            return (null, null, false);
         }
 
         /// <summary>
@@ -733,8 +1130,11 @@ namespace Cigral
 
                     if (idNuevo > 0)
                     {
-                        await CargarProveedores(); // Recarga la lista desde la BD
-                        comboProv.SelectedValue = idNuevo; // Autoselecciona el recién creado
+                        eligiendoDeLista = true;
+                        txtBuscarCliente.Text = txtRazon.Text;
+                        idClienteSeleccionado = idNuevo;
+                        eligiendoDeLista = false;
+
                         MessageBox.Show("¡Proveedor creado con éxito!", "Excelente", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
                 }
@@ -761,6 +1161,8 @@ namespace Cigral
                 StartPosition = FormStartPosition.CenterScreen,
                 MaximizeBox = false
             };
+
+            LimpiarResaltadoGrilla();
 
             TextBox txtBuscar = new TextBox() { Left = 20, Top = 20, Width = 380 };
             Button btnBuscar = new Button() { Text = "Buscar", Left = 410, Top = 18, Width = 80, Cursor = Cursors.Hand };
@@ -965,6 +1367,8 @@ namespace Cigral
                 int indexNuevaFila = dgvIngreso.Rows.Add();
                 DataGridViewRow fila = dgvIngreso.Rows[indexNuevaFila];
 
+                ResaltarFila(fila);
+
                 fila.Cells["Producto"].Value = nombreSeleccionado;
                 // Guarda el ID del producto escondido para que el sistema sepa a qué pegarle
                 fila.Cells["id"].Value = idSeleccionado;
@@ -973,6 +1377,193 @@ namespace Cigral
                 dgvIngreso.CurrentCell = fila.Cells["Lote"];
                 dgvIngreso.BeginEdit(true);
             }
+        }
+
+
+        private void txtBuscarCliente_TextChanged(object sender, EventArgs e)
+        {
+            if (eligiendoDeLista) return;
+
+            idClienteSeleccionado = 0;
+
+            timerBusquedaCliente.Stop();
+            timerBusquedaCliente.Start();
+        }
+
+        private async void timerBusquedaCliente_Tick(object sender, EventArgs e)
+        {
+            timerBusquedaCliente.Stop();
+
+            string busqueda = txtBuscarCliente.Text.Trim();
+
+            if (busqueda.Length < 2)
+            {
+                lstClientes.Visible = false;
+                return;
+            }
+
+            Cursor = Cursors.WaitCursor;
+            try
+            {
+                // Buscamos en la API
+                var listaClientes = await ApiServices.ObtenerProveedores(busqueda);
+
+                if (listaClientes != null && listaClientes.Count > 0)
+                {
+                    lstClientes.DataSource = listaClientes;
+                    lstClientes.DisplayMember = "razonSocial";
+                    lstClientes.ValueMember = "id";
+
+
+                    lstClientes.Parent = this; // Hace que la lista sea hija de la pantalla principal, no de los paneles
+                    Point posicionTextBox = txtBuscarCliente.Parent.PointToScreen(txtBuscarCliente.Location);
+                    lstClientes.Location = this.PointToClient(new Point(posicionTextBox.X, posicionTextBox.Y + txtBuscarCliente.Height));
+
+                    lstClientes.Height = 120;
+                    lstClientes.Width = txtBuscarCliente.Width;
+
+                    lstClientes.BringToFront(); // Lo trae al frente de TODO
+                    lstClientes.Visible = true;
+                }
+                else
+                {
+                    lstClientes.Visible = false;
+                }
+            }
+            catch (Exception ex)
+            {
+                // Ignoramos micro-errores de red mientras escribe
+            }
+            finally
+            {
+                Cursor = Cursors.Default;
+            }
+        }
+
+        private void lstClientes_SelectedIndexChanged(object sender, EventArgs e) { }
+
+        private void lstClientes_Click(object sender, EventArgs e)
+        {
+            if (lstClientes.SelectedItem != null)
+            {
+                eligiendoDeLista = true;
+
+                // ATRAPAMOS EL ID OCULTO
+                idClienteSeleccionado = Convert.ToInt32(lstClientes.SelectedValue);
+
+                var cliente = (ProveedorDto)lstClientes.SelectedItem;
+                txtBuscarCliente.Text = cliente.RazonSocial;
+
+                lstClientes.Visible = false;
+                eligiendoDeLista = false;
+            }
+        }
+
+        private void lstClientes_SelectedIndexChanged_1(object sender, EventArgs e)
+        {
+
+        }
+
+        private void textScanner_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        /// <summary>
+        /// Levanta un modal para concatenar códigos de barras complementarios al GTIN base.
+        /// </summary>
+        private string PedirCodigoComplementario(string codigoBase)
+        {
+            // Limpiamos la base por las dudas
+            string codigoFinal = codigoBase != null ? codigoBase.Trim() : "";
+
+            Form prompt = new Form()
+            {
+                Width = 450,
+                Height = 250, // ⬆️ AUMENTADO: Le dimos 30px más de alto a la ventana para que entre todo bien
+                FormBorderStyle = FormBorderStyle.FixedDialog,
+                Text = "Código Dividido Detectado",
+                StartPosition = FormStartPosition.CenterScreen,
+                MaximizeBox = false,
+                MinimizeBox = false
+            };
+
+            Label lblInfo = new Label()
+            {
+                Left = 20,
+                Top = 15,
+                Width = 400,
+                Height = 40,
+                Text = "Se detectó un GTIN base. Escaneá los códigos complementarios (Lote, Vencimiento, Serie). Podés escanear varios antes de confirmar."
+            };
+
+            Label lblBase = new Label()
+            {
+                Left = 20,
+                Top = 60,
+                Width = 400,
+                Height = 45, // Ocupa desde Y=60 hasta Y=105
+                Font = new Font("Segoe UI", 9, FontStyle.Bold),
+                Text = $"Código actual: {codigoFinal}"
+            };
+
+            // ⬇️ BAJADO: Lo movimos de Top=85 a Top=115 para que quede debajo del Label
+            TextBox txtScanExtra = new TextBox() { Left = 20, Top = 115, Width = 390 };
+
+            // ⬇️ BAJADOS: Movimos los botones de Top=130 a Top=160
+            // ATENCIÓN: Le quitamos el DialogResult automático al botón confirmar
+            Button btnConfirmar = new Button() { Text = "Confirmar", Left = 210, Top = 160, Width = 100, Cursor = Cursors.Hand };
+            Button btnCancelar = new Button() { Text = "Cancelar", Left = 320, Top = 160, Width = 90, DialogResult = DialogResult.Cancel, Cursor = Cursors.Hand };
+
+            txtScanExtra.KeyDown += (senderObj, eArgs) =>
+            {
+                if (eArgs.KeyCode == Keys.Enter)
+                {
+                    eArgs.SuppressKeyPress = true;
+                    string extra = txtScanExtra.Text.Trim();
+
+                    if (!string.IsNullOrEmpty(extra))
+                    {
+                        codigoFinal += extra;
+                        lblBase.Text = $"Código actual: {codigoFinal}";
+                        txtScanExtra.Clear();
+                    }
+                }
+            };
+
+            // Lógica para atrapar textos pegados sin Enter
+            btnConfirmar.Click += (sender, e) =>
+            {
+                string extra = txtScanExtra.Text.Trim();
+                if (!string.IsNullOrEmpty(extra))
+                {
+                    codigoFinal += extra;
+                }
+
+                prompt.DialogResult = DialogResult.OK;
+                prompt.Close();
+            };
+
+            prompt.Controls.Add(lblInfo);
+            prompt.Controls.Add(lblBase);
+            prompt.Controls.Add(txtScanExtra);
+            prompt.Controls.Add(btnConfirmar);
+            prompt.Controls.Add(btnCancelar);
+
+            prompt.CancelButton = btnCancelar;
+            prompt.Shown += (s, e) => txtScanExtra.Focus();
+
+            if (prompt.ShowDialog() == DialogResult.OK)
+            {
+                return codigoFinal;
+            }
+
+            return null;
+        }
+
+        private void textRemito_TextChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

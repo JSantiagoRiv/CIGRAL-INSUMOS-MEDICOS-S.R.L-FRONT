@@ -28,7 +28,6 @@ namespace Cigral
 
         private async void UC_Dashboard_Load(object sender, EventArgs e)
         {
-            lblFecha.Text = DateTime.Now.ToString("dd/MM/yyyy");
             await CargarDashboard();
         }
 
@@ -42,7 +41,7 @@ namespace Cigral
 
                 // 🔥 EL TRUCO: Hacemos 1 sola llamada pidiendo TODO el espectro de fechas 
                 // Desde hace -10.000 días (pasado) hasta 1.500 días (futuro), obligando a que traiga los vencidos
-                var listaCompleta = await ApiServices.ObtenerVencimientos(-10000, 1500, true);
+                var listaCompleta = await ApiServices.ObtenerVencimientos(-10000, 180, true);
 
                 if (this.IsDisposed) return;
 
@@ -94,6 +93,11 @@ namespace Cigral
             {
                 Cursor = Cursors.Default;
             }
+        }
+
+        private void dgvProximos_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
         }
     }
 }

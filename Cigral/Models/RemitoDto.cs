@@ -13,6 +13,7 @@ namespace Cigral.Models
         public string Observaciones { get; set; }                        //Texto extra de detalles.
         public List<RemitoDetalleRequest> Detalles { get; set; }         //Lista de los productos escaneados.
         public string ComprobanteAsociado { get; set; }
+        public bool EsDevolucion { get; set; } = false;                           
     }
 
     // Molde para cada renglón individual DENTRO de la caja grande del remito.
@@ -91,16 +92,13 @@ namespace Cigral.Models
         public DateTime fecha { get; set; }
 
         public int depositoId { get; set; }
-        public string depositoNombre { get; set; } // ¡Clave para que se lea bien!
+        public string nombreDeposito { get; set; } // ¡Clave para que se lea bien!
 
         public int entidadId { get; set; }
-        public string entidadNombre { get; set; }  // Proveedor o Cliente
+        public string nombreEntidad { get; set; }  // Proveedor o Cliente
         public string comprobanteAsociado { get; set; }
 
         public string observaciones { get; set; }
         // Los "detalles" los ignoramos acá porque no los necesitamos para la tabla principal
     }
-
-
-
 }
